@@ -406,13 +406,23 @@ export class FilterPanelComponent {
 
     // Build event cards HTML
     const eventsHtml = events.map((ev, i) => {
-      const isHighlighted = this.filterSvc.isEventHighlighted(ev);
-      const borderColor = isHighlighted ? '#d97706' : '#3b82f6';
-      const borderWidth = isHighlighted ? '5px' : '3px';
-      const highlightBg = isHighlighted ? 'background: #fffbeb;' : '';
-      const highlightBadge = isHighlighted
-        ? `<span style="display:inline-block;background:#fef3c7;color:#92400e;font-size:7.5pt;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid #f59e0b;margin-left:8px;vertical-align:middle;">★ Resaltado</span>`
-        : '';
+      const hlTagsOnEvent = ev.tags.filter(tagId => this.filterSvc.highlightedTags().has(tagId));
+      const isHighlighted = hlTagsOnEvent.length > 0;
+      
+      let borderColor = '#3b82f6';
+      let borderWidth = '3px';
+      let highlightBg = '';
+      let highlightBadge = '';
+
+      if (isHighlighted) {
+        const tag = this.getTag(hlTagsOnEvent[0]);
+        if (tag) {
+          borderColor = tag.border;
+          borderWidth = '5px';
+          highlightBg = `background: ${tag.bg} !important;`;
+          highlightBadge = ``;
+        }
+      }
 
       // Tag chips
       const tagsHtml = ev.tags.map(tagId => {
@@ -433,6 +443,11 @@ export class FilterPanelComponent {
            </div>`
         : '';
 
+      // Event main image if exists (floating left to wrap text)
+      const imgHtml = ev.image
+        ? `<img src="${ev.image}" alt="${ev.title}" style="float:left; width:140px; height:auto; margin:0 12px 6px 0; border-radius:4px; border:1px solid #e5e7eb; box-shadow:0 1px 2px rgba(0,0,0,0.05);" />`
+        : '';
+
       return `
         <article style="
           border-left: ${borderWidth} solid ${borderColor};
@@ -444,15 +459,19 @@ export class FilterPanelComponent {
           border-radius: 0 6px 6px 0;
           box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         ">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
             <div style="flex:1;min-width:0;">
               <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
                 <span style="font-family:'Playfair Display',Georgia,serif;font-size:11pt;font-weight:700;color:${borderColor};white-space:nowrap;">${ev.yearLabel}</span>
                 <span style="font-family:'Playfair Display',Georgia,serif;font-size:11pt;font-weight:700;color:#1c1710;">${ev.title}</span>
                 ${highlightBadge}
               </div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${tagsHtml}</div>
-              <div style="font-size:8.5pt;color:#374151;line-height:1.45;text-align:justify;">${cleanDesc}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">${tagsHtml}</div>
+              <div style="font-size:8.5pt;color:#374151;line-height:1.45;text-align:justify;">
+                ${imgHtml}
+                ${cleanDesc}
+                <div style="clear:both;"></div>
+              </div>
             </div>
             ${qrHtml}
           </div>
@@ -494,6 +513,8 @@ export class FilterPanelComponent {
       background: #ffffff;
       line-height: 1.4;
       padding: 12mm 14mm;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     @page {
       size: A4;
