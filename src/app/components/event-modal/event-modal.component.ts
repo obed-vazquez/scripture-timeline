@@ -82,19 +82,23 @@ import { Router } from '@angular/router';
             </div>
           </div>
 
-          <h2 class="modal-title">{{ event.title }}</h2>
+          <div class="modal-title-row">
+            <h2 class="modal-title">{{ event.title }}</h2>
 
-          <!-- Share link button -->
-          <button class="share-link-btn" (click)="copyLink()" [title]="linkCopied() ? 'Link copiado!' : 'Copiar link directo'">
-            <svg *ngIf="!linkCopied()" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-            </svg>
-            <svg *ngIf="linkCopied()" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
-            <span>{{ linkCopied() ? '¡Copiado!' : 'Compartir enlace' }}</span>
-          </button>
+            <!-- Share link button -->
+            <button class="share-link-btn" (click)="copyLink()" [title]="linkCopied() ? '¡Enlace copiado!' : 'Compartir enlace directo'">
+              <svg *ngIf="!linkCopied()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              <svg *ngIf="linkCopied()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+          </div>
 
           <div class="modal-description" [innerHTML]="safeHtml"></div>
         </div>
@@ -291,7 +295,14 @@ import { Router } from '@angular/router';
       font-weight: 600;
     }
 
-    /* ── Title ───────────────────────────────────────────────── */
+    /* ── Title Row ───────────────────────────────────────────── */
+    .modal-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
     .modal-title {
       font-family: var(--font-display);
       font-size: 1.6rem;
@@ -299,6 +310,7 @@ import { Router } from '@angular/router';
       line-height: 1.2;
       color: var(--color-text-primary);
       margin: 0;
+      flex: 1;
     }
 
     @media (min-width: 768px) {
@@ -368,27 +380,25 @@ import { Router } from '@angular/router';
 
     /* ── Share Link Button ────────────────────────────────────── */
     .share-link-btn {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       border: 1px solid var(--color-border-light, rgba(255,255,255,0.15));
       background: var(--color-surface-1, rgba(255,255,255,0.06));
-      color: var(--color-accent);
-      font-size: 0.8rem;
-      font-weight: 600;
+      color: var(--color-text-secondary);
       cursor: pointer;
       transition: all 0.25s ease;
-      white-space: nowrap;
-      align-self: flex-start;
+      flex-shrink: 0;
     }
     .share-link-btn:hover {
       background: var(--color-accent);
       color: white;
       border-color: var(--color-accent);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .share-link-btn:active {
       transform: translateY(0);
