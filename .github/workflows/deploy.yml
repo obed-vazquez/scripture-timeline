@@ -32,6 +32,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist/scripture-timeline/browser
-          cname: YOUR_CUSTOM_DOMAIN
-          # ↑ Replace YOUR_CUSTOM_DOMAIN with your domain, e.g.: timeline.midominio.com
-          # If you don't have a custom domain, delete the `cname` line above.
+          cname: timeline.whiteweb.mx
