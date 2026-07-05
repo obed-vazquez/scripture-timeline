@@ -342,7 +342,10 @@ export class FilterPanelComponent {
   async onPrint(): Promise<void> {
     this.printing.set(true);
     try {
-      const QRCode = await import('qrcode');
+      const qrcodeModule = await import('qrcode');
+      // Compatibility for CommonJS modules in production builds
+      const QRCode = (qrcodeModule as any).default || qrcodeModule;
+      
       const events = this.filterSvc.getVisibleEvents();
       const baseUrl = this.getBaseUrl();
 
