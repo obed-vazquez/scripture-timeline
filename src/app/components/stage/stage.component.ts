@@ -58,6 +58,8 @@ const FIGURE_GAP = 34;
  * between which a text appears.
  */
 const PORTRAIT_TYPE = { desc: 34, read: 30, minPx: 9.5, fullPx: 11 };
+/** Vertical layout: height of the row the era pill takes under the top bar (mirrors chrome.css). */
+const PORTRAIT_ERA_ROW = 42;
 /** Phones: room (screen px) the labels leave beside an axis: the years on its left, the bars on its right. */
 const PORTRAIT_LABEL_CLEAR = { years: 80, bars: 44 };
 /** Phones: widest label (authored px), so a label fits between the screen edge and the years. */
@@ -211,6 +213,8 @@ export class StageComponent implements AfterViewInit, OnDestroy {
   private measuredFor = '';
 
   constructor() {
+    // The vertical layout also rearranges the floating bars (the era pill gets its own row).
+    effect(() => document.body.classList.toggle('is-portrait', this.orient() === 'v'));
     // Scene rebuilt (new orientation, measured text, language) → re-collect elements and keep the view.
     effect(() => {
       const scene = this.scene();
@@ -541,7 +545,11 @@ export class StageComponent implements AfterViewInit, OnDestroy {
 
   private insets(): Insets {
     const phone = this.vw < 700;
-    return phone ? { top: 62, right: 54, bottom: 128, left: 14 } : { top: 84, right: 84, bottom: 118, left: 48 };
+    // vertical layout: the era pill sits on its own row under the top bar
+    const eraRow = this.orient() === 'v' ? PORTRAIT_ERA_ROW : 0;
+    return phone
+      ? { top: 62 + eraRow, right: 54, bottom: 128, left: 14 }
+      : { top: 84 + eraRow, right: 84, bottom: 118, left: 48 };
   }
 
 

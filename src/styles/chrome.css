@@ -477,6 +477,19 @@
   animation: chip-in .3s var(--ease-out) both;
 }
 
+/* ── Vertical layout: the era pill takes its own row under the title and the tools ── */
+body.is-portrait .topbar {
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr) max-content;
+  grid-template-areas: 'brand . tools' 'era era era';
+  row-gap: 8px; /* the row is PORTRAIT_ERA_ROW tall in the stage's insets */
+}
+body.is-portrait .brand { grid-area: brand; min-width: 0; white-space: nowrap; }
+body.is-portrait .brand-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+body.is-portrait .tool-label { display: none; }
+body.is-portrait .tools { grid-area: tools; }
+body.is-portrait .era-pill-slot { grid-area: era; }
+body.is-portrait .era-pill { max-width: 100%; }
+
 /* ── Phone ───────────────────────────────────────────────── */
 @media (max-width: 700px) {
   .topbar { top: 10px; left: 10px; right: 10px; grid-template-columns: auto 1fr auto; gap: 8px; }
