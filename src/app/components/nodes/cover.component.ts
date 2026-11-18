@@ -125,7 +125,10 @@ export class CoverComponent {
   }
 }
 
-/** Phones: the full text of an event, readable when the visitor zooms into it (A67: no scroll boxes). */
+/**
+ * Phones: the full text of an event, a sheet laid over its card that turns on as the visitor
+ * zooms past the card (A67: no scroll boxes). It repeats the year and title, as the card is under it.
+ */
 @Component({
   selector: 'tl-read-panel',
   standalone: true,
@@ -133,6 +136,9 @@ export class CoverComponent {
   template: `
     <article class="read" [class.is-portrait]="orient() === 'v'" [style.--c]="color()"
              [style.padding]="geo().padY + 'px ' + geo().padX + 'px'">
+      @if (orient() === 'v') {
+        <header class="read-head"><span class="read-year">{{ year() }}</span><h3 class="read-title">{{ title() }}</h3></header>
+      }
       <div class="read-body" [style.column-count]="cols()" [style.column-gap.px]="geo().gap" [innerHTML]="html()"></div>
       @if (nav.reviewMode() && note()) {
         <div class="review-badge">{{ note() }}</div>
@@ -152,6 +158,8 @@ export class ReadPanelComponent {
   readonly geo = computed(() => READ_GEOMETRY[this.orient()]);
   readonly color = computed(() => themed(this.node().item!.color, this.theme.dark()));
   readonly cols = computed(() => this.reading.sizes().get(this.node().item!.id)?.cols ?? 1);
+  readonly year = computed(() => this.i18n.year(this.node().item!.yearLabel));
+  readonly title = computed(() => this.i18n.text(`${this.node().item!.id}.title`, this.node().item!.title));
   readonly html = computed<SafeHtml>(() => {
     const it = this.node().item!;
     return this.sanitizer.bypassSecurityTrustHtml(this.i18n.text(`${it.id}.fullDesc`, it.fullDesc));

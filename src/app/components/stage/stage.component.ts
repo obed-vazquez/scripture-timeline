@@ -52,6 +52,16 @@ const BASE_KINDS = new Set(['era', 'title', 'guide', 'hub']);
 const NO_SIZES = new Map<string, ReadSize>();
 /** Space kept between the full text and the figure of a detail view. */
 const FIGURE_GAP = 34;
+/**
+ * Phones: authored type sizes of an event's summary and full text (mirror canvas.css:
+ * .cover.is-portrait .cv-desc, .read.is-portrait .read-body), and the on-screen sizes (px)
+ * between which a text appears.
+ */
+const PORTRAIT_TYPE = { desc: 34, read: 30, minPx: 9.5, fullPx: 11 };
+/** Phones: room (screen px) the labels leave beside an axis: the years on its left, the bars on its right. */
+const PORTRAIT_LABEL_CLEAR = { years: 80, bars: 44 };
+/** Phones: widest label (authored px), so a label fits between the screen edge and the years. */
+const PORTRAIT_LABEL_W = 640;
 /** Narrowest single column beside a figure in a detail view (narrower ones read as half a page). */
 const DETAIL_BESIDE_MIN_W = 860;
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -118,7 +128,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
       <div class="layer layer-labels">
         @for (n of labelNodes(); track n.id) {
           <button type="button" class="label" tabindex="-1" [attr.data-label]="n.id" [style.--c]="labelColor(n)"
-                  [style.width.px]="n.cover!.text.w">
+                  [style.width.px]="orient() === 'v' ? null : n.cover!.text.w" [style.max-width.px]="orient() === 'v' ? portraitLabelW : null">
             <span class="lb-year" [style.font-size.px]="type().year">{{ i18n.year(n.item!.yearLabel) }}</span>
             <span class="lb-title" [style.font-size.px]="labelTitleSize(n)" [style.margin-top.px]="type().gap">{{ i18n.text(n.item!.id + '.title', n.item!.title) }}</span>
           </button>
@@ -168,6 +178,7 @@ export class StageComponent implements AfterViewInit, OnDestroy {
   private els = new Map<string, HTMLElement>();
   private labelEls = new Map<string, HTMLElement>();
   private labelGeo = new Map<string, LabelGeo>();
+  readonly portraitLabelW = PORTRAIT_LABEL_W;
   private state = new WeakMap<HTMLElement, ElState>();
   private frameOf = new Map<string, TimelineFrame>();
   private cardAlpha = new Map<string, number>();
@@ -370,15 +381,25 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     host.innerHTML = '';
     const out = new Map<string, ReadSize>();
     for (const it of this.data.events) {
+      // the same sheet the reading panel draws: year and title, then the text
       const art = document.createElement('article');
       art.className = 'read is-portrait';
+      Object.assign(art.style, { width: `${g.col + 2 * g.padX}px`, height: 'auto', padding: `${g.padY}px ${g.padX}px`, boxSizing: 'border-box' });
+      const head = document.createElement('header');
+      head.className = 'read-head';
+      const year = document.createElement('span');
+      year.className = 'read-year';
+      year.textContent = this.i18n.year(it.yearLabel);
+      const title = document.createElement('h3');
+      title.className = 'read-title';
+      title.textContent = this.i18n.text(`${it.id}.title`, it.title);
+      head.append(year, title);
       const body = document.createElement('div');
       body.className = 'read-body';
       body.innerHTML = this.i18n.text(`${it.id}.fullDesc`, it.fullDesc);
-      body.style.width = `${g.col}px`;
-      art.appendChild(body);
+      art.append(head, body);
       host.appendChild(art);
-      out.set(it.id, { w: g.col + 2 * g.padX, h: g.head + body.offsetHeight + 2 * g.padY + 10, cols: 1 });
+      out.set(it.id, { w: g.col + 2 * g.padX, h: art.offsetHeight + 10, cols: 1 });
     }
     host.innerHTML = '';
     this.zone.run(() => this.reading.sizes.set(out));
@@ -563,6 +584,12 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     const cardFit = Math.min(aw, ah * (CARD_H.w / CARD_H.h));
     const big = (n: SceneNode) => {
       if (n.tight) return n.rect.w * t.k >= cardFit * 0.66;
+      // phones: the reading sheet lies over its card; it counts once it turns on, a little
+      // past the card's own view (see render)
+      if (n.kind === 'read' && scene.orient === 'v') {
+        const pr = n.parent!.rect;
+        return n.rect.w * t.k >= Math.min(aw, ah * (pr.w / pr.h)) * 1.045;
+      }
       if (n.kind === 'event' && scene.orient === 'h') return n.rect.w * t.k >= cardFit * 0.42;
       return n.rect.w * t.k >= aw * 0.42 || n.rect.h * t.k >= ah * 0.55;
     };
@@ -868,8 +895,11 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         const t0 = Math.max(minS * 1.03 * L.w, img1 * 0.98);
         const t1 = t0 * 1.16;
         const txt = smoothstep(t0, t1, sw);
-        const rv0 = portrait ? t1 * 1.08 : Math.max(t1 * 1.05, cardFit * 0.3);
-        const rv1 = portrait ? rv0 * 1.25 : Math.max(rv0 * 1.12, cardFit * 0.42);
+        // phones: the summary shows only while its letters are readable on screen, so it never
+        // appears (or leaves) as a grey smudge
+        const descPx = (min: number) => (min * L.w) / PORTRAIT_TYPE.desc;
+        const rv0 = portrait ? Math.max(t1 * 1.08, descPx(PORTRAIT_TYPE.minPx)) : Math.max(t1 * 1.05, cardFit * 0.3);
+        const rv1 = portrait ? Math.max(rv0 * 1.1, descPx(PORTRAIT_TYPE.fullPx)) : Math.max(rv0 * 1.12, cardFit * 0.42);
         rv = Math.min(txt, smoothstep(rv0, rv1, sw));
         this.textAlpha.set(n.id, txt);
         this.summaryEnd.set(n.id, rv1);
@@ -888,13 +918,28 @@ export class StageComponent implements AfterViewInit, OnDestroy {
       } else if (n.kind === 'read') {
         // 4. the full text, after the summary
         const psw = n.parent!.rect.w * k;
-        const end = this.summaryEnd.get(n.parent!.id) ?? vw * 0.4;
-        const r0 = portrait ? end * 1.02 : Math.max(vw * 0.5, end * 1.2);
-        const r1 = portrait ? r0 * 1.07 : Math.max(vw * 0.7, r0 * 1.3);
-        a = smoothstep(r0, r1, psw) * Math.min(1, parentA * 1.6);
+        if (portrait) {
+          // phones: the full text waits until the visitor zooms past the event's own view, and
+          // shows only while its letters are readable
+          // (the sheet lies over the card; only the sheet the visitor is on turns on)
+          const pr = n.parent!.rect;
+          const ownView = Math.min(fitW, fitH * (pr.w / pr.h));
+          const px = (PORTRAIT_TYPE.read * sw) / n.authW;
+          const off = Math.max(Math.abs(x + sw / 2 - cx0) - sw / 2, Math.abs(y + sh / 2 - cy0) - sh / 2, 0);
+          a = smoothstep(PORTRAIT_TYPE.minPx, PORTRAIT_TYPE.fullPx, px) * smoothstep(ownView * 1.02, ownView * 1.07, psw)
+            * (1 - smoothstep(0, vw * 0.08, off)) * Math.min(1, parentA * 1.6);
+        } else {
+          const end = this.summaryEnd.get(n.parent!.id) ?? vw * 0.4;
+          const r0 = Math.max(vw * 0.5, end * 1.2);
+          const r1 = Math.max(vw * 0.7, r0 * 1.3);
+          a = smoothstep(r0, r1, psw) * Math.min(1, parentA * 1.6);
+        }
         rv = smoothstep(150, 420, sw);
       } else if (n.kind === 'block' || n.kind === 'point') {
         a = (n.reveal[1] > 0 ? smoothstep(n.reveal[0], n.reveal[1], sw) : 1) * Math.min(1, parentA * 1.6);
+        // phones: a chart (not a closed section, whose picture reads from afar) waits until it is
+        // large enough to read
+        if (portrait && n.kind === 'block' && n.block?.type !== 'group') a *= smoothstep(vw * 0.4, vw * 0.65, sw);
         if (n.kind === 'block' && n.parent) {
           // a block belongs to the detail of its event: it appears with the detail view
           // (phones: with the summary); inside a section, as the section opens
@@ -926,6 +971,13 @@ export class StageComponent implements AfterViewInit, OnDestroy {
           const gy = y + sh / 2 - vh / 2;
           const off = Math.max(Math.abs(gx) - sw / 2, Math.abs(gy) - sh / 2, 0);
           rv = smoothstep(vw * 0.36, vw * 0.5, sw) * (1 - smoothstep(0, vw * 0.06, off));
+        } else {
+          // phones: a guide is nested at the end of its line of the menu; it appears as the
+          // visitor zooms into that line, and unfolds its list once it is large
+          // (only the guide the visitor is on: the next one sits just below it)
+          const off = Math.max(Math.abs(x + sw / 2 - cx0) - sw / 2, Math.abs(y + sh / 2 - cy0) - sh / 2, 0);
+          a = smoothstep(vw * 0.2, vw * 0.45, sw) * (1 - smoothstep(0, vw * 0.08, off));
+          rv = smoothstep(vw * 0.6, vw * 0.85, sw);
         }
       }
       if (n.kind === 'point' && this.nav.hidden().has(`${n.item!.id}:${n.pointId}`)) a = 0;
@@ -1093,7 +1145,12 @@ export class StageComponent implements AfterViewInit, OnDestroy {
       const w = geo.w * sc;
       const h = geo.h * sc;
       const e = ease(smoothstep(0.05, 0.9, this.cardAlpha.get(n.id) ?? 0));
-      const cx = (n.rect.x + n.rect.w / 2) * k + t.x - w / 2;
+      let cx = (n.rect.x + n.rect.w / 2) * k + t.x - w / 2;
+      // phones: a label keeps clear of its axis (the years on the left, the bars on the right)
+      if (this.orient() === 'v' && f) {
+        const ax = f.axisCross * k + t.x;
+        cx = n.side === 1 ? Math.max(cx, ax + PORTRAIT_LABEL_CLEAR.bars) : Math.min(cx, ax - PORTRAIT_LABEL_CLEAR.years - w);
+      }
       let cy = (n.rect.y + n.rect.h / 2) * k + t.y - h / 2;
       // a label taller than its card stays off the axis (the years live there)
       if (this.orient() === 'h') {

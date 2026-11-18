@@ -187,6 +187,12 @@ export function blockSize(b: BlockDef): { w: number; h: number } {
 export const HEADER_VIEW = 0.5;
 export const DETAIL_VIEW = 0.78;
 
+/**
+ * Phones: share of the screen width the reading sheet takes in its own view. Below 1, so the
+ * card is larger than in its own view and the sheet shows (see the stage).
+ */
+export const PORTRAIT_SHEET_VIEW = 0.92;
+
 /** Largest figure of a detail view, and its bottom-right corner, in card pixels (mirrors .cd-body). */
 export const FIGURE = { w: 702, h: 400, right: 1530, bottom: 954 };
 
@@ -236,10 +242,15 @@ const V = {
   width: 1000,
   cardW: 400,
   headerH: 470,
-  axisGap: 40,
+  // room between the axis and the cards, so the years on the axis do not touch them
+  axisGap: 70,
   eraScale: 1,
   titleH: 820,
-  guideGap: 120,
+  /** Lines of the menu of guides (mirrors .hub.is-portrait): where the first starts, and their pitch. */
+  hubRowsTop: 132,
+  hubRowH: 87,
+  /** Widest a guide is while nested at the end of its line of the menu. */
+  guideW: 64,
 };
 
 export interface SceneInput {
@@ -290,12 +301,17 @@ export function buildScene(input: SceneInput): Scene {
         focus: scaleAround(cardArea, 1 / DETAIL_VIEW), focusMode: 'fit', reveal: [0, 0], depth: depth + 1, tight: true,
       });
     } else {
-      // phone: the full text is a panel under the summary, read by zooming into it
+      // phone: the full text is a sheet laid over the card, from its top and at its width; it
+      // appears as the visitor zooms past the card's own view (long texts run on below the card)
       const rs = input.readSizes.get(item.id) ?? estimateReadSize(item, orient);
-      const readRect = fitInto(sub(rect, L.w, L.read), rs.w, rs.h, 'start');
+      const authH = Math.max(rs.h, rs.w * (COVER_V.h / COVER_V.w));
+      const readRect: Rect = { x: rect.x, y: rect.y, w: rect.w, h: (rect.w * authH) / rs.w };
+      // its own view is a little closer than the card's, so the sheet is on when the camera arrives
+      const fw = readRect.w * PORTRAIT_SHEET_VIEW;
       add({
-        id: `${item.id}::leer`, kind: 'read', item, parent: card, children: [], rect: readRect, authW: rs.w, authH: rs.h,
-        focus: readRect, focusMode: rs.h / rs.w > 1.15 ? 'top' : 'fit', reveal: [30, 56], depth: depth + 1,
+        id: `${item.id}::leer`, kind: 'read', item, parent: card, children: [], rect: readRect, authW: rs.w, authH,
+        focus: { x: readRect.x + (readRect.w - fw) / 2, y: readRect.y, w: fw, h: readRect.h }, focusMode: 'top',
+        reveal: [0, 0], depth: depth + 1,
       });
     }
     // nested timeline of children
@@ -528,15 +544,19 @@ export function buildScene(input: SceneInput): Scene {
       y += h;
     });
     titleRect = { x: 0, y: 0, w: V.width, h: V.titleH - 80 };
-    let gy = y + 200;
-    input.guides.forEach((g) => {
+    // Each guide is nested, small, at the end of its line of the menu: following a line zooms
+    // into it, and the guide appears and unfolds there (instead of living after the last era).
+    input.guides.forEach((g, i) => {
       const sz = guideAuthSize(g.items.length, 'v');
-      const r: Rect = { x: 0, y: gy, w: V.width, h: (V.width * sz.h) / sz.w };
+      // as tall as its line at most, so the guides never overlap (long guides are narrower)
+      const h = Math.min(V.hubRowH * 0.9, (V.guideW * sz.h) / sz.w);
+      const w = (h * sz.w) / sz.h;
+      const rowMid = hubRect.y + V.hubRowsTop + (i + 0.5) * V.hubRowH;
+      const r: Rect = { x: V.width - w - 40, y: rowMid - h / 2, w, h };
       add({
-        id: `guia:${g.id}`, kind: 'guide', guideId: g.id, parent: root, children: [], rect: r, authW: sz.w, authH: sz.h,
-        focus: r, focusMode: 'top', reveal: [0, 0], depth: 0,
+        id: `guia:${g.id}`, kind: 'guide', guideId: g.id, parent: hub, children: [], rect: r, authW: sz.w, authH: sz.h,
+        focus: r, focusMode: 'top', reveal: [0, 0], depth: 1,
       });
-      gy += r.h + V.guideGap;
     });
   }
 
@@ -610,5 +630,5 @@ function estimateReadSize(item: TimelineItem, orient: Orientation): { w: number;
     const cols = Math.max(1, Math.min(3, Math.round(Math.sqrt((2.5 * h1) / 860))));
     return { w: cols * 860 + (cols - 1) * 80, h: h1 / cols + 120 };
   }
-  return { w: 760, h: (chars / 42) * 48 + 200 };
+  return { w: 880, h: (chars / 42) * 48 + 400 };
 }
