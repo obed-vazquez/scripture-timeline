@@ -374,7 +374,10 @@ export class ContextBarComponent {
 
   private blockLabel(nodeId: string): string {
     const [ev, blockId, pointId] = nodeId.split('::');
-    const b = this.data.custom.events[ev]?.blocks?.find((x) => x.id === blockId);
+    // a block of the event, or one inside a section of it
+    const blocks = this.data.custom.events[ev]?.blocks ?? [];
+    const b = blocks.find((x) => x.id === blockId)
+      ?? blocks.flatMap((x) => (x.type === 'group' ? x.items.map((it) => it.block) : [])).find((x) => x.id === blockId);
     if (!b) return '';
     if (pointId && b.type === 'lineage') {
       const p = b.nodes.find((n) => n.id === pointId);

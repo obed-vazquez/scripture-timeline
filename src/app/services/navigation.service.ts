@@ -18,6 +18,8 @@ export interface TourStep {
   event?: string;
   /** Hidden objects shown from this step on (point ids of the event's charts). */
   show?: string[];
+  /** The step's node is a video: it plays on arrival. */
+  play?: boolean;
 }
 
 /** The scene node `id` is `root` or lies inside it ("root::leer", "root::block"…). */
@@ -65,22 +67,21 @@ export class NavigationService {
   readonly steps = computed<TourStep[]>(() => {
     this.filters.version();
     const g = this.guide();
-    // every event has two stops: its header view, then its detail view
-    if (g) {
-      return g.entries
-        .filter((e) => this.filters.isVisible(e))
-        .flatMap((e) => [{ node: e.id, event: e.id }, { node: `${e.id}::leer`, event: e.id }]);
-    }
-    const order = this.data.custom.tour;
     const steps: TourStep[] = [];
+    // every event has two stops, its header view and its detail view, then its charts' steps
     const pushEvent = (e: TimelineItem) => {
       if (!this.filters.isVisible(e)) return;
       steps.push({ node: e.id, event: e.id });
       steps.push({ node: `${e.id}::leer`, event: e.id });
       for (const s of this.data.custom.events[e.id]?.steps ?? []) {
-        steps.push({ node: s.focus ? `${e.id}::${s.focus}` : e.id, event: e.id, show: s.show });
+        steps.push({ node: s.focus ? `${e.id}::${s.focus}` : e.id, event: e.id, show: s.show, play: s.play });
       }
     };
+    if (g) {
+      g.entries.forEach(pushEvent);
+      return steps;
+    }
+    const order = this.data.custom.tour;
     if (order) {
       for (const id of order) {
         const it = this.data.get(id);
@@ -168,8 +169,15 @@ export class NavigationService {
     this.tourIndex.set(i);
     this.hidden.set(this.hiddenAt(i, steps));
     this.tourFlight = true;
-    this.engine?.flyTo(steps[i].node);
+    const step = steps[i];
+    this.engine?.flyTo(step.node).then(() => {
+      // a video step plays once the camera is on it (if the visitor is still at that step)
+      if (step.play && this.tourIndex() === i) this.playRequest.set(step.node);
+    });
   }
+
+  /** A video block (scene node id) the presentation asks to play; the block plays it and clears it. */
+  readonly playRequest = signal<string | null>(null);
 
   /** Objects still hidden when the presentation is at step i. */
   private hiddenAt(i: number, steps: TourStep[]): Set<string> {

@@ -212,9 +212,12 @@ export const TIMELINE_CUSTOM: Customization = {
       ],
       steps: [
         { focus: 'historia-rv' },
-        { focus: 'video-rv' },
+        { focus: 'video-rv', play: true },
         { focus: 'portada-oso' },
+        { focus: 'portada-oso::titulo' },
         { focus: 'portada-oso::oso' },
+        { focus: 'portada-oso::lema' },
+        { focus: 'portada-oso::anio' },
         { focus: 'cronologia-rv' },
       ],
     },

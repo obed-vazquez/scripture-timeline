@@ -193,6 +193,8 @@ export interface PresentationStep {
   focus?: string;
   /** Hidden objects (block or point ids) that appear at this step. */
   show?: string[];
+  /** The focused block is a video: it starts playing when the step arrives. */
+  play?: boolean;
 }
 
 export interface EventCustom {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { SceneNode } from '../../engine/scene';
 import {
   ChronicleBlock, ChronicleEntry, CompareBlock, CompareMark, CompareRow, GroupBlock, LineageBlock, LineageNode, RelationNode,
@@ -46,6 +46,17 @@ export class VideoBlockComponent {
   readonly color = computed(() => themed(this.node().item!.color, this.theme.dark()));
   readonly title = computed(() => this.i18n.text(`custom.${this.block().id}.title`, this.block().title));
   readonly caption = computed(() => this.i18n.text(`custom.${this.block().id}.caption`, this.block().caption ?? ''));
+
+  constructor() {
+    // a presentation step on this video plays it
+    effect(() => {
+      if (this.nav.playRequest() !== this.node().id) return;
+      untracked(() => {
+        this.nav.playRequest.set(null);
+        this.media.playVideo(this.node().id, this.block().youtube, this.title());
+      });
+    });
+  }
 
   play(ev: Event): void {
     ev.stopPropagation();
