@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "i18n": "node --no-warnings scripts/i18n.mts"
   },
   "prettier": {
     "printWidth": 100,
@@ -30,6 +31,11 @@
     "@angular/platform-browser": "^20.2.0",
     "@angular/router": "^20.2.0",
     "@types/qrcode": "^1.5.6",
+    "d3-ease": "^3.0.2",
+    "d3-interpolate": "^3.0.2",
+    "d3-selection": "^3.0.1",
+    "d3-transition": "^3.0.2",
+    "d3-zoom": "^3.0.1",
     "gsap": "^3.14.2",
     "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
@@ -40,6 +46,11 @@
     "@angular/build": "^20.2.0",
     "@angular/cli": "^20.2.0",
     "@angular/compiler-cli": "^20.2.0",
+    "@types/d3-ease": "^3.0.2",
+    "@types/d3-interpolate": "^3.0.4",
+    "@types/d3-selection": "^3.0.12",
+    "@types/d3-transition": "^3.0.9",
+    "@types/d3-zoom": "^3.0.9",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",

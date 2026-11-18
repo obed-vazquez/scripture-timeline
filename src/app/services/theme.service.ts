@@ -1,33 +1,37 @@
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, effect, signal } from '@angular/core';
+
+const KEY = 'theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private renderer: Renderer2;
-  private isDark$ = new BehaviorSubject<boolean>(false);
+  readonly dark = signal<boolean>(this.initial());
 
-  readonly isDarkMode$ = this.isDark$.asObservable();
-
-  constructor(rendererFactory: RendererFactory2) {
-    this.renderer = rendererFactory.createRenderer(null, null);
-    // Restore saved preference
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      this.setDark(true);
-    }
+  constructor() {
+    effect(() => {
+      const dark = this.dark();
+      const root = document.documentElement;
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#101216' : '#f2ece0');
+      try {
+        localStorage.setItem(KEY, dark ? 'dark' : 'light');
+      } catch {
+        /* storage unavailable */
+      }
+    });
   }
 
   toggle(): void {
-    this.setDark(!this.isDark$.value);
+    this.dark.update((d) => !d);
   }
 
-  private setDark(dark: boolean): void {
-    this.isDark$.next(dark);
-    if (dark) {
-      this.renderer.setAttribute(document.documentElement, 'data-theme', 'dark');
-    } else {
-      this.renderer.removeAttribute(document.documentElement, 'data-theme');
+  private initial(): boolean {
+    try {
+      const saved = localStorage.getItem(KEY);
+      if (saved === 'dark') return true;
+      if (saved === 'light') return false;
+    } catch {
+      /* storage unavailable */
     }
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? true;
   }
 }

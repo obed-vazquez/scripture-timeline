@@ -1,0 +1,61 @@
+/*
+ * Design tokens — every colour, font and shared measure lives here (T6: cheap visual rounds).
+ * Two themes: "ink" (dark, default when the device prefers dark) and "parchment" (light).
+ * Era and category colours come from the data and are adapted per theme in code.
+ */
+
+:root {
+  --f-display: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
+  --f-read: 'Literata', Georgia, 'Times New Roman', serif;
+  --f-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius-pill: 999px;
+  --ease-out: cubic-bezier(.22, .8, .24, 1);
+}
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #101216;
+  --bg-hi: #191d24;
+  --bg-lo: #0a0b0e;
+  --ink: #ece5d8;
+  --ink-2: #b9b09f;
+  --ink-3: #857d6f;
+  --rule: rgba(236, 229, 216, .14);
+  --accent: #d4ae5c;
+  --accent-ink: #15120c;
+  --mark: rgba(212, 174, 92, .16);
+  --glass: rgba(22, 25, 31, .74);
+  --glass-solid: #181b21;
+  --glass-line: rgba(236, 229, 216, .11);
+  --glass-hover: rgba(236, 229, 216, .08);
+  --shadow: 0 18px 50px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35);
+  --img-filter: saturate(.92) contrast(1.03) brightness(.96);
+  --era-img: .13;
+  --grain: .055;
+  --halo: 0 0 12px rgba(16, 18, 22, .95), 0 0 3px rgba(16, 18, 22, .95);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f2ece0;
+  --bg-hi: #f8f4ec;
+  --bg-lo: #e4d9c5;
+  --ink: #221d16;
+  --ink-2: #554c3f;
+  --ink-3: #8b8172;
+  --rule: rgba(34, 29, 22, .15);
+  --accent: #9a6a1a;
+  --accent-ink: #fbf7ef;
+  --mark: rgba(154, 106, 26, .13);
+  --glass: rgba(250, 246, 238, .82);
+  --glass-solid: #f9f5ed;
+  --glass-line: rgba(34, 29, 22, .11);
+  --glass-hover: rgba(34, 29, 22, .06);
+  --shadow: 0 18px 44px rgba(70, 52, 22, .16), 0 2px 8px rgba(70, 52, 22, .08);
+  --img-filter: saturate(.88) contrast(1.02) sepia(.06);
+  --era-img: .12;
+  --grain: .075;
+  --halo: 0 0 12px rgba(242, 236, 224, .98), 0 0 3px rgba(242, 236, 224, .98);
+}
