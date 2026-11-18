@@ -29,10 +29,10 @@ npm run build
 
 ## Publicar
 
-La publicación es manual:
+Un push no publica. Hay dos formas de publicar:
 
-1. En GitHub, abre **Actions → Build and Deploy to GitHub Pages**.
-2. Da clic en **Run workflow** sobre la rama `main`.
+- **Con un PR:** ponle la etiqueta `deploy` al PR hacia `main`. Al hacer merge, se publica.
+- **A mano:** en GitHub, abre **Actions → Build and Deploy to GitHub Pages** y da clic en **Run workflow** sobre la rama `main`.
 
 El workflow compila y publica en la rama `gh-pages` con el dominio `timeline.whiteweb.mx`.
 
