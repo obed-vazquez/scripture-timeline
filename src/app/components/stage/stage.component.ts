@@ -5,7 +5,7 @@ import {
 import { ZoomTransform } from 'd3-zoom';
 import { Camera, SettleReason } from '../../engine/camera';
 import {
-  CARD_H, COVER_TYPE, HUB_ID, Orientation, Scene, SceneNode, TimelineFrame, buildScene, coverLayout, coverTitleSize,
+  CARD_H, COVER_TYPE, COVER_V, HUB_ID, Orientation, Scene, SceneNode, TimelineFrame, buildScene, coverLayout, coverTitleSize,
 } from '../../engine/scene';
 import { Insets, containsPoint, smoothstep } from '../../engine/geometry';
 import { MarkerHit, frameAlpha, hitDistance, paint, PaintColors } from '../../engine/painter';
@@ -356,6 +356,8 @@ export class StageComponent implements AfterViewInit, OnDestroy {
 
   /** The last place the camera was sent to, or the deepest frame the visitor settled in. */
   private lastTarget: string = 'home';
+  /** Phones: events whose reading sheet is on (it turns on over the cover; see render). */
+  private sheetOn = new Set<string>();
 
   private restoreTarget(target: string): void {
     if (target !== 'home' && this.scene().byId.has(target)) this.flyTo(target, true);
@@ -606,7 +608,10 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     let level = scene.nodes.filter((n) => n.parent === null);
     const path: PathEntry[] = [];
     for (;;) {
-      const hit = level.filter(entered).sort((a, b) => a.rect.w - b.rect.w)[0];
+      // phones: a reading sheet that is on is where the visitor is, even over the event's charts
+      const hits = level.filter(entered);
+      const hit = hits.find((n) => n.kind === 'read' && scene.orient === 'v' && this.sheetOn.has(n.item!.id))
+        ?? hits.sort((a, b) => a.rect.w - b.rect.w)[0];
       if (!hit) break;
       path.push({ id: hit.id, kind: hit.kind, item: hit.item, guideId: hit.guideId });
       level = hit.children;
@@ -934,8 +939,21 @@ export class StageComponent implements AfterViewInit, OnDestroy {
           const ownView = Math.min(fitW, fitH * (pr.w / pr.h));
           const px = (PORTRAIT_TYPE.read * sw) / n.authW;
           const off = Math.max(Math.abs(x + sw / 2 - cx0) - sw / 2, Math.abs(y + sh / 2 - cy0) - sh / 2, 0);
-          a = smoothstep(PORTRAIT_TYPE.minPx, PORTRAIT_TYPE.fullPx, px) * smoothstep(ownView * 1.02, ownView * 1.07, psw)
-            * (1 - smoothstep(0, vw * 0.08, off)) * Math.min(1, parentA * 1.6);
+          // The sheet runs on below the cover, over the event's charts. It turns on only when the
+          // visitor zooms in on the cover itself, then stays on while they read down the sheet;
+          // zooming in on a chart, or being sent to one, leaves it off.
+          const ev = n.item!.id;
+          const wx = (cx0 - t.x) / k;
+          const wy = (cy0 - t.y) / k;
+          const onCover = wx >= pr.x && wx <= pr.x + pr.w && wy >= pr.y && wy <= pr.y + pr.w * (COVER_V.h / COVER_V.w);
+          const sentToChart = this.lastTarget.startsWith(`${ev}::`) && this.lastTarget !== `${ev}::leer`;
+          const zoomed = psw >= ownView * 1.02 && px >= PORTRAIT_TYPE.minPx;
+          if (!zoomed || off > vw * 0.08 || sentToChart) this.sheetOn.delete(ev);
+          else if (onCover) this.sheetOn.add(ev);
+          a = this.sheetOn.has(ev)
+            ? smoothstep(PORTRAIT_TYPE.minPx, PORTRAIT_TYPE.fullPx, px) * smoothstep(ownView * 1.02, ownView * 1.07, psw)
+              * (1 - smoothstep(0, vw * 0.08, off)) * Math.min(1, parentA * 1.6)
+            : 0;
         } else {
           const end = this.summaryEnd.get(n.parent!.id) ?? vw * 0.4;
           const r0 = Math.max(vw * 0.5, end * 1.2);
@@ -945,9 +963,11 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         rv = smoothstep(150, 420, sw);
       } else if (n.kind === 'block' || n.kind === 'point') {
         a = (n.reveal[1] > 0 ? smoothstep(n.reveal[0], n.reveal[1], sw) : 1) * Math.min(1, parentA * 1.6);
-        // phones: a chart (not a closed section, whose picture reads from afar) waits until it is
-        // large enough to read
-        if (portrait && n.kind === 'block' && n.block?.type !== 'group') a *= smoothstep(vw * 0.4, vw * 0.65, sw);
+        // phones: a chart of the event (not a closed section, whose picture reads from afar, nor
+        // what a section holds, which opens with it) waits until it is large enough to read
+        if (portrait && n.kind === 'block' && n.block?.type !== 'group' && n.parent?.kind === 'event') {
+          a *= smoothstep(vw * 0.4, vw * 0.65, sw);
+        }
         if (n.kind === 'block' && n.parent) {
           // a block belongs to the detail of its event: it appears with the detail view
           // (phones: with the summary); inside a section, as the section opens

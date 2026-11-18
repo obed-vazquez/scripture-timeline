@@ -107,7 +107,8 @@ export interface CoverLayout {
 }
 
 const COVER_H = { w: 1600, h: 1000 };
-const COVER_V = { w: 1000, h: 1400 };
+/** Phones: the cover itself (image, title, summary), before any nested timeline or block. */
+export const COVER_V = { w: 1000, h: 1400 };
 
 export function coverLayout(item: TimelineItem, orient: Orientation, custom?: EventCustom): CoverLayout {
   const blocks = custom?.blocks ?? [];
