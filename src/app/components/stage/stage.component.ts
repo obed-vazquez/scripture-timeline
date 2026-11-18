@@ -968,6 +968,8 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         if (portrait && n.kind === 'block' && n.block?.type !== 'group' && n.parent?.kind === 'event') {
           a *= smoothstep(vw * 0.4, vw * 0.65, sw);
         }
+        // phones: while the event's reading sheet is on, its charts (which the sheet runs over) stay hidden
+        if (portrait && this.sheetOn.has(n.item!.id)) a = 0;
         if (n.kind === 'block' && n.parent) {
           // a block belongs to the detail of its event: it appears with the detail view
           // (phones: with the summary); inside a section, as the section opens
@@ -1159,7 +1161,8 @@ export class StageComponent implements AfterViewInit, OnDestroy {
       const vis = this.filters.isVisible(n.item!);
       let a = 0;
       if (f && vis) {
-        const owner = f.isRoot ? 1 : (this.textAlpha.get(f.ownerId) ?? 0);
+        // (phones: nor while the owner's reading sheet lies over its nested timeline)
+        const owner = f.isRoot ? 1 : (this.sheetOn.has(f.ownerId) ? 0 : (this.textAlpha.get(f.ownerId) ?? 0));
         a = frameAlpha(f, k, this.vw) * owner * (1 - smoothstep(0.7, 1, this.textAlpha.get(n.id) ?? 0));
       }
       if (a < 0.03) {
