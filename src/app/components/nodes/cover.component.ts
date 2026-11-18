@@ -55,7 +55,10 @@ const box = (r: Rect) => ({ left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`
             </span>
           </div>
           <p class="cd-sub">{{ shortDesc() }}</p>
-          <div class="cd-body read-body" [innerHTML]="html()"></div>
+          <div class="cd-body read-body">
+            <div [innerHTML]="html()"></div>
+            @if (L.figure) { <div class="cd-spacer" [style.height.px]="L.figure.h + 34"></div> }
+          </div>
         </div>
       }
       @if (L.subtl) {

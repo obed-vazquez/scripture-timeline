@@ -8,6 +8,13 @@ import { Insets, Rect, clamp } from './geometry';
 
 export type SettleReason = 'user' | 'program';
 
+/** Zoom per wheel pixel: one notch (100 px) ≈ 8 %. */
+const WHEEL_ZOOM = 0.00115;
+/** Largest wheel movement taken from a single event (fast wheels send huge deltas). */
+const WHEEL_CAP = 160;
+/** Time constant of the wheel glide: shorter = snappier, longer = smoother. */
+const WHEEL_GLIDE_MS = 95;
+
 /**
  * Prezi-like camera over a plain HTML element.
  *  - drag with the left button from anywhere (also over objects), one finger on touch
@@ -38,6 +45,7 @@ export class Camera {
   private lastWheelAt = 0;
   private lastWheelKind: 'zoom' | 'pan' = 'zoom';
   private flying = false;
+  private wheelLast = 0;
 
   constructor(private el: HTMLElement) {
     this.sel = select(el);
@@ -218,8 +226,10 @@ export class Camera {
       const factor = Math.pow(2, -e.deltaY * unit * 0.01);
       this.zb.scaleTo(this.sel, this.t.k * factor, p);
     } else {
-      // mouse wheel: accumulate a target and glide towards it
-      const factor = Math.pow(2, -e.deltaY * (e.deltaMode === 1 ? 0.05 : e.deltaMode ? 1 : 0.002) * 1.15);
+      // mouse wheel: each notch adds ~8 % to a target zoom and the camera glides towards it
+      // (deltas normalised to pixels and capped, so fast or high-resolution wheels stay calm)
+      const px = Math.max(-WHEEL_CAP, Math.min(WHEEL_CAP, e.deltaY * unit));
+      const factor = Math.pow(2, -px * WHEEL_ZOOM);
       const base = this.wheelTarget ?? this.t;
       this.wheelTarget = this.scaledAround(base, factor, p);
       this.wheelPoint = p;
@@ -233,12 +243,15 @@ export class Camera {
     }, 200);
   };
 
-  private wheelStep = () => {
+  private wheelStep = (now: number) => {
     this.wheelRaf = 0;
     const target = this.wheelTarget;
     if (!target) return;
     const t = this.t;
-    const a = 0.24;
+    // exponential approach, by time (the same feel at any frame rate)
+    const dt = Math.min(64, Math.max(1, now - (this.wheelLast || now - 16)));
+    this.wheelLast = now;
+    const a = 1 - Math.exp(-dt / WHEEL_GLIDE_MS);
     const k = t.k * Math.pow(target.k / t.k, a);
     const done = Math.abs(Math.log(target.k / t.k)) < 0.002;
     const next = done ? target : this.scaledAround(t, k / t.k, this.wheelPoint);
@@ -246,6 +259,7 @@ export class Camera {
     this.sel.call(this.zb.transform, next);
     if (done) {
       this.wheelTarget = null;
+      this.wheelLast = 0;
       clearTimeout(this.wheelEnd);
       this.wheelEnd = setTimeout(() => {
         this.wheeling = false;
@@ -260,6 +274,7 @@ export class Camera {
     if (this.wheelRaf) cancelAnimationFrame(this.wheelRaf);
     this.wheelRaf = 0;
     this.wheelTarget = null;
+    this.wheelLast = 0;
   }
 
   private classifyWheel(e: WheelEvent, now: number): 'zoom' | 'pan' {

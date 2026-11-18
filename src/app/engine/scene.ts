@@ -62,7 +62,7 @@ export interface SceneNode {
   depth: number;
   frame?: TimelineFrame;
   cover?: CoverLayout;
-  /** Fly here with small margins (reading views). */
+  /** The detail view of a wide-screen card (no DOM of its own: the card turns into it). */
   tight?: boolean;
 }
 
@@ -99,6 +99,11 @@ export interface CoverLayout {
   read: Rect;
   subtl?: Rect;
   blocks: Rect[];
+  /**
+   * Wide screens: where the first block sits inside the card, as a figure of its detail view
+   * (bottom right). The full text leaves that corner free.
+   */
+  figure?: Rect;
 }
 
 const COVER_H = { w: 1600, h: 1000 };
@@ -123,17 +128,21 @@ export function coverLayout(item: TimelineItem, orient: Orientation, custom?: Ev
       L.subtl = { x: 40, y: L.h + 20, w: 1520, h: 640 };
       L.h += 680;
     }
-    if (blocks.length === 1 && blocks[0].type === 'group') {
-      // a closed section: small under the card, it opens when zoomed into
-      const g = blocks[0];
-      const bw = 620;
-      const bh = (bw * g.h) / g.w;
-      L.blocks.push({ x: (L.w - bw) / 2, y: L.h + 40, w: bw, h: bh });
-      L.h += bh + 80;
-    } else if (blocks.length) {
+    if (blocks.length) {
+      // the first block is a figure of the detail view: bottom right of the card
+      const size = blockSize(blocks[0]);
+      const f = Math.min(FIGURE.w / size.w, FIGURE.h / size.h);
+      const fw = size.w * f;
+      const fh = size.h * f;
+      L.figure = { x: FIGURE.right - fw, y: FIGURE.bottom - fh, w: fw, h: fh };
+      L.blocks.push(L.figure);
+    }
+    if (blocks.length > 1) {
+      // any further blocks go under the card
+      const rest = blocks.length - 1;
       const gap = 60;
-      const bw = (1520 - gap * (blocks.length - 1)) / blocks.length;
-      blocks.forEach((_, i) => L.blocks.push({ x: 40 + i * (bw + gap), y: L.h + 20, w: bw, h: 760 }));
+      const bw = (1520 - gap * (rest - 1)) / rest;
+      for (let i = 0; i < rest; i++) L.blocks.push({ x: 40 + i * (bw + gap), y: L.h + 20, w: bw, h: 760 });
       L.h += 800;
     }
     return L;
@@ -171,10 +180,15 @@ export function blockSize(b: BlockDef): { w: number; h: number } {
 }
 
 /**
- * Wide screens: share of the screen the card takes in the "header view" (image, title and
- * summary). The "detail view" fits the card to the screen.
+ * Wide screens: share of the screen the card takes in its "header view" (image, title and
+ * summary) and in its "detail view" (full text). The detail view leaves room around the card,
+ * so there is still room to zoom in.
  */
-export const HEADER_VIEW = 0.62;
+export const HEADER_VIEW = 0.5;
+export const DETAIL_VIEW = 0.78;
+
+/** Largest figure of a detail view, and its bottom-right corner, in card pixels (mirrors .cd-body). */
+export const FIGURE = { w: 702, h: 400, right: 1530, bottom: 954 };
 
 /** Scene id of the hub (the menu of guides). */
 export const HUB_ID = '::guias';
@@ -269,10 +283,10 @@ export function buildScene(input: SceneInput): Scene {
       focus: headerFocus, focusMode: 'fit', reveal: [70, 130], side, depth, cover: L,
     });
     if (orient === 'h') {
-      // "detail view": the card itself fills the screen and turns into its full text
+      // "detail view": the card, larger on screen, turns into its full text
       add({
         id: `${item.id}::leer`, kind: 'read', item, parent: card, children: [], rect: cardArea, authW: CARD_H.w, authH: CARD_H.h,
-        focus: cardArea, focusMode: 'fit', reveal: [0, 0], depth: depth + 1, tight: true,
+        focus: scaleAround(cardArea, 1 / DETAIL_VIEW), focusMode: 'fit', reveal: [0, 0], depth: depth + 1, tight: true,
       });
     } else {
       // phone: the full text is a panel under the summary, read by zooming into it

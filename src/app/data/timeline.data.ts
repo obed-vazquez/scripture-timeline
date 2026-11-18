@@ -137,15 +137,51 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ════════════════════════════════════════════════
-  //   ERA III · IGLESIAS PRIMITIVAS (~30 – 313)
+  //   ERA III · LA IGLESIA DE LOS APÓSTOLES (~30 – ~100)
+  // ════════════════════════════════════════════════
+  {
+    id: 'iglesia-apostolica',
+    era: true,
+    year: '~30 – ~100',
+    title: 'La iglesia de los apóstoles',
+    color: '#a9b35b',
+    shortDesc: 'De Pentecostés a la muerte de Juan: los apóstoles predican, escriben el Nuevo Testamento y enfrentan las primeras persecuciones.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Ephesus_Celsus_Library_Fa%C3%A7ade.jpg/1280px-Ephesus_Celsus_Library_Fa%C3%A7ade.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'muerte-de-juan',
+    year: '~100',
+    parent: 'iglesia-apostolica',
+    title: 'Muere Juan, el último apóstol',
+    tags: ['historia'],
+    shortDesc: 'Según la tradición, el apóstol Juan muere en Éfeso hacia el año 100; con él termina la generación de los testigos directos de Cristo.',
+    fullDesc: `Juan, hijo de Zebedeo, fue uno de los doce apóstoles (Mt 4.21–22). Según <a href='https://es.wikipedia.org/wiki/Ireneo_de_Lyon' target='_blank' class='inline-link'>Ireneo de Lyon</a>,
+          que escribió a finales del siglo II, Juan vivió en Éfeso y permaneció allí «hasta los tiempos de Trajano», emperador desde el año 98
+          (<em>Contra las herejías</em> II.22.5 y III.3.4).<br><br>
+          <strong>📜 Lo que se sabe:</strong>
+          <ul class='modal-list'>
+            <li><strong>Patmos:</strong> El Apocalipsis dice que Juan estuvo en la isla de Patmos «por causa de la palabra de Dios y el testimonio de Jesucristo» (Ap 1.9).
+            Ireneo sitúa la visión hacia el final del reinado de Domiciano, es decir, hacia el <mark class='dudoso'>95</mark> (<em>Contra las herejías</em> V.30.3).</li>
+            <li><strong>Sus escritos:</strong> La tradición le atribuye el Evangelio de Juan, tres cartas y el Apocalipsis.</li>
+            <li><strong>El último apóstol:</strong> Con su muerte, hacia el <mark class='dudoso'>año 100</mark>, termina la generación de los testigos directos de Cristo.
+            Las fechas vienen de la tradición, no de un registro de la época.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/1488_Bosch_Der_Evangelist_Johannes_auf_der_Insel_Patmos_anagoria.JPG/960px-1488_Bosch_Der_Evangelist_Johannes_auf_der_Insel_Patmos_anagoria.JPG',
+    pendingReview: true,
+  },
+
+  // ════════════════════════════════════════════════
+  //   ERA IV · IGLESIAS PRIMITIVAS (~100 – 313)
   // ════════════════════════════════════════════════
   {
     id: 'iglesias-primitivas',
     era: true,
-    year: '~30 – 313',
+    year: '~100 – 313',
     title: 'Iglesias Primitivas',
     color: '#8fa86a',
-    shortDesc: 'De Pentecostés a Constantino: los apóstoles y las iglesias bajo persecución.',
+    shortDesc: 'De la muerte del último apóstol a Constantino: las iglesias bajo persecución.',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/The_Trail_of_Blood.jpg/1920px-The_Trail_of_Blood.jpg',
     pendingReview: true,
   },
@@ -256,7 +292,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
             <li><strong>Sin nombre propio:</strong> El texto del edicto no se conserva; se le conoce simplemente como "el edicto de Decio".</li>
             <li><strong>El certificado (<em>libellus</em>):</strong> Cada persona debía sacrificar, comer de la carne ofrecida y declarar ante una comisión local, que le entregaba un certificado.
             Se conservan decenas de estos <em>libelli</em> en papiros de Egipto.</li>
-            <li><strong>Los "lapsos" (<em>lapsi</em>):</strong> Muchos cristianos cedieron: unos sacrificaron (<em>sacrificati</em>), otros compraron un certificado sin sacrificar (<em>libellatici</em>).
+            <li><strong>Los <em>lapsi</em> («caídos»):</strong> Muchos cristianos cedieron: unos sacrificaron (<em>sacrificati</em>), otros compraron un certificado sin sacrificar (<em>libellatici</em>).
             Otros resistieron y murieron, como Fabián, obispo de Roma.</li>
           </ul>
           <strong>📌 La pregunta que dividió a las iglesias:</strong> ¿Se debe volver a recibir en comunión a quienes negaron la fe para salvar la vida?
@@ -270,20 +306,20 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     year: '251',
     title: 'Sínodo de Roma',
     tags: ['roma', 'historia'],
-    shortDesc: 'Unos 60 obispos respaldan a Cornelio como obispo de Roma, aceptan a los lapsos con penitencia y excomulgan a Novaciano.',
+    shortDesc: 'Unos 60 obispos respaldan a Cornelio como obispo de Roma, aceptan a los lapsi con penitencia y excomulgan a Novaciano.',
     fullDesc: `En junio del 251 Decio muere en batalla contra los godos y la persecución termina. Las iglesias quedan con un problema:
-          qué hacer con los <strong>lapsos</strong>, los que negaron la fe durante la persecución y ahora piden volver.<br><br>
+          qué hacer con los <strong><em>lapsi</em></strong> («caídos»), los que negaron la fe durante la persecución y ahora piden volver.<br><br>
           <strong>📜 Los hechos:</strong>
           <ul class='modal-list'>
             <li><strong>Cornelio (marzo del 251):</strong> Tras más de un año sin obispo en Roma, <a href='https://es.wikipedia.org/wiki/Cornelio' target='_blank' class='inline-link' data-preview='Obispo de Roma del 251 al 253'>Cornelio</a> es elegido obispo de Roma
-            (hoy se le llamaría papa). Era partidario de recibir a los lapsos después de una penitencia.</li>
+            (hoy se le llamaría papa). Era partidario de recibir a los <em>lapsi</em> después de una penitencia.</li>
             <li><strong>Novaciano:</strong> El presbítero <a href='https://es.wikipedia.org/wiki/Novaciano' target='_blank' class='inline-link' data-preview='Presbítero romano, rigorista'>Novaciano</a>, que sostenía que la iglesia no podía devolver la comunión
             a quien había negado a Cristo, se hace consagrar obispo de Roma por otros obispos cuando ya había uno elegido.</li>
             <li><strong>El sínodo:</strong> Según Eusebio (<em>Historia eclesiástica</em> VI.43), se reúnen en Roma unos <strong>60 obispos</strong>, mayormente italianos,
             y muchos más presbíteros y diáconos. Respaldan a Cornelio, confirman la línea del concilio de Cartago presidido por
-            <a href='https://es.wikipedia.org/wiki/Cipriano_de_Cartago' target='_blank' class='inline-link'>Cipriano</a> (recibir a los lapsos con penitencia) y <strong>excomulgan a Novaciano</strong> y a quienes lo siguen.</li>
+            <a href='https://es.wikipedia.org/wiki/Cipriano_de_Cartago' target='_blank' class='inline-link'>Cipriano</a> (recibir a los <em>lapsi</em> con penitencia) y <strong>excomulgan a Novaciano</strong> y a quienes lo siguen.</li>
           </ul>
-          <strong>⚠️ Lectura de este evento:</strong> A los novacianos se les excluyó tanto por la consagración rival como por negarse a recibir a los lapsos.
+          <strong>⚠️ Lectura de este evento:</strong> A los novacianos se les excluyó tanto por la consagración rival como por negarse a recibir a los <em>lapsi</em>.
           La mayoría reunida en sínodo establecía así que la comunión dependía de una penitencia regulada por los obispos. Las iglesias novacianas siguieron existiendo
           por siglos, separadas, y la historiografía bautista sucesionista las cuenta entre las iglesias que se mantuvieron fuera del sistema que daría origen a Roma.`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Pope_Cornelius_%E2%80%93_Santa_Maria_in_Trastevere.jpg',
@@ -521,7 +557,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═══════════════════════════════════════════════════════
-  //   ERA IV · IGLESIA IMPERIAL Y EDAD MEDIA (313 – 1453)
+  //   ERA V · IGLESIA IMPERIAL Y EDAD MEDIA (313 – 1453)
   // ═══════════════════════════════════════════════════════
   {
     id: 'iglesia-imperial',
@@ -607,7 +643,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ══════════════════════════════════════════════════════
-  //   ERA V · RENACIMIENTO Y PRE-REFORMA (1453 – 1517)
+  //   ERA VI · RENACIMIENTO Y PRE-REFORMA (1453 – 1517)
   // ══════════════════════════════════════════════════════
   {
     id: 'renacimiento',
@@ -671,7 +707,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═════════════════════════════════════════════════
-  //   ERA VI · LA REFORMA PROTESTANTE (1517 – 1600)
+  //   ERA VII · LA REFORMA PROTESTANTE (1517 – 1600)
   // ═════════════════════════════════════════════════
   {
     id: 'reforma',
@@ -777,7 +813,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═══════════════════════════════════════════════
-  //   ERA VII · ORTODOXIA PROTESTANTE (1600 – 1800)
+  //   ERA VIII · ORTODOXIA PROTESTANTE (1600 – 1800)
   // ═══════════════════════════════════════════════
   {
     id: 'ortodoxia-protestante',
@@ -873,7 +909,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═════════════════════════════════════════════════════════════════════════
-  //   ERA VIII · BAUTISTAS PRIMITIVOS Y REVISIONES HISPANAS (1800 – presente)
+  //   ERA IX · BAUTISTAS PRIMITIVOS Y REVISIONES HISPANAS (1800 – presente)
   // ═════════════════════════════════════════════════════════════════════════
   {
     id: 'bautistas-primitivos',

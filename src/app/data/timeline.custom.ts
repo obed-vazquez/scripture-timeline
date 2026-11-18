@@ -57,6 +57,41 @@ export const TIMELINE_CUSTOM: Customization = {
 
   // ── Personalización por evento ───────────────────────────────
   events: {
+    'sinodo-de-roma-251': {
+      blocks: [
+        {
+          type: 'lineage',
+          id: 'linea-251',
+          title: '251: el año de los lapsi',
+          caption: 'Lo que pasó alrededor del sínodo. Acércate a un punto para ver el detalle.',
+          nodes: [
+            { id: 'decio', label: 'Edicto de Decio', year: '250', x: 110, y: 330, event: 'edicto-de-decio',
+              detail: 'Decio ordena que todos sacrifiquen a los dioses. Muchos cristianos ceden: son los lapsi.' },
+            { id: 'cornelio', label: 'Cornelio, obispo', year: 'marzo 251', x: 300, y: 560,
+              detail: 'Tras más de un año sin obispo en Roma, Cornelio es elegido. Recibe a los lapsi después de una penitencia.' },
+            { id: 'novaciano', label: 'Novaciano', year: '251', x: 500, y: 330,
+              detail: 'El presbítero Novaciano, que no admite de vuelta a los lapsi, se hace consagrar obispo de Roma rival.' },
+            { id: 'cartago', label: 'Concilio de Cartago', year: 'primavera 251', x: 700, y: 560,
+              detail: 'Cipriano reúne a los obispos de África: los lapsi pueden volver tras una penitencia.' },
+            { id: 'decio-muere', label: 'Muere Decio', year: 'junio 251', x: 900, y: 330,
+              detail: 'Decio muere en batalla contra los godos y la persecución termina.' },
+            { id: 'sinodo', label: 'Sínodo de Roma', year: '251', x: 1100, y: 560, event: 'sinodo-de-roma-251',
+              detail: 'Unos 60 obispos respaldan a Cornelio y excomulgan a Novaciano.' },
+            { id: 'cornelio-muere', label: 'Muere Cornelio', year: '253', x: 1290, y: 330,
+              detail: 'Desterrado por el emperador Galo, Cornelio muere en el exilio.' },
+          ],
+          edges: [
+            ['decio', 'cornelio'],
+            ['cornelio', 'novaciano'],
+            ['novaciano', 'cartago'],
+            ['cartago', 'decio-muere'],
+            ['decio-muere', 'sinodo'],
+            ['sinodo', 'cornelio-muere'],
+          ],
+        },
+      ],
+      steps: [{ focus: 'linea-251' }],
+    },
     beza: {
       blocks: [
         {

@@ -161,6 +161,23 @@ export const EN_TRANSLATIONS: TranslationTable = {
   'custom.cronologia-rv.e1909.text': { src: '8dcd94c8', text: `A committee of the American and British Bible Societies, formed in 1907, publishes the RV 1909.` },
   'custom.cronologia-rv.e1960.text': { src: 'fc18ea02', text: `Bible scholars from several Spanish-speaking countries make the best-known revision: the RV 1960.` },
 
+  'custom.linea-251.title': { src: '805a16fd', text: `251: the year of the lapsi` },
+  'custom.linea-251.caption': { src: '4005546e', text: `What happened around the synod. Zoom into a point to see the detail.` },
+  'custom.linea-251.decio.label': { src: '087ebd00', text: `Edict of Decius` },
+  'custom.linea-251.decio.detail': { src: '5bf8fbba', text: `Decius orders everyone to sacrifice to the gods. Many Christians give in: they are the lapsi.` },
+  'custom.linea-251.cornelio.label': { src: 'e014782e', text: `Cornelius, bishop` },
+  'custom.linea-251.cornelio.detail': { src: '4c8a189d', text: `After more than a year without a bishop in Rome, Cornelius is elected. He receives the lapsi after a penance.` },
+  'custom.linea-251.novaciano.label': { src: '869b6901', text: `Novatian` },
+  'custom.linea-251.novaciano.detail': { src: 'f68b2cfc', text: `The presbyter Novatian, who will not take the lapsi back, has himself consecrated as a rival bishop of Rome.` },
+  'custom.linea-251.cartago.label': { src: '6e0bfb4b', text: `Council of Carthage` },
+  'custom.linea-251.cartago.detail': { src: '70eea96f', text: `Cyprian gathers the bishops of Africa: the lapsi may return after a penance.` },
+  'custom.linea-251.decio-muere.label': { src: 'bca03abf', text: `Decius dies` },
+  'custom.linea-251.decio-muere.detail': { src: '49a4f1c0', text: `Decius dies in battle against the Goths and the persecution ends.` },
+  'custom.linea-251.sinodo.label': { src: 'd200a687', text: `Synod of Rome` },
+  'custom.linea-251.sinodo.detail': { src: 'b280b6d6', text: `About 60 bishops back Cornelius and excommunicate Novatian.` },
+  'custom.linea-251.cornelio-muere.label': { src: '7394d1b6', text: `Cornelius dies` },
+  'custom.linea-251.cornelio-muere.detail': { src: 'e4d138ef', text: `Banished by the emperor Gallus, Cornelius dies in exile.` },
+
   // ══ ERA I · BEFORE CHRIST ═════════════════════════════════
   'antes-de-cristo.title': { src: '70f0dff3', text: `Before Christ` },
   'antes-de-cristo.shortDesc': { src: '3a5d9823', text: `The Old Testament Scriptures and their translation into Greek in the Hellenistic world.` },
@@ -186,9 +203,26 @@ export const EN_TRANSLATIONS: TranslationTable = {
           </ul>
           The Gospels of Matthew, Mark, Luke and John are the main sources for his life.` },
 
-  // ══ ERA III · EARLY CHURCHES═══════════════════════════════
+  // ══ ERA III · THE CHURCH OF THE APOSTLES ═══════════════════
+  'iglesia-apostolica.title': { src: '5d02b837', text: `The church of the apostles` },
+  'iglesia-apostolica.shortDesc': { src: 'dffcb780', text: `From Pentecost to the death of John: the apostles preach, write the New Testament and face the first persecutions.` },
+  'muerte-de-juan.title': { src: 'aca343d9', text: `John, the last apostle, dies` },
+  'muerte-de-juan.shortDesc': { src: '50354060', text: `According to tradition, the apostle John dies in Ephesus around the year 100; with him ends the generation of the direct witnesses of Christ.` },
+  'muerte-de-juan.fullDesc': { src: 'd4d5c007', text: `John, son of Zebedee, was one of the twelve apostles (Mt 4:21–22). According to <a href='${W}Irenaeus' target='_blank' class='inline-link'>Irenaeus of Lyon</a>,
+          who wrote at the end of the 2nd century, John lived in Ephesus and remained there "until the times of Trajan", emperor from the year 98
+          (<em>Against Heresies</em> II.22.5 and III.3.4).<br><br>
+          <strong>📜 What is known:</strong>
+          <ul class='modal-list'>
+            <li><strong>Patmos:</strong> Revelation says that John was on the island of Patmos "for the word of God, and for the testimony of Jesus Christ" (Rev 1:9).
+            Irenaeus places the vision towards the end of Domitian's reign, that is, around <mark class='dudoso'>95</mark> (<em>Against Heresies</em> V.30.3).</li>
+            <li><strong>His writings:</strong> Tradition attributes to him the Gospel of John, three letters and Revelation.</li>
+            <li><strong>The last apostle:</strong> With his death, around <mark class='dudoso'>the year 100</mark>, the generation of the direct witnesses of Christ comes to an end.
+            The dates come from tradition, not from a record of the time.</li>
+          </ul>` },
+
+  // ══ ERA IV · EARLY CHURCHES═══════════════════════════════
   'iglesias-primitivas.title': { src: '703085e0', text: `Early Churches` },
-  'iglesias-primitivas.shortDesc': { src: 'a92239de', text: `From Pentecost to Constantine: the apostles and the churches under persecution.` },
+  'iglesias-primitivas.shortDesc': { src: '9835a053', text: `From the death of the last apostle to Constantine: the churches under persecution.` },
 
   'septuaginta.title': { src: '93c3fee6', text: `The Septuagint (LXX)` },
   'septuaginta.shortDesc': { src: '64a5236a', text: `Jewish scholars in Alexandria translate the Torah into Greek, beginning a collection that would become the most influential translation of antiquity.` },
@@ -278,7 +312,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'edicto-de-decio.title': { src: '087ebd00', text: `The Edict of Decius` },
   'edicto-de-decio.shortDesc': { src: '49dab6ad', text: `Decius orders every inhabitant of the Empire to sacrifice to the gods and obtain a certificate; many Christians from lax churches give in.` },
-  'edicto-de-decio.fullDesc': { src: 'cb037bab', text: `After decades of relative peace, many churches had grown lax: members were received without evidence of conversion, some pastors were beginning to raise themselves
+  'edicto-de-decio.fullDesc': { src: 'c59f0cbe', text: `After decades of relative peace, many churches had grown lax: members were received without evidence of conversion, some pastors were beginning to raise themselves
           over other churches, and the first ideas that baptism saves were appearing. In that context, the emperor <a href='${W}Decius' target='_blank' class='inline-link'>Decius</a>
           (ruled 249–251) issued, at the end of 249 or the beginning of 250, an edict requiring <strong>every inhabitant of the Empire</strong> to sacrifice to the Roman gods.<br><br>
           <strong>📜 How it worked:</strong>
@@ -293,8 +327,8 @@ export const EN_TRANSLATIONS: TranslationTable = {
           The answer to that question led to the Synod of Rome of 251 and to the separation of the Novatianists.` },
 
   'sinodo-de-roma-251.title': { src: 'd200a687', text: `The Synod of Rome` },
-  'sinodo-de-roma-251.shortDesc': { src: '246a4d43', text: `Some 60 bishops back Cornelius as bishop of Rome, accept the lapsed after penance and excommunicate Novatian.` },
-  'sinodo-de-roma-251.fullDesc': { src: 'e13f0f81', text: `In June 251 Decius dies in battle against the Goths and the persecution ends. The churches are left with a problem:
+  'sinodo-de-roma-251.shortDesc': { src: 'b5319f24', text: `Some 60 bishops back Cornelius as bishop of Rome, accept the lapsed after penance and excommunicate Novatian.` },
+  'sinodo-de-roma-251.fullDesc': { src: 'e16a25f7', text: `In June 251 Decius dies in battle against the Goths and the persecution ends. The churches are left with a problem:
           what to do with the <strong>lapsed</strong>, those who denied the faith during the persecution and now ask to return.<br><br>
           <strong>📜 The facts:</strong>
           <ul class='modal-list'>
@@ -464,7 +498,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           </ul>
           His sons divided the Empire. Constantius II, in the east, openly supported Arianism, and the disputes Nicaea meant to settle went on for decades.` },
 
-  // ══ ERA IV · THE IMPERIAL CHURCH AND THE MIDDLE AGES ═══════
+  // ══ ERA V · THE IMPERIAL CHURCH AND THE MIDDLE AGES ═══════
   'iglesia-imperial.title': { src: '4c01d88b', text: `The Imperial Church and the Middle Ages` },
   'iglesia-imperial.shortDesc': { src: 'c5d5613a', text: `The church united to the State: imperial councils, the Vulgate, the crusades.` },
 
@@ -521,7 +555,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
             <li><strong>Later expeditions (1147–1291):</strong> They included new military and diplomatic attempts, though with less overall success.</li>
           </ul>` },
 
-  // ══ ERA V · RENAISSANCE AND PRE-REFORMATION ══════════════
+  // ══ ERA VI · RENAISSANCE AND PRE-REFORMATION ══════════════
   'renacimiento.title': { src: '4d00d298', text: `Renaissance and Pre-Reformation` },
   'renacimiento.shortDesc': { src: '1e5a8b8e', text: `The printing press, the Inquisition and the first printed Greek New Testament.` },
 
@@ -557,7 +591,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           This Greek text (later called the <a href='${W}Textus_Receptus' target='_blank' class='inline-link'>Textus Receptus</a>)
           served as the undeniable basis for Bible translations into the vernacular languages during the Reformation.` },
 
-  // ══ ERA VI · THE PROTESTANT REFORMATION ════════════════════
+  // ══ ERA VII · THE PROTESTANT REFORMATION ════════════════════
   'reforma.title': { src: 'add48f43', text: `The Protestant Reformation` },
   'reforma.shortDesc': { src: 'aabd3c16', text: `Luther, Calvin, Trent and the consolidation of the Textus Receptus.` },
 
@@ -617,7 +651,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           It is nicknamed the <a href='https://es.wikipedia.org/wiki/Biblia_del_oso' target='_blank' class='inline-link'>Bear Bible</a>
           after the historic emblem on its title page, used so as not to reveal that it was a Bible and to avoid it being burned by the Inquisition.` },
 
-  // ══ ERA VII · PROTESTANT ORTHODOXY ═══════════════════════════
+  // ══ ERA VIII · PROTESTANT ORTHODOXY ═══════════════════════════
   'ortodoxia-protestante.title': { src: '77bf6a49', text: `Protestant Orthodoxy` },
   'ortodoxia-protestante.shortDesc': { src: '43066ca3', text: `The Reina-Valera, the King James, Dort and the Pilgrims.` },
 
@@ -673,7 +707,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           in the new world firmly grounded in godly ideals and teachings, known and praised today in American history as the true
           <a href='${W}Pilgrims_(Plymouth_Colony)' target='_blank' class='inline-link'>Pilgrims</a> or American Pilgrim Mothers and Fathers.` },
 
-  // ══ ERA VIII · PRIMITIVE BAPTISTS AND SPANISH REVISIONS ══════
+  // ══ ERA IX · PRIMITIVE BAPTISTS AND SPANISH REVISIONS ══════
   'bautistas-primitivos.title': { src: 'c4bd7292', text: `Primitive Baptists and Spanish Revisions` },
   'bautistas-primitivos.shortDesc': { src: 'e6491a3e', text: `Kehukee, the Dead Sea Scrolls and the revisions of the Reina-Valera.` },
 

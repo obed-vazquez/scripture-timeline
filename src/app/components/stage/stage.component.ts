@@ -49,6 +49,8 @@ interface HubMorph {
 
 const BASE_KINDS = new Set(['era', 'title', 'guide', 'hub']);
 const NO_SIZES = new Map<string, ReadSize>();
+/** Space kept between the full text and the figure of a detail view. */
+const FIGURE_GAP = 34;
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -171,6 +173,8 @@ export class StageComponent implements AfterViewInit, OnDestroy {
   private hits: MarkerHit[] = [];
   /** How open each section is (0 closed, 1 open), this frame. */
   private groupOpen = new Map<string, number>();
+  /** How far each card has turned into its detail view (0 → 1), this frame. */
+  private detailAlpha = new Map<string, number>();
   private alphaMap = new Map<string, number>();
   private vars = new WeakMap<HTMLElement, { txt: number; dt: number; open: number }>();
   private hoverId: string | null = null;
@@ -389,6 +393,10 @@ export class StageComponent implements AfterViewInit, OnDestroy {
       position: 'static', width: `${DETAIL_BODY.w}px`, height: `${DETAIL_BODY.h}px`,
       columnGap: `${DETAIL_BODY.gap}px`, columnFill: 'auto', overflow: 'hidden',
     });
+    const content = document.createElement('div');
+    const spacer = document.createElement('div');
+    spacer.className = 'cd-spacer';
+    body.append(content, spacer);
     host.appendChild(body);
     const fits = (cols: number, font: number) => {
       body.style.columnCount = `${cols}`;
@@ -406,10 +414,14 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     };
     const out = new Map<string, DetailFit>();
     for (const it of this.data.events) {
-      body.innerHTML = this.i18n.text(`${it.id}.fullDesc`, it.fullDesc);
-      const two = largest(2, 21, 27);
-      if (two) {
-        out.set(it.id, { cols: 2, font: two });
+      content.innerHTML = this.i18n.text(`${it.id}.fullDesc`, it.fullDesc);
+      // a figure (the event's first block) takes the bottom of the second column
+      const fig = coverLayout(it, 'h', this.data.custom.events[it.id]).figure;
+      spacer.style.height = fig ? `${fig.h + FIGURE_GAP}px` : '0';
+      const two = largest(2, fig ? 14 : 21, 27);
+      if (two || fig) {
+        if (!two && isDevMode()) console.warn(`[timeline] El texto de "${it.id}" no cabe junto a su figura.`);
+        out.set(it.id, { cols: 2, font: two || 14 });
         continue;
       }
       const three = largest(3, 14, 24);
@@ -484,17 +496,12 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     return phone ? { top: 62, right: 54, bottom: 128, left: 14 } : { top: 84, right: 84, bottom: 118, left: 48 };
   }
 
-  /** Margins of the reading views: just clear of the bars. */
-  private tightInsets(): Insets {
-    const phone = this.vw < 700;
-    return phone ? { top: 60, right: 50, bottom: 124, left: 10 } : { top: 66, right: 72, bottom: 90, left: 24 };
-  }
 
   private flyTo(id: string, instant = false): Promise<void> {
     const n = this.scene().byId.get(id);
     if (!n || !this.camera) return Promise.resolve();
     this.lastTarget = id;
-    return this.camera.flyTo(n.focus, n.tight ? this.tightInsets() : this.insets(), n.focusMode, { instant });
+    return this.camera.flyTo(n.focus, this.insets(), n.focusMode, { instant });
   }
 
   private home(instant = false): Promise<void> {
@@ -525,10 +532,13 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     // At the overview there is no "current" frame (the bottom bar stays empty, A48).
     if (this.atHomeTransform(t)) return [];
     const [cx, cy] = t.invert([ins.left + aw / 2, ins.top + ah / 2]);
-    const big = (n: SceneNode) =>
-      n.tight
-        ? n.rect.w * t.k >= aw * 0.85 || n.rect.h * t.k >= ah * 0.85
-        : n.rect.w * t.k >= aw * 0.42 || n.rect.h * t.k >= ah * 0.55;
+    // wide screens: an event counts from its header view on, its reading from its detail view on
+    const cardFit = Math.min(aw, ah * (CARD_H.w / CARD_H.h));
+    const big = (n: SceneNode) => {
+      if (n.tight) return n.rect.w * t.k >= cardFit * 0.66;
+      if (n.kind === 'event' && scene.orient === 'h') return n.rect.w * t.k >= cardFit * 0.42;
+      return n.rect.w * t.k >= aw * 0.42 || n.rect.h * t.k >= ah * 0.55;
+    };
     const entered = (n: SceneNode) =>
       n.kind !== 'title' && containsPoint(n.rect, cx, cy) && big(n) && this.isNodeVisible(n);
     let level = scene.nodes.filter((n) => n.parent === null);
@@ -777,6 +787,7 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     alpha.clear();
     this.cardAlpha.clear();
     this.groupOpen.clear();
+    this.detailAlpha.clear();
     const any = this.filters.hasHighlights();
     const homeK = this.homeT?.k ?? k;
     // Size (screen px) of a card fitted to the screen, with the usual and with tight margins.
@@ -784,8 +795,6 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     const fitW = vw - ins.left - ins.right;
     const fitH = vh - ins.top - ins.bottom;
     const cardFit = Math.min(fitW, fitH * (CARD_H.w / CARD_H.h));
-    const tight = this.tightInsets();
-    const cardFitTight = Math.min(vw - tight.left - tight.right, (vh - tight.top - tight.bottom) * (CARD_H.w / CARD_H.h));
     // Opening of the hub into its guides (wide screens): 0 at the overview, 1 a little closer.
     const hubP = scene.hubMorph ? smoothstep(1.25, 2.4, k / homeK) : 0;
 
@@ -821,14 +830,16 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         const t0 = Math.max(minS * 1.03 * L.w, img1 * 0.98);
         const t1 = t0 * 1.16;
         const txt = smoothstep(t0, t1, sw);
-        const rv0 = portrait ? t1 * 1.08 : Math.max(t1 * 1.1, cardFit * 0.38);
-        const rv1 = portrait ? rv0 * 1.25 : Math.max(rv0 * 1.15, cardFit * 0.56);
+        const rv0 = portrait ? t1 * 1.08 : Math.max(t1 * 1.05, cardFit * 0.3);
+        const rv1 = portrait ? rv0 * 1.25 : Math.max(rv0 * 1.12, cardFit * 0.42);
         rv = Math.min(txt, smoothstep(rv0, rv1, sw));
         this.textAlpha.set(n.id, txt);
         this.summaryEnd.set(n.id, rv1);
         this.cardAlpha.set(n.id, a);
         // 4. wide screens: the card turns into its full text as it fills the screen ("detail view")
-        const dt = portrait ? 0 : smoothstep(cardFit * 0.7, cardFitTight * 0.92, sw);
+        //    (between the header view, at HEADER_VIEW of the screen, and the detail view, at DETAIL_VIEW)
+        const dt = portrait ? 0 : smoothstep(cardFit * 0.58, cardFit * 0.72, sw);
+        this.detailAlpha.set(n.id, dt);
         self = portrait ? 1 - smoothstep(vw * 1.1, vw * 1.5, sw) : 1;
         this.setVars(el, txt, dt, -1);
       } else if (n.kind === 'read') {
@@ -842,7 +853,9 @@ export class StageComponent implements AfterViewInit, OnDestroy {
       } else if (n.kind === 'block' || n.kind === 'point') {
         a = (n.reveal[1] > 0 ? smoothstep(n.reveal[0], n.reveal[1], sw) : 1) * Math.min(1, parentA * 1.6);
         if (n.kind === 'block' && n.parent) {
-          a *= this.textAlpha.get(n.parent.id) ?? 1;
+          // a block belongs to the detail of its event: it appears with the detail view
+          // (phones: with the summary); inside a section, as the section opens
+          a *= (portrait ? this.textAlpha : this.detailAlpha).get(n.parent.id) ?? 1;
           a *= this.groupOpen.get(n.parent.id) ?? 1;
         }
         if (n.block?.type === 'group') {
@@ -865,7 +878,11 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         if (scene.hubMorph) {
           a = smoothstep(0.55, 0.75, hubP);
           this.setGuideVars(el, smoothstep(0.86, 0.97, hubP), smoothstep(0.75, 1, hubP));
-          rv = smoothstep(Math.max(300, vw * 0.2), Math.max(450, vw * 0.3), sw);
+          // only the guide the visitor is centred on, once it is large, unfolds its list
+          const gx = x + sw / 2 - vw / 2;
+          const gy = y + sh / 2 - vh / 2;
+          const off = Math.max(Math.abs(gx) - sw / 2, Math.abs(gy) - sh / 2, 0);
+          rv = smoothstep(vw * 0.36, vw * 0.5, sw) * (1 - smoothstep(0, vw * 0.06, off));
         }
       }
       if (n.kind === 'point' && this.nav.hidden().has(`${n.item!.id}:${n.pointId}`)) a = 0;
@@ -1049,7 +1066,10 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         this.hideLabel(el);
         continue;
       }
-      const hl = this.filters.hasHighlights() && this.filters.isHighlighted(n.item!);
+      const anyHl = this.filters.hasHighlights();
+      const hl = anyHl && this.filters.isHighlighted(n.item!);
+      el.classList.toggle('is-hl', hl);
+      if (anyHl && !hl) a *= 0.5;
       cands.push({ id: n.id, x, y, w, h, sc, a, pr: (hl ? 10 : 0) + a - n.depth * 0.5 });
     }
     cands.sort((p, q) => q.pr - p.pr);
