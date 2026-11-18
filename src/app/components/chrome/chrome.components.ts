@@ -261,6 +261,14 @@ export class NavControlsComponent {
         <button type="button" class="gc-x" (click)="nav.exitGuide()" [title]="i18n.t('guideExit')"><tl-icon name="close" /></button>
       </div>
     }
+    @if (back(); as bk) {
+      <div class="back-chip" [class.is-stacked]="!!g">
+        <button type="button" class="bk-go" (click)="nav.goBack()">
+          <tl-icon name="back" /><span class="bk-k">{{ i18n.t('returnTo') }}</span><span class="bk-name">{{ bk }}</span>
+        </button>
+        <button type="button" class="gc-x" (click)="nav.clearReturn()" [title]="i18n.t('returnDismiss')"><tl-icon name="close" /></button>
+      </div>
+    }
     <footer class="ctxbar" [class.is-empty]="nav.atHome()">
       <div class="crumbs">
         @if (!nav.atHome()) {
@@ -352,6 +360,17 @@ export class ContextBarComponent {
       return { id: p.id, label };
     }),
   );
+
+  /** Name of the place a link inside the content was followed from (the way back). */
+  readonly back = computed(() => {
+    const r = this.nav.returnTo();
+    if (!r) return null;
+    const [ev, sub] = r.origin.split('::');
+    const label = sub && sub !== 'leer' ? this.blockLabel(r.origin) : '';
+    if (label) return label;
+    const it = this.data.get(ev);
+    return it ? this.i18n.text(`${it.id}.title`, it.title) : this.i18n.t('overview');
+  });
 
   private blockLabel(nodeId: string): string {
     const [ev, blockId, pointId] = nodeId.split('::');

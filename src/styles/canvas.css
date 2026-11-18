@@ -651,7 +651,7 @@ button.cmp-row:hover { background: var(--glass-hover); }
   line-height: 1.55;
   column-count: var(--cols, 3);
   column-gap: 56px;
-  column-fill: auto;
+  column-fill: balance;
   overflow: hidden;
 }
 .cd-body.read-body img.modal-inline-img { width: 240px; height: 170px; margin: 4px 0 12px 22px; }
@@ -713,6 +713,66 @@ button.cmp-row:hover { background: var(--glass-hover); }
 .chr-year { font: 600 21px/1.3 var(--f-ui); color: var(--c); font-variant-numeric: tabular-nums; }
 .chr-text { font: 400 17.5px/1.38 var(--f-read); }
 .chr-note { display: block; margin-top: 4px; font: italic 400 14px/1.3 var(--f-read); color: var(--ink-3); }
+
+/* ── Blocks: relations map (cards joined by labelled arrows; geometry mirrors REL) ── */
+.relations { position: relative; width: 100%; height: 100%; color: var(--ink); }
+.relations .lin-head { max-width: 1150px; }
+.rel-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rel-edge { fill: none; stroke-width: 3; stroke-linecap: round; }
+.rel-edge.k-against { stroke-width: 3.5; }
+.rel-edge.k-coincides { stroke-width: 3.5; stroke-dasharray: 1 9; }
+.rel-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 16px 18px 14px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-line);
+  background: var(--glass-solid);
+  box-shadow: inset 7px 0 0 var(--nc), 0 10px 26px rgba(0, 0, 0, .14);
+  text-align: left;
+  color: var(--ink);
+  transition: transform .25s var(--ease-out), box-shadow .25s;
+}
+.rel-node:hover { transform: translateY(-4px); box-shadow: inset 7px 0 0 var(--nc), 0 16px 34px rgba(0, 0, 0, .2); }
+.rel-node.is-special { border: 2.5px dashed var(--nc); background: transparent; box-shadow: none; }
+.rel-node.is-special:hover { box-shadow: none; }
+.rel-year { font: 600 18px/1 var(--f-ui); color: var(--nc); font-variant-numeric: tabular-nums; }
+.rel-label { margin-bottom: 4px; font: 600 34px/.95 var(--f-display); }
+.rel-pt { position: relative; padding-left: 14px; font: 400 16px/1.28 var(--f-read); color: var(--ink-2); }
+.rel-pt::before { content: ''; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--nc); }
+.rel-note { margin-top: auto; font: italic 400 14px/1.25 var(--f-read); color: var(--ink-3); }
+.rel-elabel {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  max-width: 120px;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  box-shadow: 0 0 0 1.5px var(--ec);
+  color: var(--ec);
+  font: 600 15px/1.15 var(--f-ui);
+  text-align: center;
+  pointer-events: none;
+}
+.rel-elabel.k-coincides { max-width: 190px; color: var(--ink-2); box-shadow: 0 0 0 1.5px var(--rule); }
+.rel-legend { position: absolute; display: flex; flex-direction: column; gap: 12px; list-style: none; font: 500 16px/1.2 var(--f-ui); color: var(--ink-2); }
+.rel-legend li { display: flex; align-items: center; gap: 14px; }
+.rel-legend svg { width: 54px; height: 10px; overflow: visible; }
+.rel-ph { position: absolute; font: 600 32px/1 var(--f-display); color: var(--ink); transition: color .2s; }
+.rel-ph:hover { color: var(--c); }
+.rel-ph.is-left { right: 870px; text-align: right; }
+.rel-ph.is-right { left: 870px; text-align: left; }
+.rel-pnote { position: absolute; left: 565px; width: 270px; text-align: center; font: italic 400 14.5px/1.3 var(--f-read); color: var(--ink-3); }
+.rel-item { position: absolute; width: 490px; display: flex; flex-direction: column; gap: 4px; }
+.rel-item.is-left { left: 40px; align-items: flex-end; text-align: right; }
+.rel-item.is-right { left: 870px; }
+.rel-item b { font: 600 27px/1.05 var(--f-display); }
+.rel-item span { font: 400 15.5px/1.3 var(--f-read); color: var(--ink-2); }
+.rel-link { fill: none; stroke: var(--c); stroke-width: 2.5; opacity: .7; }
+.rel-link-end { fill: var(--c); }
 .cd-spacer { break-inside: avoid; }
 
 /* Highlighted events (filters): the same mark in every state, from the first label on. */

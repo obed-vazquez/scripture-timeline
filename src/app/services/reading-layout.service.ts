@@ -11,6 +11,10 @@ export interface ReadSize {
 export interface DetailFit {
   font: number;
   cols: number;
+  /** Height of the text box when it is shorter than usual (one column above a figure). */
+  h?: number;
+  /** Width of the text box when it is narrower than usual (one column beside a figure). */
+  w?: number;
 }
 
 /** Authored geometry of the reading panels of phones (the full text under the summary). */

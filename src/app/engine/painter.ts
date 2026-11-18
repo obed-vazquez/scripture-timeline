@@ -77,6 +77,39 @@ export function paint(ctx: CanvasRenderingContext2D, scene: Scene, t: ZoomTransf
   /** Right / bottom edge of the last era-boundary label drawn (they must not overlap). */
   let edgeLabelEnd = -Infinity;
 
+  /** A range bar of frame `f` in its lane, with its start tick on the axis; `fade` is the frame's opacity. */
+  const drawBar = (f: TimelineFrame, mk: Marker, fade: number): void => {
+    const toM = (v: number) => (horiz ? sx : sy)(v);
+    const ac = (horiz ? sy : sx)(f.axisCross);
+    const P = (m: number, c: number): [number, number] => (horiz ? [m, c] : [c, m]);
+    const vis = o.visible(mk.item);
+    const isHl = o.anyHighlight && o.highlighted(mk.item);
+    const hover = o.hoverId === mk.nodeId;
+    const c = mk.item.color ? o.themed(mk.item.color) : f.color ? o.themed(f.color) : colors.accent;
+    const alpha = fade * (vis ? 1 : 0.16) * (o.anyHighlight ? (isHl ? 1 : 0.4) : 1);
+    ctx.globalAlpha = alpha;
+    const off = mk.side * laneOffset(mk.lane);
+    const [bx0, by0] = P(toM(mk.m0), ac + off);
+    const [bx1, by1] = P(toM(mk.m1), ac + off);
+    drawRange(ctx, mk, bx0, by0, bx1, by1, c, isHl || hover ? 5 : 3.6);
+    if (mk.clippedEnd || mk.ongoing || mk.clippedStart) {
+      // the year past the arrow: 'presente', or where a cut bar really ends
+      const room = 2 * f.timePad * k;
+      if (mk.clippedEnd || mk.ongoing) arrowYear(ctx, o.yearLabel(mk.item.end, mk.approxEnd && !mk.ongoing), bx0, by0, bx1, by1, room, c, colors.bg);
+      if (mk.clippedStart) arrowYear(ctx, o.yearLabel(mk.item.start, mk.approxStart), bx1, by1, bx0, by0, room, c, colors.bg);
+    }
+    // start tick on the axis
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = withAlpha(c, mk.approxStart ? 0.3 : 0.7);
+    ctx.beginPath();
+    ctx.moveTo(...P(toM(mk.m0), ac));
+    ctx.lineTo(bx0, by0);
+    ctx.stroke();
+    if (alpha > 0.3 && vis) o.hits.push({ id: mk.nodeId, x0: bx0, y0: by0, x1: bx1, y1: by1 });
+  };
+  /** The bar leaves its frame: it continues over the next eras. */
+  const spills = (f: TimelineFrame, mk: Marker) => f.isRoot && (mk.m1 > f.mainHi || mk.m0 < f.mainLo);
+
   for (const f of scene.frames) {
     const r = f.region;
     const rx = sx(r.x), ry = sy(r.y), rw = r.w * k, rh = r.h * k;
@@ -230,18 +263,8 @@ export function paint(ctx: CanvasRenderingContext2D, scene: Scene, t: ZoomTransf
       const alpha = ma * ownerAlpha * fa * hl;
       ctx.globalAlpha = alpha;
       if (mk.isRange) {
-        const off = mk.side * laneOffset(mk.lane);
-        const [bx0, by0] = P(toM(mk.m0), ac + off);
-        const [bx1, by1] = P(toM(mk.m1), ac + off);
-        drawRange(ctx, mk, bx0, by0, bx1, by1, c, isHl || hover ? 5 : 3.6);
-        // start tick on the axis
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = withAlpha(c, mk.approxStart ? 0.3 : 0.7);
-        ctx.beginPath();
-        ctx.moveTo(...P(toM(mk.m0), ac));
-        ctx.lineTo(bx0, by0);
-        ctx.stroke();
-        if (alpha > 0.3 && vis) o.hits.push({ id: mk.nodeId, x0: bx0, y0: by0, x1: bx1, y1: by1 });
+        // a bar that runs on over the next eras is drawn after all of them (see below)
+        if (!spills(f, mk)) drawBar(f, mk, ma * ownerAlpha);
       } else {
         const [px, py] = P(toM(mk.m0), ac);
         if (isHl || hover) {
@@ -257,12 +280,21 @@ export function paint(ctx: CanvasRenderingContext2D, scene: Scene, t: ZoomTransf
     }
     ctx.globalAlpha = 1;
   }
+
+  // Bars that run past their era, over the next ones: drawn last, so the next eras' bands do not
+  // cover them, and even when their own era is off screen.
+  for (const f of roots) {
+    const ma = frameAlpha(f, k, W);
+    if (ma < 0.01) continue;
+    for (const mk of f.markers) if (mk.isRange && spills(f, mk)) drawBar(f, mk, ma);
+  }
   ctx.globalAlpha = 1;
 }
 
 /**
- * A range bar. An approximate end ('~' in the data) dissolves; an end that runs on beyond
- * its frame (the next era, or the present) finishes in an arrow.
+ * A range bar. An approximate end ('~' in the data) dissolves. An end that is still going
+ * ('presente'), or that a frame cuts (a container's sub-timeline; bars of the eras run on over
+ * the next eras instead), finishes in an arrow with its real year beside it (see arrowYear).
  */
 function drawRange(ctx: CanvasRenderingContext2D, mk: Marker, x0: number, y0: number, x1: number, y1: number, c: string, width: number): void {
   const len = Math.hypot(x1 - x0, y1 - y0);
@@ -289,6 +321,36 @@ function drawRange(ctx: CanvasRenderingContext2D, mk: Marker, x0: number, y0: nu
   const uy = (y1 - y0) / len;
   if (mk.clippedEnd || mk.ongoing) arrow(ctx, x1 + ux * 4, y1 + uy * 4, ux, uy, c);
   if (mk.clippedStart) arrow(ctx, x0 - ux * 4, y0 - uy * 4, -ux, -uy, c);
+}
+
+/**
+ * The year written past the arrow at the (x1, y1) end of a bar coming from (x0, y0): along the
+ * bar, in the free space between the eras (`room` px), and only when it fits there.
+ */
+function arrowYear(
+  ctx: CanvasRenderingContext2D, text: string, x0: number, y0: number, x1: number, y1: number,
+  room: number, c: string, bg: string,
+): void {
+  const len = Math.hypot(x1 - x0, y1 - y0);
+  if (len < 1) return;
+  const ux = (x1 - x0) / len;
+  const uy = (y1 - y0) / len;
+  const gap = 11;
+  ctx.save();
+  ctx.font = YEAR_FONT;
+  const along = Math.abs(ux) >= Math.abs(uy);
+  const need = gap + (along ? ctx.measureText(text).width : 14) + 4;
+  if (need <= room) {
+    if (along) {
+      ctx.textAlign = ux > 0 ? 'left' : 'right';
+      ctx.textBaseline = 'middle';
+    } else {
+      ctx.textAlign = 'center';
+      ctx.textBaseline = uy > 0 ? 'top' : 'bottom';
+    }
+    haloText(ctx, text, x1 + ux * gap, y1 + uy * gap, c, bg);
+  }
+  ctx.restore();
 }
 
 function arrow(ctx: CanvasRenderingContext2D, x: number, y: number, ux: number, uy: number, c: string): void {

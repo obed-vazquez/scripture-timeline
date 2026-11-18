@@ -104,9 +104,65 @@ export interface ChronicleBlock {
   entries: ChronicleEntry[];
 }
 
+/** A card of a relations map: an event and the one or two ideas it stands for. */
+export interface RelationNode {
+  id: string;
+  /** Event the card opens. */
+  event: string;
+  label: string;
+  year: string;
+  /** One or two short lines: what the event stands for in this map. */
+  points: string[];
+  /** Short note in small type (a doubt, a nuance). */
+  note?: string;
+  /** Centre (x) and top (y) of the card, in chart pixels (chart is 1400 × 1100). */
+  x: number;
+  y: number;
+  /** Drawn apart (dashed border): related by a coincidence, not by descent. */
+  special?: boolean;
+  /** Colour of the card; the event's colour by default. */
+  color?: string;
+}
+
+/**
+ * An arrow between two cards. 'leads' (default): one led to the other; 'against': an answer that
+ * condemns; 'coincides': the same idea, without one coming from the other (dashed).
+ */
+export interface RelationEdge {
+  id: string;
+  from: string;
+  to: string;
+  label?: string;
+  kind?: 'leads' | 'against' | 'coincides';
+}
+
+/** Two facing lists joined item by item (e.g. five articles and the five points that answer them). */
+export interface RelationPairs {
+  left: { title: string; event?: string };
+  right: { title: string; event?: string };
+  leftItems: { id: string; label: string; sub: string }[];
+  rightItems: { id: string; label: string; sub: string }[];
+  /** [left id, right id] */
+  links: [string, string][];
+  note?: string;
+}
+
+/** A map of how a few events relate (who answers whom), with an optional point-by-point pairing. */
+export interface RelationsBlock {
+  type: 'relations';
+  id: string;
+  title: string;
+  caption?: string;
+  nodes: RelationNode[];
+  edges: RelationEdge[];
+  /** What each kind of line means, at (x, y) in chart pixels. */
+  legend?: { x: number; y: number; items: { kind: 'leads' | 'against' | 'coincides'; label: string }[] };
+  pairs?: RelationPairs;
+}
+
 /** One block placed inside a group, in the group's own pixels. */
 export interface GroupItem {
-  block: VideoBlock | LineageBlock | CompareBlock | ChronicleBlock;
+  block: VideoBlock | LineageBlock | CompareBlock | ChronicleBlock | RelationsBlock;
   x: number;
   y: number;
   w: number;
@@ -129,7 +185,7 @@ export interface GroupBlock {
   items: GroupItem[];
 }
 
-export type BlockDef = VideoBlock | LineageBlock | CompareBlock | ChronicleBlock | GroupBlock;
+export type BlockDef = VideoBlock | LineageBlock | CompareBlock | ChronicleBlock | RelationsBlock | GroupBlock;
 
 /** Extra presentation step run inside an event after arriving at it. */
 export interface PresentationStep {

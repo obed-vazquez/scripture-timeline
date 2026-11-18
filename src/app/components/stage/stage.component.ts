@@ -19,7 +19,8 @@ import { DETAIL_BODY, DetailFit, READ_GEOMETRY, ReadSize, ReadingLayoutService }
 import { CoverComponent, ReadPanelComponent } from '../nodes/cover.component';
 import { EraHeaderComponent, GuideHubComponent, GuideMenuComponent, TitleBlockComponent } from '../nodes/frame-nodes.component';
 import {
-  ChronicleBlockComponent, CompareBlockComponent, GroupBlockComponent, LineageBlockComponent, PointDetailComponent, VideoBlockComponent,
+  ChronicleBlockComponent, CompareBlockComponent, GroupBlockComponent, LineageBlockComponent, PointDetailComponent, RelationsBlockComponent,
+  VideoBlockComponent,
 } from '../nodes/blocks.component';
 import { themed } from '../../utils/color.util';
 
@@ -51,6 +52,8 @@ const BASE_KINDS = new Set(['era', 'title', 'guide', 'hub']);
 const NO_SIZES = new Map<string, ReadSize>();
 /** Space kept between the full text and the figure of a detail view. */
 const FIGURE_GAP = 34;
+/** Narrowest single column beside a figure in a detail view (narrower ones read as half a page). */
+const DETAIL_BESIDE_MIN_W = 860;
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -72,7 +75,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
   imports: [
     CoverComponent, ReadPanelComponent, EraHeaderComponent, TitleBlockComponent, GuideMenuComponent, GuideHubComponent,
     VideoBlockComponent, LineageBlockComponent, PointDetailComponent, CompareBlockComponent, ChronicleBlockComponent,
-    GroupBlockComponent,
+    GroupBlockComponent, RelationsBlockComponent,
   ],
   template: `
     <div class="stage" #stage (click)="onClick($event)" [class.is-portrait]="orient() === 'v'">
@@ -102,6 +105,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
                   @case ('video') { <tl-video-block [node]="n" /> }
                   @case ('compare') { <tl-compare-block [node]="n" /> }
                   @case ('chronicle') { <tl-chronicle-block [node]="n" /> }
+                  @case ('relations') { <tl-relations-block [node]="n" /> }
                   @case ('group') { <tl-group-block [node]="n" /> }
                   @default { <tl-lineage-block [node]="n" /> }
                 }
@@ -391,7 +395,7 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     body.className = 'cd-body read-body';
     Object.assign(body.style, {
       position: 'static', width: `${DETAIL_BODY.w}px`, height: `${DETAIL_BODY.h}px`,
-      columnGap: `${DETAIL_BODY.gap}px`, columnFill: 'auto', overflow: 'hidden',
+      columnGap: `${DETAIL_BODY.gap}px`, columnFill: 'balance', overflow: 'hidden',
     });
     const content = document.createElement('div');
     const spacer = document.createElement('div');
@@ -415,8 +419,31 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     const out = new Map<string, DetailFit>();
     for (const it of this.data.events) {
       content.innerHTML = this.i18n.text(`${it.id}.fullDesc`, it.fullDesc);
-      // a figure (the event's first block) takes the bottom of the second column
       const fig = coverLayout(it, 'h', this.data.custom.events[it.id]).figure;
+      // 1. a short text takes one column across the whole card (above the figure, if any):
+      //    lists keep each point on one line instead of filling half the card
+      const oneH = fig ? DETAIL_BODY.h - fig.h - FIGURE_GAP : DETAIL_BODY.h;
+      body.style.height = `${oneH}px`;
+      spacer.style.height = '0';
+      const one = largest(1, 24, 28);
+      if (one) {
+        out.set(it.id, { cols: 1, font: one, h: fig ? oneH : undefined });
+        continue;
+      }
+      body.style.height = `${DETAIL_BODY.h}px`;
+      // 1b. beside a narrow figure, still one column (narrower, full height): a list keeps reading
+      //     as one list instead of breaking into two columns
+      const besideW = fig ? DETAIL_BODY.w - fig.w - DETAIL_BODY.gap : 0;
+      if (besideW >= DETAIL_BESIDE_MIN_W) {
+        body.style.width = `${besideW}px`;
+        const beside = largest(1, 22, 28);
+        body.style.width = `${DETAIL_BODY.w}px`;
+        if (beside) {
+          out.set(it.id, { cols: 1, font: beside, w: besideW });
+          continue;
+        }
+      }
+      // 2. two columns; a figure (the event's first block) keeps the bottom of the second one
       spacer.style.height = fig ? `${fig.h + FIGURE_GAP}px` : '0';
       const two = largest(2, fig ? 14 : 21, 27);
       if (two || fig) {
@@ -568,6 +595,14 @@ export class StageComponent implements AfterViewInit, OnDestroy {
 
   onClick(ev: MouseEvent): void {
     const target = ev.target as HTMLElement;
+    // a link to another event of the timeline (data-event in the text) flies to it
+    const toEvent = target.closest<HTMLElement>('a[data-event]');
+    if (toEvent) {
+      ev.preventDefault();
+      const id = toEvent.dataset['event']!;
+      if (this.scene().byId.has(id)) this.nav.jumpTo(id);
+      return;
+    }
     if (target.closest('a[href]')) return;
     const label = target.closest<HTMLElement>('[data-label]');
     if (label) {
@@ -795,6 +830,9 @@ export class StageComponent implements AfterViewInit, OnDestroy {
     const fitW = vw - ins.left - ins.right;
     const fitH = vh - ins.top - ins.bottom;
     const cardFit = Math.min(fitW, fitH * (CARD_H.w / CARD_H.h));
+    // centre of the free area of the screen (between the bars): the focus of the visitor
+    const cx0 = ins.left + fitW / 2;
+    const cy0 = ins.top + fitH / 2;
     // Opening of the hub into its guides (wide screens): 0 at the overview, 1 a little closer.
     const hubP = scene.hubMorph ? smoothstep(1.25, 2.4, k / homeK) : 0;
 
@@ -838,7 +876,12 @@ export class StageComponent implements AfterViewInit, OnDestroy {
         this.cardAlpha.set(n.id, a);
         // 4. wide screens: the card turns into its full text as it fills the screen ("detail view")
         //    (between the header view, at HEADER_VIEW of the screen, and the detail view, at DETAIL_VIEW)
-        const dt = portrait ? 0 : smoothstep(cardFit * 0.58, cardFit * 0.72, sw);
+        //    Only the card the visitor is centred on turns: the others stay in their header view
+        //    until they take the centre (as the guide menus do).
+        const topH = sw * (CARD_H.h / CARD_H.w);
+        const off = Math.max(Math.abs(x + sw / 2 - cx0) - sw / 2, Math.abs(y + topH / 2 - cy0) - topH / 2, 0);
+        const focus = 1 - smoothstep(0, vw * 0.05, off);
+        const dt = portrait ? 0 : smoothstep(cardFit * 0.58, cardFit * 0.72, sw) * focus;
         this.detailAlpha.set(n.id, dt);
         self = portrait ? 1 - smoothstep(vw * 1.1, vw * 1.5, sw) : 1;
         this.setVars(el, txt, dt, -1);

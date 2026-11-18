@@ -55,9 +55,9 @@ const box = (r: Rect) => ({ left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`
             </span>
           </div>
           <p class="cd-sub">{{ shortDesc() }}</p>
-          <div class="cd-body read-body">
+          <div class="cd-body read-body" [style.height.px]="fit().h ?? null" [style.width.px]="fit().w ?? null">
             <div [innerHTML]="html()"></div>
-            @if (L.figure) { <div class="cd-spacer" [style.height.px]="L.figure.h + 34"></div> }
+            @if (L.figure && fit().cols > 1) { <div class="cd-spacer" [style.height.px]="L.figure.h + 34"></div> }
           </div>
         </div>
       }

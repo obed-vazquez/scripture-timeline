@@ -29,7 +29,7 @@ export class TimelineDataService {
       const item: TimelineItem = {
         id: d.id,
         kind: d.era ? 'era' : 'event',
-        yearLabel: d.year,
+        yearLabel: d.yearText ?? d.year,
         start: Math.min(y.start, end),
         end: Math.max(y.start, end),
         isRange: y.end !== null || y.ongoing,

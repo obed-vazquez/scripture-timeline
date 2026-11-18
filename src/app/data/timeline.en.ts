@@ -23,6 +23,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
   'tag.doctrina.label': { src: 'ace3d14c', text: `Theology and Doctrine` },
   'tag.historia.label': { src: '562e456b', text: `History and Culture` },
   'tag.roma.label': { src: 'fe2a3f6f', text: `Roman Catholic Church` },
+  'tag.landmark.label': { src: '30473780', text: `Landmark History` },
 
   // ── Guides ─────────────────────────────────────────────────
   'guide.biblia.title': { src: '9ca3dc81', text: `The Bible and its versions` },
@@ -37,6 +38,59 @@ export const EN_TRANSLATIONS: TranslationTable = {
   // ── Charts and videos ──────────────────────────────────────
   'custom.linea-tr.title': { src: 'b7862c36', text: `The line of the Textus Receptus` },
   'custom.linea-tr.caption': { src: '947d8cb9', text: `Each edition built on the one before. Zoom into a point to see its contribution.` },
+  // ── Mapa de doctrinas (Dort) ──
+  'custom.mapa-doctrinas.title': { src: 'e30f6ec1', text: `From Luther to Dort` },
+  'custom.mapa-doctrinas.caption': { src: '03bb9359', text: `How one position led to the next, and how Rome answered.` },
+  'custom.mapa-doctrinas.lutero.label': { src: 'ee2b2e36', text: `Luther` },
+  'custom.mapa-doctrinas.lutero.p0': { src: '66e6eea8', text: `Justification by faith alone` },
+  'custom.mapa-doctrinas.lutero.p1': { src: '112780e7', text: `Scripture alone` },
+  'custom.mapa-doctrinas.calvino.label': { src: 'c9b03cb5', text: `Calvin` },
+  'custom.mapa-doctrinas.calvino.p0': { src: '617d3d23', text: `Orders Reformed doctrine into a system` },
+  'custom.mapa-doctrinas.calvino.p1': { src: 'cb51bf56', text: `God's sovereignty and predestination` },
+  'custom.mapa-doctrinas.remonstrantes.label': { src: '0bc227ce', text: `Remonstrants` },
+  'custom.mapa-doctrinas.remonstrantes.p0': { src: '02f1f15c', text: `God elects according to the faith He foresees` },
+  'custom.mapa-doctrinas.remonstrantes.p1': { src: 'e93c893f', text: `Grace can be resisted` },
+  'custom.mapa-doctrinas.dort.label': { src: '8ca17932', text: `Dort` },
+  'custom.mapa-doctrinas.dort.p0': { src: 'e6dde240', text: `Answers point by point` },
+  'custom.mapa-doctrinas.dort.p1': { src: '20449d6a', text: `Its canons are summed up today as TULIP` },
+  'custom.mapa-doctrinas.trento.label': { src: '84a2ca1d', text: `Trent` },
+  'custom.mapa-doctrinas.trento.p0': { src: '75b8dc40', text: `Scripture and tradition with equal reverence (1546)` },
+  'custom.mapa-doctrinas.trento.p1': { src: '729f8b45', text: `Condemns justification by faith alone (1547)` },
+  'custom.mapa-doctrinas.kehukee.label': { src: 'ae1c4511', text: `Kehukee` },
+  'custom.mapa-doctrinas.kehukee.p0': { src: '88876431', text: `Primitive Baptists` },
+  'custom.mapa-doctrinas.kehukee.p1': { src: 'dc2159ea', text: `God's sovereignty in salvation` },
+  'custom.mapa-doctrinas.kehukee.note': { src: 'af168460', text: `How much Dort influenced them is not known.` },
+  'custom.mapa-doctrinas.e1.label': { src: 'd5d1eb4c', text: `systematizes it` },
+  'custom.mapa-doctrinas.e2.label': { src: '343b53a1', text: `object to it` },
+  'custom.mapa-doctrinas.e3.label': { src: '1cfbcead', text: `answers them` },
+  'custom.mapa-doctrinas.e4.label': { src: 'd90d573e', text: `Rome condemns` },
+  'custom.mapa-doctrinas.e6.label': { src: '541fe945', text: `agrees in doctrine` },
+  'custom.mapa-doctrinas.legend.leads': { src: '62d6c415', text: `One position led to the other` },
+  'custom.mapa-doctrinas.legend.against': { src: '5185d36d', text: `Rome answers and condemns` },
+  'custom.mapa-doctrinas.legend.coincides': { src: 'e48d576e', text: `Agrees, without coming from it` },
+  'custom.mapa-doctrinas.pairs.left': { src: 'dcdb8183', text: `Remonstrants (1610)` },
+  'custom.mapa-doctrinas.pairs.right': { src: '1a77a08c', text: `Dort: TULIP (1619)` },
+  'custom.mapa-doctrinas.pairs.note': { src: 'c62ff2e2', text: `The Canons of Dort answer articles 3 and 4 in a single chapter (III/IV).` },
+  'custom.mapa-doctrinas.r1.label': { src: '936176d5', text: `1. Conditional election` },
+  'custom.mapa-doctrinas.r1.sub': { src: '718b0f72', text: `God elects on the basis of His foreknowledge of man's faith.` },
+  'custom.mapa-doctrinas.r2.label': { src: '3c87752f', text: `2. Unlimited atonement` },
+  'custom.mapa-doctrinas.r2.sub': { src: 'ca1b94db', text: `Christ died for all mankind (potentially).` },
+  'custom.mapa-doctrinas.r3.label': { src: '6287919a', text: `3. Total depravity` },
+  'custom.mapa-doctrinas.r3.sub': { src: 'b44b3791', text: `Man needs prevenient grace in order to believe.` },
+  'custom.mapa-doctrinas.r4.label': { src: '30b296a4', text: `4. Resistible grace` },
+  'custom.mapa-doctrinas.r4.sub': { src: 'c03aeb29', text: `The human will can reject God's call.` },
+  'custom.mapa-doctrinas.r5.label': { src: 'fef22d83', text: `5. Conditional security` },
+  'custom.mapa-doctrinas.r5.sub': { src: '51b3a3dc', text: `It is possible to fall from grace after having believed.` },
+  'custom.mapa-doctrinas.t.label': { src: '3d0acf28', text: `T · Total depravity` },
+  'custom.mapa-doctrinas.t.sub': { src: '01808edf', text: `Sin affects man's will, and he cannot seek God.` },
+  'custom.mapa-doctrinas.u.label': { src: 'cfbac1ed', text: `U · Unconditional election` },
+  'custom.mapa-doctrinas.u.sub': { src: 'ce5f3c68', text: `God chooses without basing it on the faith of the chosen.` },
+  'custom.mapa-doctrinas.l.label': { src: '18d7333b', text: `L · Limited atonement` },
+  'custom.mapa-doctrinas.l.sub': { src: '6ea2bd56', text: `Christ paid only for the elect.` },
+  'custom.mapa-doctrinas.i.label': { src: '73a3a105', text: `I · Irresistible grace` },
+  'custom.mapa-doctrinas.i.sub': { src: '2f430491', text: `The Spirit changes man's will so that he accepts the call, and the elect always accept it.` },
+  'custom.mapa-doctrinas.p.label': { src: '0e0b7fef', text: `P · Perseverance of the saints` },
+  'custom.mapa-doctrinas.p.sub': { src: 'd16f3090', text: `"Once saved, always saved."` },
   'custom.linea-tr.erasmo.label': { src: '63203146', text: `Erasmus` },
   'custom.linea-tr.erasmo.detail': { src: 'cc954f98', text: `The first printed Greek New Testament, from manuscripts of the Byzantine tradition.` },
   'custom.linea-tr.stephanus.label': { src: '7f95acee', text: `Stephanus` },
@@ -61,7 +115,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
   'custom.portada-oso.oso.label': { src: '57982512', text: `The bear and the honey` },
   'custom.portada-oso.oso.detail': { src: '8d6a35bd', text: `A bear reaches for the honey of a honeycomb in a tree trunk; a mallet hangs over its head and an open book lies at the foot of the tree. It was the emblem of the printer Matthias Apiarius (apiarius is Latin for "beekeeper"): a picture with no religious symbols.` },
   'custom.portada-oso.lema.label': { src: '48a5b4d5', text: `The motto` },
-  'custom.portada-oso.lema.detail': { src: '62d4bb68', text: `In Hebrew and then in Spanish: "The word of our God shall stand for ever" (Isaiah 40:8).` },
+  'custom.portada-oso.lema.detail': { src: 'f796529a', text: `In Hebrew and then in Spanish: "La Palabra del Dios nuestro permanece para siempre" (Isaiah 40:8, Reina 1569), in the KJV "the word of our God shall stand for ever".` },
   'custom.portada-oso.anio.label': { src: 'd2859ae7', text: `The year` },
   'custom.portada-oso.anio.detail': { src: '7c16739b', text: `M. D. LXIX: 1569 in Roman numerals (M = 1000, D = 500, LXIX = 69). It was published in Basel, Switzerland.` },
 
@@ -168,15 +222,184 @@ export const EN_TRANSLATIONS: TranslationTable = {
   'custom.linea-251.cornelio.label': { src: 'e014782e', text: `Cornelius, bishop` },
   'custom.linea-251.cornelio.detail': { src: '4c8a189d', text: `After more than a year without a bishop in Rome, Cornelius is elected. He receives the lapsi after a penance.` },
   'custom.linea-251.novaciano.label': { src: '869b6901', text: `Novatian` },
-  'custom.linea-251.novaciano.detail': { src: 'f68b2cfc', text: `The presbyter Novatian, who will not take the lapsi back, has himself consecrated as a rival bishop of Rome.` },
+  'custom.linea-251.novaciano.detail': { src: 'f3d7c967', text: `The presbyter Novatian will not take the lapsi back. His opponents accuse him of having himself consecrated bishop of Rome when there already was one.` },
   'custom.linea-251.cartago.label': { src: '6e0bfb4b', text: `Council of Carthage` },
   'custom.linea-251.cartago.detail': { src: '70eea96f', text: `Cyprian gathers the bishops of Africa: the lapsi may return after a penance.` },
   'custom.linea-251.decio-muere.label': { src: 'bca03abf', text: `Decius dies` },
   'custom.linea-251.decio-muere.detail': { src: '49a4f1c0', text: `Decius dies in battle against the Goths and the persecution ends.` },
   'custom.linea-251.sinodo.label': { src: 'd200a687', text: `Synod of Rome` },
-  'custom.linea-251.sinodo.detail': { src: 'b280b6d6', text: `About 60 bishops back Cornelius and excommunicate Novatian.` },
+  'custom.linea-251.sinodo.detail': { src: '55cd1ad7', text: `About 60 bishops back Cornelius and excommunicate Novatian, blaming him for that consecration and for not accepting the lapsi.` },
   'custom.linea-251.cornelio-muere.label': { src: '7394d1b6', text: `Cornelius dies` },
   'custom.linea-251.cornelio-muere.detail': { src: 'e4d138ef', text: `Banished by the emperor Gallus, Cornelius dies in exile.` },
+
+  // ── Critical Text ──
+  'westcott-y-hort.title': { src: 'cd1e8a67', text: `Westcott and Hort and the Critical Text` },
+  'westcott-y-hort.shortDesc': { src: 'ddfd7123', text: `Two Cambridge professors spend almost thirty years preparing a Greek New Testament based above all on the Vatican and Sinai codices.` },
+  'westcott-y-hort.fullDesc': { src: 'c028123e', text: `In 1853, <a href='${W}Brooke_Foss_Westcott' target='_blank' class='inline-link'>Brooke Foss Westcott</a> and <a href='${W}Fenton_John_Anthony_Hort' target='_blank' class='inline-link'>Fenton John Anthony Hort</a>, professors at Cambridge, began to prepare a new Greek text of the New Testament.
+          They published it in 1881 under the title <em><a href='${W}The_New_Testament_in_the_Original_Greek' target='_blank' class='inline-link'>The New Testament in the Original Greek</a></em>.<br><br>
+          <strong>📜 What changed:</strong>
+          <ul class='modal-list'>
+            <li><strong>Other manuscripts:</strong> They preferred two fourth-century codices, the <a href='${W}Codex_Vaticanus' target='_blank' class='inline-link'>Vatican</a> and the Sinai codex, which they held to be the closest to the original,
+            over the great majority of Greek manuscripts, which belong to the same family as those of the <a href='#erasmo' class='inline-link' data-event='erasmo'>Textus Receptus</a>.</li>
+            <li><strong>A new English version:</strong> Both sat on the committee of the <a href='${W}Revised_Version' target='_blank' class='inline-link'><em>Revised Version</em></a> (1881), the English revision of the <a href='#king-james' class='inline-link' data-event='king-james'>King James</a>, whose New Testament largely followed their text.</li>
+            <li><strong>They were not the first:</strong> Before them, Lachmann, Tischendorf and Tregelles had already published Greek texts of this kind; Westcott and Hort's was the one that prevailed.</li>
+            <li><strong>The basis of the Critical Text:</strong> The Greek editions on which most modern Bibles are based today (<a href='#ubs-nestle-aland-26' class='inline-link' data-event='ubs-nestle-aland-26'>UBS and Nestle-Aland</a>) follow their text closely.</li>
+          </ul>` },
+  'ubs-nestle-aland-26.title': { src: '11cb2d7a', text: `UBS and Nestle-Aland 26: a common text` },
+  'ubs-nestle-aland-26.shortDesc': { src: 'a879d05f', text: `The two most used editions of the Greek New Testament agree on one text, still very close to Westcott and Hort's.` },
+  'ubs-nestle-aland-26.fullDesc': { src: '9dc64989', text: `In 1966, the United Bible Societies (UBS) published a Greek New Testament meant for Bible translators.
+          Since 1898 there had also been the edition of Eberhard Nestle, later carried on by Kurt Aland: the <a href='${W}Novum_Testamentum_Graece' target='_blank' class='inline-link'><em>Nestle-Aland</em></a>, the one most used by scholars.<br><br>
+          <strong>📜 What happened:</strong>
+          <ul class='modal-list'>
+            <li><strong>One text:</strong> With the third edition of the UBS (1975) and the 26th of the Nestle-Aland (1979), both ended up with the same Greek text; only their notes differ.</li>
+            <li><strong>How it was chosen:</strong> The editors chose, passage by passage, the reading they held most likely among all the manuscripts, giving great weight to the oldest ones.</li>
+            <li><strong>Close to 1881:</strong> The result remains very close to the text of <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'>Westcott and Hort</a>.</li>
+            <li><strong>Modern Bibles:</strong> It is the Greek text on which most modern translations of the New Testament are based.</li>
+          </ul>` },
+  'nestle-aland-28.title': { src: '328998f3', text: `Nestle-Aland 28` },
+  'nestle-aland-28.shortDesc': { src: '2c89cd2e', text: `The new edition changes the text of the letters of James, Peter, John and Jude with a new way of comparing the manuscripts.` },
+  'nestle-aland-28.fullDesc': { src: 'ad56a7fd', text: `In 2013 the 28th edition of the <a href='${W}Novum_Testamentum_Graece' target='_blank' class='inline-link'><em>Nestle-Aland</em></a> was published; in 2014, the UBS published its 5th edition with the same text.<br><br>
+          <strong>📜 What is new:</strong>
+          <ul class='modal-list'>
+            <li><strong>The general letters:</strong> In James, 1 and 2 Peter, the three letters of John and Jude (the so-called "catholic" letters), it changed the text in <mark class='dudoso'>about thirty places</mark>,
+            following a new major edition prepared in Münster, Germany.</li>
+            <li><strong>A new way of comparing:</strong> To decide, the editors measured with the help of computers how far each manuscript agrees with the others, and so reconstructed which reading gave rise to the rest.</li>
+            <li><strong>Without the 1881 scheme:</strong> The idea of tracing the kinship between manuscripts lives on, but it is no longer arranged in the great text families that <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'>Westcott and Hort</a> proposed.</li>
+          </ul>
+          The rest of the New Testament keeps the text of the <a href='#ubs-nestle-aland-26' class='inline-link' data-event='ubs-nestle-aland-26'>26th edition</a>.` },
+  // ── World wars ──
+  'primera-guerra-mundial.title': { src: '8d7ff6d7', text: `World War I` },
+  'primera-guerra-mundial.shortDesc': { src: 'b125c90b', text: `The powers of Europe and their empires clash in the deadliest war seen until then. When it ends, four empires fall, and Jerusalem passes from Ottoman to British hands.` },
+  'primera-guerra-mundial.fullDesc': { src: 'cab59c96', text: `<a href='${W}World_War_I' target='_blank' class='inline-link'>World War I</a> began in July 1914, a month after Archduke Franz Ferdinand of Austria was assassinated in Sarajevo, and ended with the armistice of 11 November 1918.
+          On one side were the Allies (France, the United Kingdom, Russia and, from 1917, the United States); on the other, the Central Powers (Germany, Austria-Hungary, the Ottoman Empire and Bulgaria).<br><br>
+          <strong>📜 What it left behind:</strong>
+          <ul class='modal-list'>
+            <li><strong>The dead:</strong> <mark class='dudoso'>About 9 million soldiers</mark> died, and millions of civilians.</li>
+            <li><strong>Four empires fall:</strong> The German, the Austro-Hungarian, the Russian and the Ottoman.</li>
+            <li><strong>Jerusalem:</strong> In November 1917, the <a href='${W}Balfour_Declaration' target='_blank' class='inline-link'>Balfour Declaration</a> announced British support for "a national home for the Jewish people" in Palestine.
+            In December, the British troops of General Allenby took Jerusalem, after four centuries of Ottoman rule.</li>
+            <li><strong>The peace:</strong> The <a href='${W}Treaty_of_Versailles' target='_blank' class='inline-link'>Treaty of Versailles</a> (1919) imposed harsh terms on Germany; many historians count it among the causes of <a href='#segunda-guerra-mundial' class='inline-link' data-event='segunda-guerra-mundial'>World War II</a>.</li>
+          </ul>` },
+  'segunda-guerra-mundial.title': { src: '2e3e1b5a', text: `World War II` },
+  'segunda-guerra-mundial.shortDesc': { src: 'f6a01bb4', text: `The deadliest war in history sets Germany, Italy and Japan against the Allies. In it, the Nazi regime murders about six million Jews.` },
+  'segunda-guerra-mundial.fullDesc': { src: '6961ba98', text: `<a href='${W}World_War_II' target='_blank' class='inline-link'>World War II</a> began on 1 September 1939, when Germany invaded Poland, and ended in 1945: Germany surrendered in May, and Japan in September, after the atomic bombs on Hiroshima and Nagasaki.
+          Its causes go back in part to <a href='#primera-guerra-mundial' class='inline-link' data-event='primera-guerra-mundial'>World War I</a> and the peace that closed it.<br><br>
+          <strong>📜 What marked it:</strong>
+          <ul class='modal-list'>
+            <li><strong>The dead:</strong> An estimated <mark class='dudoso'>70 to 85 million people</mark> died, most of them civilians.</li>
+            <li><strong>The Holocaust:</strong> The Nazi regime murdered about six million Jews, besides millions of other victims (<a href='${W}The_Holocaust' target='_blank' class='inline-link'>Holocaust</a>).</li>
+            <li><strong>Rome and the Nazi regime:</strong> In 1933, the Holy See signed a concordat with Hitler's government, the <a href='${W}Reichskonkordat' target='_blank' class='inline-link'>Reichskonkordat</a>.</li>
+            <li><strong>The Confessing Church:</strong> In 1934, in the <a href='${W}Barmen_Declaration' target='_blank' class='inline-link'>Barmen Declaration</a>, representatives of German Protestant churches rejected the church's submission to the regime's ideology.
+            One of the pastors of the Confessing Church, <a href='${W}Dietrich_Bonhoeffer' target='_blank' class='inline-link'>Dietrich Bonhoeffer</a>, was executed in April 1945.</li>
+            <li><strong>Afterwards:</strong> The UN was founded (1945), and in 1948 the State of Israel was proclaimed.</li>
+          </ul>` },
+  // ── Councils ────────────────────────────────────────────
+  'concilio-de-jerusalen.title': { src: '9a558ac7', text: `Council of Jerusalem` },
+  'concilio-de-jerusalen.shortDesc': { src: 'fc9e2ede', text: `The apostles and elders, with the whole church of Jerusalem, resolve that Gentile believers need not be circumcised to be saved.` },
+  'concilio-de-jerusalen.fullDesc': { src: 'efa8ccb3', text: `Certain men which came down from Judea taught the brethren of Antioch: "Except ye be circumcised after the manner of Moses, ye cannot be saved" (Acts 15:1, KJV).
+          Paul and Barnabas went up to Jerusalem to settle the question with the apostles and elders. This is the <a href='${W}Council_of_Jerusalem' target='_blank' class='inline-link'>Council of Jerusalem</a>.<br><br>
+          <strong>📜 What Acts 15 tells:</strong>
+          <ul class='modal-list'>
+            <li><strong>Peter:</strong> "We believe that through the grace of the Lord Jesus Christ we shall be saved, even as they" (Acts 15:11, KJV).</li>
+            <li><strong>James:</strong> He proposes not to trouble the Gentiles who turn to God, but to write unto them "that they abstain from pollutions of idols, and from fornication, and from things strangled, and from blood" (Acts 15:19–20, KJV).</li>
+            <li><strong>The decision:</strong> "Then pleased it the apostles and elders, with the whole church", to send a letter to Antioch with that agreement (Acts 15:22–29, KJV).</li>
+          </ul>
+          Acts gives no date; the one most often given is around <mark class='dudoso'>49 or 50</mark>.` },
+  'concilio-de-constantinopla-381.title': { src: '395e599c', text: `First Council of Constantinople` },
+  'concilio-de-constantinopla-381.shortDesc': { src: 'd76d8b56', text: `Called by Theodosius I, it completes the Nicene creed on the Holy Spirit and places the bishop of Constantinople second, after the bishop of Rome.` },
+  'concilio-de-constantinopla-381.fullDesc': { src: '49c89aa1', text: `A year after the Edict of Thessalonica, the emperor <a href='${W}Theodosius_I' target='_blank' class='inline-link'>Theodosius I</a> gathered some 150 eastern bishops in Constantinople
+          to close the Arian dispute: the <a href='${W}First_Council_of_Constantinople' target='_blank' class='inline-link'>First Council of Constantinople</a>.<br><br>
+          <strong>📜 What it decided:</strong>
+          <ul class='modal-list'>
+            <li><strong>The faith of Nicaea:</strong> It confirmed the Nicene creed and condemned the Arians and those who denied the divinity of the Holy Spirit.</li>
+            <li><strong>The creed:</strong> The enlarged form of the creed, with the article on the Holy Spirit, "the Lord and giver of life", is attributed to it: the so-called Niceno-Constantinopolitan Creed.</li>
+            <li><strong>The rank of bishops:</strong> Its canon 3 gives the bishop of Constantinople "the primacy of honour after the bishop of Rome, because it is New Rome".</li>
+          </ul>
+          Just as the Edict of Thessalonica made the Nicene faith the law of the Empire, this council fixed it as the doctrine of the imperial church.` },
+  'concilio-de-efeso.title': { src: '260322f8', text: `Council of Ephesus` },
+  'concilio-de-efeso.shortDesc': { src: '6498f4be', text: `It deposes Nestorius and proclaims Mary "Mother of God" (Theotokos), in an assembly dominated by Cyril of Alexandria.` },
+  'concilio-de-efeso.fullDesc': { src: 'fbe69b96', text: `<a href='${W}Nestorius' target='_blank' class='inline-link'>Nestorius</a>, bishop of Constantinople, taught that Mary should be called "mother of Christ" and not "mother of God", because he sharply distinguished
+          the humanity and the divinity of Christ. Cyril, bishop of Alexandria, accused him of dividing Christ into two persons.<br><br>
+          <strong>📜 What happened at the <a href='${W}Council_of_Ephesus' target='_blank' class='inline-link'>Council of Ephesus</a>:</strong>
+          <ul class='modal-list'>
+            <li><strong>Two meetings:</strong> Called by the emperor Theodosius II, it was opened by Cyril before the bishops of Antioch, who supported Nestorius, arrived.
+            Those bishops held their own meeting and condemned Cyril.</li>
+            <li><strong>The decision:</strong> Nestorius was deposed and Mary was proclaimed <em>Theotokos</em> ("Mother of God"). The followers of Pelagius were also condemned.</li>
+            <li><strong>Afterwards:</strong> The title <em>Theotokos</em>, meant to affirm that Christ is God, fed devotion to Mary over the centuries.
+            Nestorius's theology lived on in the Church of the East, in Persia.</li>
+          </ul>` },
+  'concilio-de-calcedonia.title': { src: '1f7f2bef', text: `Council of Chalcedon` },
+  'concilio-de-calcedonia.shortDesc': { src: '0a95b504', text: `It defines that Christ is one person in two natures, divine and human; the churches that reject it separate from the imperial church.` },
+  'concilio-de-calcedonia.fullDesc': { src: '66deb7f5', text: `Called by the emperor Marcian, the <a href='${W}Council_of_Chalcedon' target='_blank' class='inline-link'>Council of Chalcedon</a> was the largest of antiquity:
+          <mark class='dudoso'>more than 500 bishops</mark>, almost all from the East.<br><br>
+          <strong>📜 What it decided:</strong>
+          <ul class='modal-list'>
+            <li><strong>The two natures:</strong> Christ is one person "in two natures, without confusion, without change, without division, without separation".
+            It rejected both Nestorius and Eutyches, who merged the two natures into one.</li>
+            <li><strong>The Tome of Leo:</strong> The letter of the bishop of Rome, Leo I, was read, and according to the acts the bishops acclaimed: "Peter has spoken through Leo".</li>
+            <li><strong>Canon 28:</strong> It gave Constantinople the same privileges as Rome. Leo rejected it.</li>
+          </ul>
+          The churches that did not accept Chalcedon, today called Coptic, Armenian, Syriac and Ethiopian, separated from the imperial church.` },
+  'segundo-concilio-de-nicea.title': { src: '1c16bccb', text: `Second Council of Nicaea` },
+  'segundo-concilio-de-nicea.shortDesc': { src: '2ecc6af3', text: `Called by the empress Irene, it restores the veneration of images against the iconoclasts.` },
+  'segundo-concilio-de-nicea.fullDesc': { src: '3afcef98', text: `For much of the 8th century, emperors in Constantinople banned and destroyed religious images: <a href='${W}Byzantine_Iconoclasm' target='_blank' class='inline-link'>iconoclasm</a>.
+          The empress Irene called the <a href='${W}Second_Council_of_Nicaea' target='_blank' class='inline-link'>Second Council of Nicaea</a>, the last one recognised by both the Catholic and the Orthodox churches.<br><br>
+          <strong>📜 What it decided:</strong>
+          <ul class='modal-list'>
+            <li><strong>The images:</strong> It ordered images of Christ, of Mary, of the angels and of the saints to be set up in churches and honoured with kisses, incense and lights.</li>
+            <li><strong>Veneration and worship:</strong> It distinguished the "veneration" given to images from the "worship" due to God alone,
+            and stated that the honour given to the image passes to the one it represents.</li>
+            <li><strong>In the West:</strong> The Council of Frankfurt (794), under Charlemagne, rejected what Nicaea had decided, working from a poor translation of its acts.</li>
+          </ul>` },
+  'cuarto-concilio-de-letran.title': { src: '96872d95', text: `Fourth Lateran Council` },
+  'cuarto-concilio-de-letran.shortDesc': { src: 'c5da21e6', text: `Innocent III gathers the largest council of the Middle Ages: it defines transubstantiation, imposes yearly confession and orders heretics to be pursued.` },
+  'cuarto-concilio-de-letran.fullDesc': { src: '60e78a46', text: `Called by <a href='${W}Pope_Innocent_III' target='_blank' class='inline-link'>Innocent III</a> at the height of papal power, the <a href='${W}Fourth_Council_of_the_Lateran' target='_blank' class='inline-link'>Fourth Lateran Council</a> gathered
+          <mark class='dudoso'>more than 400 bishops</mark>, hundreds of abbots and envoys of the kings.<br><br>
+          <strong>📜 Some of its 71 canons:</strong>
+          <ul class='modal-list'>
+            <li><strong>Canon 1:</strong> For the first time a council uses the word <a href='${W}Transubstantiation' target='_blank' class='inline-link'>transubstantiation</a>: the bread and wine are changed into the body and blood of Christ.</li>
+            <li><strong>Canon 3:</strong> It orders civil authorities to "exterminate" (drive out) from their lands the heretics pointed out by the church, on pain of excommunication,
+            and promises those who fight them the same indulgences as crusaders.</li>
+            <li><strong>Canon 21:</strong> Every believer must confess to his priest at least once a year and receive communion at Easter.</li>
+            <li><strong>Canon 68:</strong> Jews and Muslims must wear clothing that sets them apart from Christians.</li>
+          </ul>
+          It also called a new crusade, the fifth.` },
+  'concilio-de-constanza.title': { src: 'b665affd', text: `Council of Constance` },
+  'concilio-de-constanza.shortDesc': { src: '276d1df5', text: `It ends the Western Schism, with three popes at once, and sends Jan Hus to the stake despite the emperor's safe-conduct.` },
+  'concilio-de-constanza.fullDesc': { src: 'b249b80f', text: `From 1378 the Western church had two popes, and from 1409 three, each with his allied kingdoms. The emperor Sigismund pushed for the
+          <a href='${W}Council_of_Constance' target='_blank' class='inline-link'>Council of Constance</a> to resolve it.<br><br>
+          <strong>📜 What happened:</strong>
+          <ul class='modal-list'>
+            <li><strong>From three popes to one:</strong> It deposed John XXIII and Benedict XIII, accepted the resignation of Gregory XII and elected Martin V (1417).</li>
+            <li><strong>The council above the pope:</strong> Its decree <em>Haec sancta</em> (1415) stated that the council receives its authority directly from Christ and that even the pope must obey it.</li>
+            <li><strong>Jan Hus:</strong> The Bohemian reformer <a href='${W}Jan_Hus' target='_blank' class='inline-link'>Jan Hus</a> came with a safe-conduct from Sigismund. He was imprisoned, condemned as a heretic
+            and burned on 6 July 1415. His companion Jerome of Prague died the same way in 1416.</li>
+            <li><strong>Wycliffe:</strong> It also condemned John Wycliffe, who had died in 1384, and ordered his remains dug up and burned, which was done in 1428.</li>
+          </ul>` },
+  'concilio-vaticano-i.title': { src: '8e04e805', text: `First Vatican Council` },
+  'concilio-vaticano-i.shortDesc': { src: 'd4753dba', text: `Pius IX has the council define the infallibility of the pope when he speaks ex cathedra and his jurisdiction over the whole church.` },
+  'concilio-vaticano-i.fullDesc': { src: '0c1e6ba0', text: `Called by <a href='${W}Pope_Pius_IX' target='_blank' class='inline-link'>Pius IX</a>, the <a href='${W}First_Vatican_Council' target='_blank' class='inline-link'>First Vatican Council</a> was the first since Trent.<br><br>
+          <strong>📜 What it decided:</strong>
+          <ul class='modal-list'>
+            <li><strong><em>Pastor aeternus</em> (18 July 1870):</strong> It defined that the pope, when he speaks <em>ex cathedra</em> on faith or morals, is
+            <a href='${W}Papal_infallibility' target='_blank' class='inline-link'>infallible</a>, and that he has full and immediate jurisdiction over the whole church. Before the final vote,
+            <mark class='dudoso'>dozens of bishops</mark> who opposed it left Rome so as not to vote against it.</li>
+            <li><strong><em>Dei Filius</em>:</strong> On faith and reason.</li>
+            <li><strong>Interrupted:</strong> In September 1870 Italian troops took Rome and the council was suspended unfinished.</li>
+          </ul>
+          Those who rejected infallibility formed the Old Catholic Church.` },
+  'concilio-vaticano-ii.title': { src: 'ddb9afa4', text: `Second Vatican Council` },
+  'concilio-vaticano-ii.shortDesc': { src: '71255e34', text: `Called by John XXIII and closed by Paul VI: Mass in each people's language, ecumenical openness and religious freedom, with no new dogmas defined.` },
+  'concilio-vaticano-ii.fullDesc': { src: '9096c625', text: `Called by John XXIII and closed by Paul VI, the <a href='${W}Second_Vatican_Council' target='_blank' class='inline-link'>Second Vatican Council</a> gathered
+          <mark class='dudoso'>some 2,500 bishops</mark> from all over the world and approved 16 documents.<br><br>
+          <strong>📜 Some of its changes:</strong>
+          <ul class='modal-list'>
+            <li><strong>The liturgy:</strong> It allowed Mass to be celebrated in each people's language and not only in Latin (<em>Sacrosanctum Concilium</em>).</li>
+            <li><strong>Scripture and tradition:</strong> <em>Dei Verbum</em> presents them as "one sacred deposit of the word of God", whose authentic interpretation belongs to the magisterium of the church.</li>
+            <li><strong>The "separated brethren":</strong> It called Protestants and Orthodox by that name and opened ecumenical dialogue (<em>Unitatis redintegratio</em>).</li>
+            <li><strong>Religious freedom:</strong> <em>Dignitatis humanae</em> recognised the civil right to religious freedom.</li>
+          </ul>
+          It defined no new dogmas: it kept those of Trent and of the First Vatican Council.` },
 
   // ══ ERA I · BEFORE CHRIST ═════════════════════════════════
   'antes-de-cristo.title': { src: '70f0dff3', text: `Before Christ` },
@@ -188,18 +411,18 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'jesucristo.title': { src: '35c6d9fc', text: `Jesus Christ` },
   'jesucristo.shortDesc': { src: '5c55191a', text: `Jesus is born in Bethlehem in the days of King Herod, teaches and heals in Galilee and Judea, dies crucified under Pontius Pilate and rises on the third day.` },
-  'jesucristo.fullDesc': { src: 'a378def0', text: `According to the Gospels, <a href='${W}Jesus' target='_blank' class='inline-link'>Jesus of Nazareth</a>
-          was born in Bethlehem of Judea "in the days of <a href='${W}Herod_the_Great' target='_blank' class='inline-link'>Herod</a> the king" (Mt 2:1).
+  'jesucristo.fullDesc': { src: '5cc86f5e', text: `According to the Gospels, <a href='${W}Jesus' target='_blank' class='inline-link'>Jesus of Nazareth</a>
+          was born in Bethlehem of Judea "in the days of <a href='${W}Herod_the_Great' target='_blank' class='inline-link'>Herod</a> the king" (Mt 2:1, KJV).
           Since Herod died around 4 BC, the birth is usually dated between 6 and 4 BC.<br><br>
           <strong>📅 Born "before Christ"?</strong> The count of years "after Christ" (anno Domini) was proposed by the monk
           <a href='${W}Dionysius_Exiguus' target='_blank' class='inline-link'>Dionysius Exiguus</a> around the year 525,
           and his reckoning of the birth fell short by a few years. That is why the dates of the life of Christ are written as approximate.<br><br>
           <strong>📜 His life in the Scriptures:</strong>
           <ul class='modal-list'>
-            <li><strong>Baptism:</strong> John the Baptist baptizes him in the Jordan. Jesus "began to be about thirty years of age" (Lk 3:23), in the fifteenth year of Tiberius Caesar (Lk 3:1), around AD 28 or 29.</li>
+            <li><strong>Baptism:</strong> John the Baptist baptizes him in the Jordan. Jesus "began to be about thirty years of age" (Lk 3:23, KJV), in the fifteenth year of Tiberius Caesar (Lk 3:1), around AD 28 or 29.</li>
             <li><strong>Ministry:</strong> He teaches, heals and calls his disciples in Galilee and Judea. The Gospel of John mentions at least three Passovers, so his ministry is usually reckoned at about three years.</li>
             <li><strong>Death:</strong> He is crucified in Jerusalem under <a href='${W}Pontius_Pilate' target='_blank' class='inline-link'>Pontius Pilate</a>, prefect of Judea from 26 to 36. The year most often given is <mark class='dudoso'>30</mark>; others propose 33.</li>
-            <li><strong>Resurrection:</strong> "He rose again the third day according to the scriptures" (1 Cor 15:4), and showed himself alive to his disciples for forty days before ascending (Acts 1:3, 9).</li>
+            <li><strong>Resurrection:</strong> "He rose again the third day according to the scriptures" (1 Cor 15:4, KJV), and showed himself alive to his disciples for forty days before ascending (Acts 1:3, 9).</li>
           </ul>
           The Gospels of Matthew, Mark, Luke and John are the main sources for his life.` },
 
@@ -208,12 +431,12 @@ export const EN_TRANSLATIONS: TranslationTable = {
   'iglesia-apostolica.shortDesc': { src: 'dffcb780', text: `From Pentecost to the death of John: the apostles preach, write the New Testament and face the first persecutions.` },
   'muerte-de-juan.title': { src: 'aca343d9', text: `John, the last apostle, dies` },
   'muerte-de-juan.shortDesc': { src: '50354060', text: `According to tradition, the apostle John dies in Ephesus around the year 100; with him ends the generation of the direct witnesses of Christ.` },
-  'muerte-de-juan.fullDesc': { src: 'd4d5c007', text: `John, son of Zebedee, was one of the twelve apostles (Mt 4:21–22). According to <a href='${W}Irenaeus' target='_blank' class='inline-link'>Irenaeus of Lyon</a>,
+  'muerte-de-juan.fullDesc': { src: 'd4517ac9', text: `John, son of Zebedee, was one of the twelve apostles (Mt 4:21–22). According to <a href='${W}Irenaeus' target='_blank' class='inline-link'>Irenaeus of Lyon</a>,
           who wrote at the end of the 2nd century, John lived in Ephesus and remained there "until the times of Trajan", emperor from the year 98
           (<em>Against Heresies</em> II.22.5 and III.3.4).<br><br>
           <strong>📜 What is known:</strong>
           <ul class='modal-list'>
-            <li><strong>Patmos:</strong> Revelation says that John was on the island of Patmos "for the word of God, and for the testimony of Jesus Christ" (Rev 1:9).
+            <li><strong>Patmos:</strong> Revelation says that John was on the island of Patmos "for the word of God, and for the testimony of Jesus Christ" (Rev 1:9, KJV).
             Irenaeus places the vision towards the end of Domitian's reign, that is, around <mark class='dudoso'>95</mark> (<em>Against Heresies</em> V.30.3).</li>
             <li><strong>His writings:</strong> Tradition attributes to him the Gospel of John, three letters and Revelation.</li>
             <li><strong>The last apostle:</strong> With his death, around <mark class='dudoso'>the year 100</mark>, the generation of the direct witnesses of Christ comes to an end.
@@ -261,13 +484,13 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'neron.title': { src: 'cddb896b', text: `Nero is Caesar` },
   'neron.shortDesc': { src: 'da6931ca', text: `Nero rules the Roman Empire: he is the Caesar to whom Paul appeals and before whom he must appear.` },
-  'neron.fullDesc': { src: '03de4aef', text: `<a href='${W}Nero' target='_blank' class='inline-link'>Nero</a> was emperor of Rome from 54 to 68. He is the "Caesar" of the book of Acts:
+  'neron.fullDesc': { src: 'c650b6cb', text: `<a href='${W}Nero' target='_blank' class='inline-link'>Nero</a> was emperor of Rome from 54 to 68. He is the "Caesar" of the book of Acts:
           imprisoned in Caesarea and in danger of being handed over to the Jews, Paul appealed to Caesar (Acts 25:11), and during the shipwreck on the way to Rome an angel assured him:
-          <em>"thou must be brought before Caesar"</em> (Acts 27:24). This was around the year 59–60.<br><br>
+          <em>"thou must be brought before Caesar"</em> (Acts 27:24, KJV). This was around the year 59–60.<br><br>
           <strong>📜 What marked his reign for the church:</strong>
           <ul class='modal-list'>
             <li><strong>Early years:</strong> He ruled under the guidance of the philosopher Seneca and the prefect Burrus, years remembered as relatively stable.
-            In that period Paul reached Rome and lived two years in a rented house, preaching "no man forbidding him" (Acts 28:30–31).</li>
+            In that period Paul reached Rome and lived two years in a rented house, preaching "no man forbidding him" (Acts 28:30–31, KJV).</li>
             <li><strong>The fire of Rome (64):</strong> After the great fire, the Roman historian <a href='${W}Tacitus' target='_blank' class='inline-link'>Tacitus</a> (<em>Annals</em> XV.44) reports that Nero
             blamed the Christians and punished them cruelly: some were covered in animal skins and torn apart by dogs, others crucified or burned as torches.
             It is the first persecution of Christians by the Roman State.</li>
@@ -328,19 +551,19 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'sinodo-de-roma-251.title': { src: 'd200a687', text: `The Synod of Rome` },
   'sinodo-de-roma-251.shortDesc': { src: 'b5319f24', text: `Some 60 bishops back Cornelius as bishop of Rome, accept the lapsed after penance and excommunicate Novatian.` },
-  'sinodo-de-roma-251.fullDesc': { src: 'e16a25f7', text: `In June 251 Decius dies in battle against the Goths and the persecution ends. The churches are left with a problem:
+  'sinodo-de-roma-251.fullDesc': { src: '6b8a715a', text: `In June 251 Decius dies in battle against the Goths and the persecution ends. The churches are left with a problem:
           what to do with the <strong>lapsed</strong>, those who denied the faith during the persecution and now ask to return.<br><br>
           <strong>📜 The facts:</strong>
           <ul class='modal-list'>
             <li><strong>Cornelius (March 251):</strong> After more than a year without a bishop in Rome, <a href='${W}Pope_Cornelius' target='_blank' class='inline-link'>Cornelius</a> is elected bishop of Rome
             (today he would be called pope). He favored receiving the lapsed after a penance.</li>
             <li><strong>Novatian:</strong> The presbyter <a href='${W}Novatian' target='_blank' class='inline-link'>Novatian</a>, who held that the church could not restore communion
-            to someone who had denied Christ, has himself consecrated bishop of Rome by other bishops when one had already been elected.</li>
+            to someone who had denied Christ. His opponents accuse him of having himself consecrated bishop of Rome when one had already been elected.</li>
             <li><strong>The synod:</strong> According to Eusebius (<em>Ecclesiastical History</em> VI.43), some <strong>60 bishops</strong>, mostly Italian,
             and many more presbyters and deacons gather in Rome. They back Cornelius, confirm the line of the council of Carthage presided over by
-            <a href='${W}Cyprian' target='_blank' class='inline-link'>Cyprian</a> (to receive the lapsed after penance) and <strong>excommunicate Novatian</strong> and his followers.</li>
+            <a href='${W}Cyprian' target='_blank' class='inline-link'>Cyprian</a> (to receive the lapsed after penance) and <strong>excommunicate Novatian</strong> and his followers, blaming him for that consecration and for not accepting the lapsed into communion.</li>
           </ul>
-          <strong>⚠️ Reading this event:</strong> The Novatianists were excluded both for the rival consecration and for refusing to receive the lapsed.
+          <strong>⚠️ Reading this event:</strong> Novatian was excluded, accused of a rival consecration and for refusing to receive the lapsed.
           The majority gathered in synod thus established that communion depended on a penance regulated by the bishops. The Novatianist churches went on existing
           for centuries, separately, and Baptist successionist historiography counts them among the churches that stayed outside the system that would give rise to Rome.` },
 
@@ -373,8 +596,8 @@ export const EN_TRANSLATIONS: TranslationTable = {
             <li>It does <strong>not</strong> return confiscated property; that would come with the edict of Milan, in 313.</li>
           </ul>` },
 
-  'donatistas.title': { src: 'd7ca032d', text: `The Donatists separate` },
-  'donatistas.shortDesc': { src: 'b7b6cad5', text: `In North Africa, a group rejects the new bishop of Carthage for having been consecrated by an alleged traditor, and separates.` },
+  'donatistas.title': { src: '33c724df', text: `The Donatists and the church of Rome part ways` },
+  'donatistas.shortDesc': { src: '93e6d39f', text: `In North Africa, a group rejects the new bishop of Carthage for having been consecrated by an alleged traditor; in 313 a synod in Rome rules against them and they are left separated from the church of Rome.` },
   'donatistas.fullDesc': { src: 'f3e59264', text: `When the persecution ended, the church of Carthage chose <strong>Caecilian</strong> as bishop. A large group rejected him: one of the bishops who consecrated him,
           Felix of Aptunga, was accused of having been a <em>traditor</em>, that is, of having handed over the Scriptures during the Great Persecution.
           They elected a rival bishop, Majorinus, and after his death <strong>Donatus</strong>, from whom the movement took its name:
@@ -519,7 +742,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'vulgata.title': { src: 'df880269', text: `Jerome's Latin Vulgate` },
   'vulgata.shortDesc': { src: '72d8a019', text: `Jerome of Stridon translates the Bible into Latin at the request of Pope Damasus I, producing the official text of the Catholic Church.` },
-  'vulgata.fullDesc': { src: '0b48fe82', text: `<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Amiatinus_Maiestas_Domini.jpg/960px-Amiatinus_Maiestas_Domini.jpg'
+  'vulgata.fullDesc': { src: '1632441d', text: `<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Amiatinus_Maiestas_Domini.jpg/960px-Amiatinus_Maiestas_Domini.jpg'
           class='modal-inline-img' alt='Majesty of the Lord in the Codex Amiatinus' title='The Codex Amiatinus, a copy of the Vulgate'>
           At the request of Pope Damasus I, <a href='${W}Jerome' target='_blank' class='inline-link'>Jerome of Stridon</a>
           produced the <a href='${W}Vulgate' target='_blank' class='inline-link'>Latin Vulgate</a>,
@@ -535,7 +758,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
               that was set down in codices such as the <strong>Codex Vaticanus</strong> (kept in the Vatican Library since the 15th century)
               and the <strong>Codex Sinaiticus</strong> (found in the Catholic-Orthodox monastery of Saint Catherine in Sinai), both manuscripts
               preserved and guarded exclusively by Catholic/Orthodox institutions. Today they form the basis of the
-              <strong>Critical Text</strong>. There was not yet a compiled and standardized Greek New Testament.</li>
+              <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'><strong>Critical Text</strong></a>. There was not yet a compiled and standardized Greek New Testament.</li>
             <li><strong>Apocrypha:</strong> Jerome <em>rejected</em> the deuterocanonical books as non-canonical — he marked them as such in his own prologues,
               following the Hebrew canon (and contrary to what the LXX admitted). However, church tradition and their presence in the Vetus Latina pressed him
               to include them. He translated them partly reluctantly and at the insistence of fellow bishops. The Vulgate ended up including: Tobit, Judith,
@@ -670,7 +893,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'remonstrantes.title': { src: '8cc64c0b', text: `The Articles of the Remonstrants` },
   'remonstrantes.shortDesc': { src: '9e024ffd', text: `The followers of Arminius officially state their disagreements and strong Calvinist objections.` },
-  'remonstrantes.fullDesc': { src: 'c3baa86b', text: `The followers of Jacobus Arminius published the <strong>Articles of Remonstrance</strong>, opposing Calvinist orthodoxy with five key points:<br>
+  'remonstrantes.fullDesc': { src: '931d3344', text: `The followers of Jacobus Arminius published the <strong>Articles of Remonstrance</strong>, opposing <a href='#calvino' class='inline-link' data-event='calvino'>Calvinist orthodoxy</a> with five key points:<br>
           <ul class='modal-list'>
             <li><strong>1. Conditional Election:</strong> God elects on the basis of His foreknowledge of man's faith.</li>
             <li><strong>2. Unlimited Atonement:</strong> Christ died for all mankind (potentially).</li>
@@ -690,14 +913,14 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'dort.title': { src: '99df5f7b', text: `The Synod of Dort and TULIP` },
   'dort.shortDesc': { src: '1afbce35', text: `The Synod drafts the Canons of Dort, reaffirming John Calvin's definitive doctrinal teachings.` },
-  'dort.fullDesc': { src: 'a81c1a42', text: `In response to the Remonstrance, the <a href='${W}Synod_of_Dort' target='_blank' class='inline-link'>Synod of Dort</a>
+  'dort.fullDesc': { src: '5ed3ee7e', text: `In response to the <a href='#remonstrantes' class='inline-link' data-event='remonstrantes'>Remonstrance</a>, the <a href='${W}Synod_of_Dort' target='_blank' class='inline-link'>Synod of Dort</a>
           set out the famous five points of Calvinism (the acrostic <strong>TULIP</strong>):<br>
           <ul class='modal-list'>
-            <li><strong>T (Total Depravity):</strong> The total depravity of man.</li>
-            <li><strong>U (Unconditional Election):</strong> God's sovereign unconditional election.</li>
-            <li><strong>L (Limited Atonement):</strong> Limited (particular) atonement.</li>
-            <li><strong>I (Irresistible Grace):</strong> Irresistible grace in the calling.</li>
-            <li><strong>P (Perseverance of the Saints):</strong> The perseverance and preservation of the saints.</li>
+            <li><strong>T (Total Depravity):</strong> The total depravity of man. Sin affects man's will, and he cannot seek God.</li>
+            <li><strong>U (Unconditional Election):</strong> God's sovereign unconditional election. God chooses without basing it on the faith of the chosen.</li>
+            <li><strong>L (Limited Atonement):</strong> Limited (particular) atonement. Christ paid only for the elect.</li>
+            <li><strong>I (Irresistible Grace):</strong> Irresistible grace in the calling. The Spirit changes man's will so that he accepts the call, and the elect always accept it.</li>
+            <li><strong>P (Perseverance of the Saints):</strong> The perseverance and preservation of the saints: "once saved, always saved".</li>
           </ul>` },
 
   'peregrinos.title': { src: 'd94ba83f', text: `The Pilgrims reach America` },
@@ -754,8 +977,8 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'rv-1909.title': { src: '89457e6a', text: `Reina-Valera 1909 (the "Antigua")` },
   'rv-1909.shortDesc': { src: '6a82418c', text: `A historic, much-loved revision, criticized today for allowing readings from the Critical Text.` },
-  'rv-1909.fullDesc': { src: '18d2544b', text: `Published by the American and the British Bible Societies, the <strong>RV 1909</strong> updated the spelling. However, it subtly incorporated some influences
-          of the <strong>Critical Text</strong> into its New Testament, departing from the pure Textus Receptus. This mixture prompted the later independent purification efforts.` },
+  'rv-1909.fullDesc': { src: '059044dc', text: `Published by the American and the British Bible Societies, the <strong>RV 1909</strong> updated the spelling. However, it subtly incorporated some influences
+          of the <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'><strong>Critical Text</strong></a> into its New Testament, departing from the pure Textus Receptus. This mixture prompted the later independent purification efforts.` },
 
   'rollos-mar-muerto.title': { src: 'b69cc7cf', text: `The discovery of the Dead Sea Scrolls` },
   'rollos-mar-muerto.shortDesc': { src: '6489e4e3', text: `A vast collection of ancient biblical manuscripts, copied and preserved by a Jewish community in the desert, comes to light.` },
@@ -777,13 +1000,13 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'rv-1960.title': { src: '895b946e', text: `Reina-Valera 1960` },
   'rv-1960.shortDesc': { src: '1db96daf', text: `The United Bible Societies publish the revision that would become the best-loved Bible in the contemporary Spanish-speaking world.` },
-  'rv-1960.fullDesc': { src: 'f6eb2b71', text: `<img src='https://m.media-amazon.com/images/S/aplus-media-library-service-media/df26a498-b71f-448b-abca-ea2d839a909c.__CR0,0,350,175_PT0_SX350_V1___.png' class='modal-inline-img' alt='RVR 1960 Bible' title='Reina-Valera 1960'>
+  'rv-1960.fullDesc': { src: '2f7c79d2', text: `<img src='https://m.media-amazon.com/images/S/aplus-media-library-service-media/df26a498-b71f-448b-abca-ea2d839a909c.__CR0,0,350,175_PT0_SX350_V1___.png' class='modal-inline-img' alt='RVR 1960 Bible' title='Reina-Valera 1960'>
           Coordinated by the <a href='${W}United_Bible_Societies' target='_blank' class='inline-link'>United Bible Societies (UBS)</a>, this historic major revision updated the grammar
           and language of the Bible for modern Spanish speakers while impeccably keeping the majesty and rhythmic style of the old translation.<br><br>
           Enjoying an impressive immediate acceptance, the <strong>Reina-Valera 1960</strong> became the standard in almost every evangelical denomination,
           memorized by countless generations. However, in terms of manuscript purity, the revision committee made a momentous decision: they did not limit themselves
           exclusively to the <strong>Textus Receptus</strong>. Instead, they chose to incorporate into the New Testament various readings from the
-          <strong>Critical Texts</strong> (minority Alexandrian manuscripts). This departure from the strict original foundation of Casiodoro de Reina and Valera
+          <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'><strong>Critical Texts</strong></a> (minority Alexandrian manuscripts). This departure from the strict original foundation of Casiodoro de Reina and Valera
           became the main reason why, decades later, the firm defenders of the Received Text would begin great revision projects
           to faithfully restore the traditional line.` },
 
@@ -805,9 +1028,9 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'rv-sbt.title': { src: '3f4d4e12', text: `Reina Valera SBT` },
   'rv-sbt.shortDesc': { src: 'a23df920', text: `The Trinitarian Bible Society subjects the old RV 1909 to a masterly revision based on the pure original texts.` },
-  'rv-sbt.fullDesc': { src: 'd842ddc4', text: `The historic project led by the <a href='https://sociedadbiblicatrinitaria.org/' target='_blank' class='inline-link'>Trinitarian Bible Society (SBT)</a>
+  'rv-sbt.fullDesc': { src: 'f7b9cda1', text: `The historic project led by the <a href='https://sociedadbiblicatrinitaria.org/' target='_blank' class='inline-link'>Trinitarian Bible Society (SBT)</a>
           seeks to give the Spanish-speaking world a refined, very high-quality Reina-Valera, taking as its primary structural text the venerable
-          <strong>Reina-Valera 1909</strong>. Correcting all the Critical Text infiltrations that this version harbored for a century, this institutional effort
+          <strong>Reina-Valera 1909</strong>. Correcting all the <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'>Critical Text</a> infiltrations that this version harbored for a century, this institutional effort
           ensures it depends loyally and exclusively on the historic <strong>Textus Receptus</strong> and the traditional Hebrew Masoretic Text, crowning a vast
           scholarly front with the aim of preserving intact the formal equivalence of the original words.` },
 };

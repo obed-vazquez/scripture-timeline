@@ -31,11 +31,19 @@ import type { TimelineItemData, TimelineTagData } from '../models/timeline.model
  *                  por su fecha.
  *   pendingReview  true = texto generado que el usuario aún no revisa. Quítalo
  *                  (o ponlo en false) cuando lo des por bueno.
+ *   yearText       Texto del año que se muestra en lugar de 'year'; la línea del tiempo
+ *                  sigue usando 'year'. Ej.: la era Antes de Cristo dice 'hasta ~4 a.C.'.
  *
  * Las eras son bloques con  era: true  y su rango de años. Un evento pertenece a
  * la era donde cae su año de inicio.
  *
  * Marcar un dato dudoso dentro del texto:  <mark class='dudoso'>...</mark>
+ *
+ * Enlazar a otro evento de la línea del tiempo (la cámara viaja a él):
+ *   <a href='#calvino' class='inline-link' data-event='calvino'>Calvino</a>
+ *
+ * Citar la Biblia: siempre con su versión; de preferencia la 1602 Purificada (1602P):
+ *   «Si no os circuncidáis, conforme a la costumbre de Moisés, no podéis ser salvos» (Hch 15.1, 1602P)
  *
  * Lo que NO va aquí (lo mantiene el implementador):
  *   - timeline.custom.ts → gráficas, videos, guías y recorrido.
@@ -50,6 +58,7 @@ export const TIMELINE_TAGS: TimelineTagData[] = [
   { id: 'doctrina', label: 'Teología y Doctrina', color: '#9b7fe0' },
   { id: 'historia', label: 'Historia y Cultura', color: '#3fa58f' },
   { id: 'roma', label: 'Iglesia Católica Romana', color: '#d65d72' },
+  { id: 'landmark', label: 'Historia landmarquista', color: '#4f86c6' },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -64,6 +73,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'antes-de-cristo',
     era: true,
     year: '300 a.C. – ~4 a.C.',
+    yearText: 'hasta ~4 a.C.',
     title: 'Antes de Cristo',
     color: '#a88b67',
     shortDesc: 'Las Escrituras del Antiguo Testamento y su traducción al griego en el mundo helenístico.',
@@ -116,20 +126,20 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'jesucristo',
     year: '~4 a.C. – ~30',
     title: 'Jesucristo',
-    tags: ['historia'],
+    tags: ['historia', 'landmark'],
     shortDesc: 'Jesús nace en Belén en días del rey Herodes, enseña y sana en Galilea y Judea, muere crucificado bajo Poncio Pilato y resucita al tercer día.',
     fullDesc: `Según los Evangelios, <a href='https://es.wikipedia.org/wiki/Jes%C3%BAs_de_Nazaret' target='_blank' class='inline-link'>Jesús de Nazaret</a>
-          nació en Belén de Judea «en días del rey <a href='https://es.wikipedia.org/wiki/Herodes_I_el_Grande' target='_blank' class='inline-link'>Herodes</a>» (Mt 2.1).
+          nació en Belén de Judea «en los días del rey <a href='https://es.wikipedia.org/wiki/Herodes_I_el_Grande' target='_blank' class='inline-link'>Herodes</a>» (Mt 2.1, 1602P).
           Como Herodes murió hacia el 4 a.C., el nacimiento suele fecharse entre el 6 y el 4 a.C.<br><br>
           <strong>📅 ¿Nacido «antes de Cristo»?</strong> La cuenta de los años «después de Cristo» la propuso el monje
           <a href='https://es.wikipedia.org/wiki/Dionisio_el_Exiguo' target='_blank' class='inline-link'>Dionisio el Exiguo</a> hacia el año 525,
           y su cálculo del nacimiento quedó corto por algunos años. Por eso las fechas de la vida de Cristo se escriben como aproximadas.<br><br>
           <strong>📜 Su vida en las Escrituras:</strong>
           <ul class='modal-list'>
-            <li><strong>Bautismo:</strong> Juan el Bautista lo bautiza en el Jordán. Jesús comenzaba su ministerio «como de treinta años» (Lc 3.23), en el año quince de Tiberio César (Lc 3.1), hacia el 28 o 29.</li>
+            <li><strong>Bautismo:</strong> Juan el Bautista lo bautiza en el Jordán. Jesús comenzaba su ministerio «como de treinta años» (Lc 3.23, 1602P), en el año quince de Tiberio César (Lc 3.1), hacia el 28 o 29.</li>
             <li><strong>Ministerio:</strong> Enseña, sana y llama a sus discípulos en Galilea y Judea. El Evangelio de Juan menciona al menos tres Pascuas, por lo que su ministerio suele calcularse en unos tres años.</li>
             <li><strong>Muerte:</strong> Es crucificado en Jerusalén bajo <a href='https://es.wikipedia.org/wiki/Poncio_Pilato' target='_blank' class='inline-link'>Poncio Pilato</a>, prefecto de Judea entre el 26 y el 36. El año más citado es el <mark class='dudoso'>30</mark>; otros proponen el 33.</li>
-            <li><strong>Resurrección:</strong> «Resucitó al tercer día, conforme a las Escrituras» (1 Co 15.4), y se presentó vivo a sus discípulos durante cuarenta días antes de ascender (Hch 1.3, 9).</li>
+            <li><strong>Resurrección:</strong> «Resucitó al tercer día, según las Escrituras» (1 Co 15.4, 1602P), y se presentó vivo a sus discípulos durante cuarenta días antes de ascender (Hch 1.3, 9).</li>
           </ul>
           Los Evangelios de Mateo, Marcos, Lucas y Juan son las fuentes principales de su vida.`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Jerusalem_Modell_BW_2.JPG/1280px-Jerusalem_Modell_BW_2.JPG',
@@ -151,6 +161,25 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   {
+    id: 'concilio-de-jerusalen',
+    year: '~49',
+    title: 'Concilio de Jerusalén',
+    tags: ['doctrina', 'landmark'],
+    shortDesc: 'Los apóstoles y los ancianos, con toda la iglesia de Jerusalén, resuelven que los creyentes gentiles no necesitan circuncidarse para ser salvos.',
+    fullDesc: `Algunos que venían de Judea enseñaban a los hermanos de Antioquía: «Si no os circuncidáis, conforme a la costumbre de Moisés, no podéis ser salvos» (Hch 15.1, 1602P).
+          Pablo y Bernabé subieron a Jerusalén para tratar la cuestión con los apóstoles y los ancianos. Es el <a href='https://es.wikipedia.org/wiki/Concilio_de_Jerusal%C3%A9n' target='_blank' class='inline-link'>Concilio de Jerusalén</a>.<br><br>
+          <strong>📜 Lo que narra Hechos 15:</strong>
+          <ul class='modal-list'>
+            <li><strong>Pedro:</strong> «Antes por la gracia del Señor Jesús Cristo creemos que seremos salvos, así como ellos» (Hch 15.11, 1602P).</li>
+            <li><strong>Jacobo:</strong> Propone no inquietar a los gentiles que se convierten, sino escribirles «que se aparten de las contaminaciones de los ídolos, y de fornicación, y de lo ahogado, y de sangre» (Hch 15.19–20, 1602P).</li>
+            <li><strong>La decisión:</strong> «Pareció bien a los apóstoles, y a los ancianos con toda la iglesia», enviar a Antioquía una carta con ese acuerdo (Hch 15.22–29, 1602P).</li>
+          </ul>
+          Hechos no da la fecha; la más citada es hacia el <mark class='dudoso'>49 o 50</mark>.`,
+    image: '',
+    pendingReview: true,
+  },
+
+  {
     id: 'muerte-de-juan',
     year: '~100',
     parent: 'iglesia-apostolica',
@@ -162,7 +191,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
           (<em>Contra las herejías</em> II.22.5 y III.3.4).<br><br>
           <strong>📜 Lo que se sabe:</strong>
           <ul class='modal-list'>
-            <li><strong>Patmos:</strong> El Apocalipsis dice que Juan estuvo en la isla de Patmos «por causa de la palabra de Dios y el testimonio de Jesucristo» (Ap 1.9).
+            <li><strong>Patmos:</strong> El Apocalipsis dice que Juan estuvo en la isla de Patmos «por la palabra de Dios, y por el testimonio de Cristo Jesús» (Ap 1.9, 1602P).
             Ireneo sitúa la visión hacia el final del reinado de Domiciano, es decir, hacia el <mark class='dudoso'>95</mark> (<em>Contra las herejías</em> V.30.3).</li>
             <li><strong>Sus escritos:</strong> La tradición le atribuye el Evangelio de Juan, tres cartas y el Apocalipsis.</li>
             <li><strong>El último apóstol:</strong> Con su muerte, hacia el <mark class='dudoso'>año 100</mark>, termina la generación de los testigos directos de Cristo.
@@ -195,11 +224,11 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     shortDesc: 'Nerón gobierna el Imperio Romano: es el César ante quien Pablo apela y ante quien debe comparecer.',
     fullDesc: `<a href='https://es.wikipedia.org/wiki/Ner%C3%B3n' target='_blank' class='inline-link' data-preview='Emperador romano del 54 al 68'>Nerón</a> fue emperador de Roma del año 54 al 68. Es el "César" del libro de los Hechos:
           preso en Cesarea y en peligro de ser entregado a los judíos, Pablo apeló a César (Hch 25.11), y durante el naufragio rumbo a Roma un ángel le aseguró:
-          <em>"es necesario que comparezcas ante César"</em> (Hch 27.24). Era alrededor del año 59–60.<br><br>
+          <em>«es menester que seas presentado delante de César»</em> (Hch 27.24, 1602P). Era alrededor del año 59–60.<br><br>
           <strong>📜 Lo que marcó su gobierno para la iglesia:</strong>
           <ul class='modal-list'>
             <li><strong>Primeros años:</strong> Gobernó bajo la tutela del filósofo Séneca y del prefecto Burro, años recordados como relativamente estables.
-            En ese periodo Pablo llegó a Roma y vivió dos años en una casa alquilada, predicando "sin impedimento" (Hch 28.30–31).</li>
+            En ese periodo Pablo llegó a Roma y vivió dos años en una casa alquilada, predicando «sin que ninguno se lo estorbase» (Hch 28.30–31, 1602P).</li>
             <li><strong>El incendio de Roma (64):</strong> Tras el gran incendio, el historiador romano <a href='https://es.wikipedia.org/wiki/T%C3%A1cito' target='_blank' class='inline-link'>Tácito</a> (<em>Anales</em> XV.44) relata que Nerón
             culpó a los cristianos y los castigó con crueldad: algunos fueron cubiertos con pieles de animales y despedazados por perros, otros crucificados o quemados como antorchas.
             Es la primera persecución del Estado romano contra los cristianos.</li>
@@ -256,7 +285,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'ignacio-esmirniotas',
     year: '~107 – 110',
     title: 'Carta de Ignacio de Antioquía a los esmirniotas',
-    tags: ['historia', 'roma'],
+    tags: ['historia', 'roma', 'landmark'],
     shortDesc: 'Camino a su martirio, Ignacio escribe a la iglesia de Esmirna: aparece por primera vez la expresión "iglesia católica" y la orden de no hacer nada sin el obispo.',
     fullDesc: `<a href='https://es.wikipedia.org/wiki/Ignacio_de_Antioqu%C3%ADa' target='_blank' class='inline-link' data-preview='Obispo de Antioquía, mártir bajo Trajano'>Ignacio</a>, obispo de Antioquía, fue arrestado y llevado a Roma para morir en el circo bajo el emperador Trajano.
           En el camino escribió siete cartas a distintas iglesias; una de ellas, a la iglesia de <strong>Esmirna</strong>, cuyo obispo era
@@ -305,7 +334,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'sinodo-de-roma-251',
     year: '251',
     title: 'Sínodo de Roma',
-    tags: ['roma', 'historia'],
+    tags: ['roma', 'historia', 'landmark'],
     shortDesc: 'Unos 60 obispos respaldan a Cornelio como obispo de Roma, aceptan a los lapsi con penitencia y excomulgan a Novaciano.',
     fullDesc: `En junio del 251 Decio muere en batalla contra los godos y la persecución termina. Las iglesias quedan con un problema:
           qué hacer con los <strong><em>lapsi</em></strong> («caídos»), los que negaron la fe durante la persecución y ahora piden volver.<br><br>
@@ -314,12 +343,12 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
             <li><strong>Cornelio (marzo del 251):</strong> Tras más de un año sin obispo en Roma, <a href='https://es.wikipedia.org/wiki/Cornelio' target='_blank' class='inline-link' data-preview='Obispo de Roma del 251 al 253'>Cornelio</a> es elegido obispo de Roma
             (hoy se le llamaría papa). Era partidario de recibir a los <em>lapsi</em> después de una penitencia.</li>
             <li><strong>Novaciano:</strong> El presbítero <a href='https://es.wikipedia.org/wiki/Novaciano' target='_blank' class='inline-link' data-preview='Presbítero romano, rigorista'>Novaciano</a>, que sostenía que la iglesia no podía devolver la comunión
-            a quien había negado a Cristo, se hace consagrar obispo de Roma por otros obispos cuando ya había uno elegido.</li>
+            a quien había negado a Cristo. Sus opositores lo acusan de haberse hecho consagrar obispo de Roma cuando ya había uno elegido.</li>
             <li><strong>El sínodo:</strong> Según Eusebio (<em>Historia eclesiástica</em> VI.43), se reúnen en Roma unos <strong>60 obispos</strong>, mayormente italianos,
             y muchos más presbíteros y diáconos. Respaldan a Cornelio, confirman la línea del concilio de Cartago presidido por
-            <a href='https://es.wikipedia.org/wiki/Cipriano_de_Cartago' target='_blank' class='inline-link'>Cipriano</a> (recibir a los <em>lapsi</em> con penitencia) y <strong>excomulgan a Novaciano</strong> y a quienes lo siguen.</li>
+            <a href='https://es.wikipedia.org/wiki/Cipriano_de_Cartago' target='_blank' class='inline-link'>Cipriano</a> (recibir a los <em>lapsi</em> con penitencia) y <strong>excomulgan a Novaciano</strong> y a quienes lo siguen, culpándolo de esa consagración y de no aceptar a los <em>lapsi</em> en comunión.</li>
           </ul>
-          <strong>⚠️ Lectura de este evento:</strong> A los novacianos se les excluyó tanto por la consagración rival como por negarse a recibir a los <em>lapsi</em>.
+          <strong>⚠️ Lectura de este evento:</strong> A Novaciano se le excluyó acusado de una consagración rival y por negarse a recibir a los <em>lapsi</em>.
           La mayoría reunida en sínodo establecía así que la comunión dependía de una penitencia regulada por los obispos. Las iglesias novacianas siguieron existiendo
           por siglos, separadas, y la historiografía bautista sucesionista las cuenta entre las iglesias que se mantuvieron fuera del sistema que daría origen a Roma.`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Pope_Cornelius_%E2%80%93_Santa_Maria_in_Trastevere.jpg',
@@ -396,7 +425,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     parent: 'constantino',
     year: '313',
     title: 'Unión de iglesia y estado: el edicto de Milán',
-    tags: ['roma'],
+    tags: ['roma', 'landmark'],
     shortDesc: 'Constantino y Licinio dan libertad de culto y devuelven sus bienes a los cristianos; comienza el maridaje de la iglesia con el Estado romano.',
     fullDesc: `En el 313, Constantino y <a href='https://es.wikipedia.org/wiki/Licinio' target='_blank' class='inline-link' data-preview='Emperador romano de oriente'>Licinio</a> acordaron en Milán la política conocida como el
           <a href='https://es.wikipedia.org/wiki/Edicto_de_Mil%C3%A1n' target='_blank' class='inline-link' data-preview='Libertad de culto en el Imperio'>edicto de Milán</a>: libertad de culto para todos, cristianos incluidos, y la devolución de los lugares de reunión
@@ -441,10 +470,9 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
 
   {
     id: 'nicea',
-    parent: 'constantino',
     year: '325',
     title: 'Concilio de Nicea',
-    tags: ['roma', 'doctrina'],
+    tags: ['roma', 'landmark'],
     shortDesc: 'Convocado por Constantino, el primer concilio "ecuménico" condena a Arrio y define la fe con el respaldo del Imperio.',
     fullDesc: `<strong>Antecedente:</strong> Hacia el 318, en Alejandría, el presbítero <a href='https://es.wikipedia.org/wiki/Arrio' target='_blank' class='inline-link' data-preview='Presbítero de Alejandría'>Arrio</a> comenzó a enseñar que el Hijo de Dios era una criatura,
           que "hubo un tiempo en que no existía". Su obispo, Alejandro, lo condenó, pero la disputa se extendió por todo el oriente.<br><br>
@@ -534,10 +562,10 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
 
   {
     id: 'donatistas',
-    year: '~311 – 312',
-    title: 'Los donatistas se separan',
-    tags: ['historia'],
-    shortDesc: 'En el norte de África, un grupo rechaza al nuevo obispo de Cartago por haber sido consagrado por un supuesto traditor, y se separa.',
+    year: '~311 – 313',
+    title: 'Los donatistas y la iglesia de Roma se separan',
+    tags: ['historia', 'landmark'],
+    shortDesc: 'En el norte de África, un grupo rechaza al nuevo obispo de Cartago por haber sido consagrado por un supuesto traditor; en 313 un sínodo en Roma falla contra ellos y quedan separados de la iglesia de Roma.',
     fullDesc: `Al terminar la persecución, la iglesia de Cartago eligió como obispo a <strong>Ceciliano</strong>. Un grupo numeroso lo rechazó: uno de los obispos que lo consagraron,
           Félix de Aptunga, era acusado de haber sido <em>traditor</em>, es decir, de haber entregado las Escrituras durante la Gran Persecución.
           Eligieron un obispo rival, Mayorino, y a su muerte a <strong>Donato</strong>, de quien el movimiento tomó su nombre: el
@@ -574,7 +602,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'edicto-de-tesalonica',
     year: '380',
     title: 'Edicto de Tesalónica',
-    tags: ['roma'],
+    tags: ['roma', 'landmark'],
     shortDesc: 'Teodosio I hace del cristianismo niceno la religión obligatoria del Imperio: sólo sus seguidores son "cristianos católicos"; los demás, herejes.',
     fullDesc: `El 27 de febrero del 380, el emperador <a href='https://es.wikipedia.org/wiki/Teodosio_I_el_Grande' target='_blank' class='inline-link' data-preview='Emperador romano del 379 al 395'>Teodosio I</a>, junto con Graciano y Valentiniano II,
           promulgó el <a href='https://es.wikipedia.org/wiki/Edicto_de_Tesal%C3%B3nica' target='_blank' class='inline-link' data-preview='Cunctos populos'>edicto de Tesalónica</a> (<em>Cunctos populos</em>).<br><br>
@@ -614,7 +642,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
               que quedó plasmada en códices como el <strong>Codex Vaticanus</strong> (resguardado en la Biblioteca Vaticana desde el siglo XV)
               y el <strong>Codex Sinaiticus</strong> (hallado en el monasterio católico-ortodoxo de Santa Catalina en el Sinaí), ambos manuscritos
               preservados y custodiados exclusivamente por instituciones católicas/ortodoxas. Hoy forman la base del
-              <strong>Texto Crítico</strong>. No existía aún un Nuevo Testamento griego compilado y estandarizado.</li>
+              <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'><strong>Texto Crítico</strong></a>. No existía aún un Nuevo Testamento griego compilado y estandarizado.</li>
             <li><strong>Apócrifos:</strong> Jerónimo <em>rechazaba</em> los libros deuterocanónicos como no canónicos — los marcó como tales en sus propios prólogos,
               siguiendo el canon hebreo (y contrario a lo que admitió la LXX). Sin embargo, la tradición eclesial y su presencia en la Vetus Latina lo presionaron
               a incluirlos. Los tradujo en parte de mala gana y bajo insistencia de colegas obispos. La Vulgata terminó incluyendo: Tobías, Judit,
@@ -640,6 +668,125 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
             <li><strong>Expediciones posteriores (1147–1291):</strong> Incluyeron nuevos intentos militares y diplomáticos, aunque con menor éxito general.</li>
           </ul>`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/SiegeofAntioch.jpeg/960px-SiegeofAntioch.jpeg',
+  },
+
+  {
+    id: 'concilio-de-constantinopla-381',
+    year: '381',
+    title: 'Primer Concilio de Constantinopla',
+    tags: ['roma'],
+    shortDesc: 'Convocado por Teodosio I, completa el credo de Nicea sobre el Espíritu Santo y pone al obispo de Constantinopla en segundo lugar, después del de Roma.',
+    fullDesc: `Un año después del Edicto de Tesalónica, el emperador <a href='https://es.wikipedia.org/wiki/Teodosio_I_el_Grande' target='_blank' class='inline-link'>Teodosio I</a> reunió en Constantinopla a unos 150 obispos de oriente
+          para cerrar la disputa arriana: el <a href='https://es.wikipedia.org/wiki/Primer_Concilio_de_Constantinopla' target='_blank' class='inline-link'>Primer Concilio de Constantinopla</a>.<br><br>
+          <strong>📜 Lo que decidió:</strong>
+          <ul class='modal-list'>
+            <li><strong>La fe de Nicea:</strong> Confirmó el credo de Nicea y condenó a los arrianos y a quienes negaban la divinidad del Espíritu Santo.</li>
+            <li><strong>El credo:</strong> Se le atribuye la forma ampliada del credo, con el artículo sobre el Espíritu Santo, «Señor y dador de vida»: el llamado Credo niceno-constantinopolitano.</li>
+            <li><strong>El rango de los obispos:</strong> Su canon 3 da al obispo de Constantinopla «la primacía de honor después del obispo de Roma, porque es la nueva Roma».</li>
+          </ul>
+          Así como el Edicto de Tesalónica hizo ley del Imperio la fe nicena, este concilio la fijó como doctrina de la iglesia imperial.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Homilies_of_Gregory_the_Theologian_gr._510%2C_f_723.jpg/960px-Homilies_of_Gregory_the_Theologian_gr._510%2C_f_723.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'concilio-de-efeso',
+    year: '431',
+    title: 'Concilio de Éfeso',
+    tags: ['roma'],
+    shortDesc: 'Depone a Nestorio y proclama a María «Madre de Dios» (Theotokos), en una asamblea dominada por Cirilo de Alejandría.',
+    fullDesc: `<a href='https://es.wikipedia.org/wiki/Nestorio' target='_blank' class='inline-link'>Nestorio</a>, obispo de Constantinopla, enseñaba que a María debía llamársele «madre de Cristo» y no «madre de Dios», porque distinguía con fuerza
+          la humanidad y la divinidad de Cristo. Cirilo, obispo de Alejandría, lo acusó de dividir a Cristo en dos personas.<br><br>
+          <strong>📜 Lo que pasó en el <a href='https://es.wikipedia.org/wiki/Concilio_de_%C3%89feso' target='_blank' class='inline-link'>Concilio de Éfeso</a>:</strong>
+          <ul class='modal-list'>
+            <li><strong>Dos reuniones:</strong> Convocado por el emperador Teodosio II, Cirilo lo abrió antes de que llegaran los obispos de Antioquía, que apoyaban a Nestorio.
+            Esos obispos tuvieron su propia reunión y condenaron a Cirilo.</li>
+            <li><strong>La decisión:</strong> Nestorio fue depuesto y María fue proclamada <em>Theotokos</em> («Madre de Dios»). También se condenó a los seguidores de Pelagio.</li>
+            <li><strong>Después:</strong> El título <em>Theotokos</em>, pensado para afirmar que Cristo es Dios, alimentó con los siglos la devoción a María.
+            La teología de Nestorio siguió viva en la Iglesia del Oriente, en Persia.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Third_Ecumenical_council_by_V.Surikov_%281876%29.jpg/960px-Third_Ecumenical_council_by_V.Surikov_%281876%29.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'concilio-de-calcedonia',
+    year: '451',
+    title: 'Concilio de Calcedonia',
+    tags: ['roma'],
+    shortDesc: 'Define que Cristo es una sola persona en dos naturalezas, divina y humana; las iglesias que lo rechazan se separan de la iglesia imperial.',
+    fullDesc: `Convocado por el emperador Marciano, el <a href='https://es.wikipedia.org/wiki/Concilio_de_Calcedonia' target='_blank' class='inline-link'>Concilio de Calcedonia</a> fue el más concurrido de la antigüedad:
+          <mark class='dudoso'>más de 500 obispos</mark>, casi todos de oriente.<br><br>
+          <strong>📜 Lo que decidió:</strong>
+          <ul class='modal-list'>
+            <li><strong>Las dos naturalezas:</strong> Cristo es una sola persona «en dos naturalezas, sin confusión, sin cambio, sin división, sin separación».
+            Rechazó a la vez a Nestorio y a Eutiques, que fundía las dos naturalezas en una.</li>
+            <li><strong>El Tomo de León:</strong> Se leyó la carta del obispo de Roma, León I, y según las actas los obispos aclamaron: «Pedro ha hablado por boca de León».</li>
+            <li><strong>Canon 28:</strong> Dio a Constantinopla los mismos privilegios que a Roma. León lo rechazó.</li>
+          </ul>
+          Las iglesias que no aceptaron Calcedonia, hoy llamadas coptas, armenias, siríacas y etíopes, se separaron de la iglesia imperial.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Fourth_ecumenical_council_of_chalcedon_-_1876.jpg/960px-Fourth_ecumenical_council_of_chalcedon_-_1876.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'segundo-concilio-de-nicea',
+    year: '787',
+    title: 'Segundo Concilio de Nicea',
+    tags: ['roma'],
+    shortDesc: 'Convocado por la emperatriz Irene, restaura la veneración de las imágenes frente a los iconoclastas.',
+    fullDesc: `Durante buena parte del siglo VIII, emperadores de Constantinopla prohibieron y destruyeron las imágenes religiosas: la <a href='https://es.wikipedia.org/wiki/Iconoclasia' target='_blank' class='inline-link'>iconoclasia</a>.
+          La emperatriz Irene convocó el <a href='https://es.wikipedia.org/wiki/Segundo_Concilio_de_Nicea' target='_blank' class='inline-link'>Segundo Concilio de Nicea</a>, el último que reconocen juntas las iglesias católica y ortodoxa.<br><br>
+          <strong>📜 Lo que decidió:</strong>
+          <ul class='modal-list'>
+            <li><strong>Las imágenes:</strong> Ordenó poner en las iglesias imágenes de Cristo, de María, de los ángeles y de los santos, y honrarlas con besos, incienso y luces.</li>
+            <li><strong>Veneración y adoración:</strong> Distinguió la «veneración» que se da a las imágenes de la «adoración» que solo corresponde a Dios,
+            y afirmó que el honor que se da a la imagen pasa a quien representa.</li>
+            <li><strong>En occidente:</strong> El Concilio de Fráncfort (794), bajo Carlomagno, rechazó lo decidido en Nicea, a partir de una mala traducción de sus actas.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Seventh_ecumenical_council_%28Icon%29.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'cuarto-concilio-de-letran',
+    year: '1215',
+    title: 'IV Concilio de Letrán',
+    tags: ['roma', 'landmark'],
+    shortDesc: 'Inocencio III reúne el mayor concilio de la Edad Media: define la transubstanciación, impone la confesión anual y ordena perseguir a los herejes.',
+    fullDesc: `Convocado por <a href='https://es.wikipedia.org/wiki/Inocencio_III' target='_blank' class='inline-link'>Inocencio III</a> en la cumbre del poder papal, el <a href='https://es.wikipedia.org/wiki/Cuarto_Concilio_de_Letr%C3%A1n' target='_blank' class='inline-link'>IV Concilio de Letrán</a> reunió a
+          <mark class='dudoso'>más de 400 obispos</mark>, cientos de abades y enviados de los reyes.<br><br>
+          <strong>📜 Algunos de sus 71 cánones:</strong>
+          <ul class='modal-list'>
+            <li><strong>Canon 1:</strong> Usa por primera vez en un concilio la palabra <a href='https://es.wikipedia.org/wiki/Transustanciaci%C3%B3n' target='_blank' class='inline-link'>transubstanciación</a>: el pan y el vino se convierten en el cuerpo y la sangre de Cristo.</li>
+            <li><strong>Canon 3:</strong> Ordena a las autoridades civiles «exterminar» (expulsar) de sus tierras a los herejes señalados por la iglesia, bajo pena de excomunión,
+            y promete a quienes los combatan las mismas indulgencias que a los cruzados.</li>
+            <li><strong>Canon 21:</strong> Todo fiel debe confesarse con su sacerdote al menos una vez al año y comulgar en Pascua.</li>
+            <li><strong>Canon 68:</strong> Judíos y musulmanes deben llevar ropa que los distinga de los cristianos.</li>
+          </ul>
+          También convocó una nueva cruzada, la quinta.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Matthew_Paris_Chronica_Maiora_Fourth_Lateran_Council.jpg/960px-Matthew_Paris_Chronica_Maiora_Fourth_Lateran_Council.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'concilio-de-constanza',
+    year: '1414 – 1418',
+    title: 'Concilio de Constanza',
+    tags: ['roma', 'historia'],
+    shortDesc: 'Termina el Cisma de Occidente, que tenía a tres papas a la vez, y lleva a la hoguera a Jan Hus pese al salvoconducto del emperador.',
+    fullDesc: `Desde 1378 la iglesia occidental tenía dos papas, y desde 1409 tres, cada uno con sus reinos aliados. El emperador Segismundo impulsó el
+          <a href='https://es.wikipedia.org/wiki/Concilio_de_Constanza' target='_blank' class='inline-link'>Concilio de Constanza</a> para resolverlo.<br><br>
+          <strong>📜 Lo que pasó:</strong>
+          <ul class='modal-list'>
+            <li><strong>De tres papas a uno:</strong> Depuso a Juan XXIII y a Benedicto XIII, aceptó la renuncia de Gregorio XII y eligió a Martín V (1417).</li>
+            <li><strong>El concilio sobre el papa:</strong> Su decreto <em>Haec sancta</em> (1415) afirmó que el concilio recibe su autoridad directamente de Cristo y que aun el papa debe obedecerle.</li>
+            <li><strong>Jan Hus:</strong> El reformador de Bohemia, <a href='https://es.wikipedia.org/wiki/Jan_Hus' target='_blank' class='inline-link'>Jan Hus</a>, llegó con un salvoconducto de Segismundo. Fue encarcelado, condenado como hereje
+            y quemado el 6 de julio de 1415. Su compañero Jerónimo de Praga murió igual en 1416.</li>
+            <li><strong>Wycliffe:</strong> Condenó también a Juan Wycliffe, muerto en 1384, y ordenó desenterrar y quemar sus restos, lo que se hizo en 1428.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Vaclav_Brozik_-_Hus.jpg/960px-Vaclav_Brozik_-_Hus.jpg',
+    pendingReview: true,
   },
 
   // ══════════════════════════════════════════════════════
@@ -673,7 +820,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'inquisicion',
     year: '1478 – 1834',
     title: 'La Santa Inquisición',
-    tags: ['historia', 'roma'],
+    tags: ['historia', 'roma', 'landmark'],
     shortDesc: 'La Inquisición fue un tribunal eclesial para investigar herejías y proteger la ortodoxia católica.',
     fullDesc: `La <a href='https://es.wikipedia.org/wiki/Santa_Inquisici%C3%B3n' target='_blank' class='inline-link' data-preview='Conoce más sobre la Inquisición'>Santa Inquisición</a>
           surgió como un tribunal eclesial destinado a investigar sospechas de herejía y preservar la ortodoxia en la Iglesia latina.<br><br>
@@ -851,7 +998,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     title: 'Artículos de los Remonstrantes',
     tags: ['doctrina'],
     shortDesc: 'Los seguidores de Arminio expresan oficialmente sus desacuerdos y fuertes objeciones calvinistas.',
-    fullDesc: `Los seguidores de Jacobo Arminio publicaron los <strong>Artículos de la Remonstrancia</strong>, oponiéndose a la ortodoxia calvinista con cinco puntos clave:<br>
+    fullDesc: `Los seguidores de Jacobo Arminio publicaron los <strong>Artículos de la Remonstrancia</strong>, oponiéndose a la <a href='#calvino' class='inline-link' data-event='calvino'>ortodoxia calvinista</a> con cinco puntos clave:<br>
           <ul class='modal-list'>
             <li><strong>1. Elección Condicional:</strong> Dios elige basándose en Su presciencia de la fe del hombre.</li>
             <li><strong>2. Expiación Ilimitada:</strong> Cristo murió por toda la humanidad (potencialmente).</li>
@@ -883,14 +1030,14 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     title: 'Sínodo de Dort y el TULIP',
     tags: ['doctrina'],
     shortDesc: 'El Sínodo redacta los Cánones de Dort reafirmando las enseñanzas definitivas doctrinales de Juan Calvino.',
-    fullDesc: `En respuesta a la Remonstrancia, el <a href='https://es.wikipedia.org/wiki/S%C3%ADnodo_de_Dort' target='_blank' class='inline-link' data-preview='Respuesta al arminianismo'>Sínodo de Dort</a>
+    fullDesc: `En respuesta a la <a href='#remonstrantes' class='inline-link' data-event='remonstrantes'>Remonstrancia</a>, el <a href='https://es.wikipedia.org/wiki/S%C3%ADnodo_de_Dort' target='_blank' class='inline-link' data-preview='Respuesta al arminianismo'>Sínodo de Dort</a>
           articuló los famosos cinco puntos del calvinismo (acróstico <strong>TULIP</strong>):<br>
           <ul class='modal-list'>
-            <li><strong>T (Total Depravity):</strong> Depravación Total del hombre.</li>
-            <li><strong>U (Unconditional Election):</strong> Elección Incondicional soberana de Dios.</li>
-            <li><strong>L (Limited Atonement):</strong> Expiación Limitada (Particular).</li>
-            <li><strong>I (Irresistible Grace):</strong> Gracia Irresistible en el llamado.</li>
-            <li><strong>P (Perseverance of the Saints):</strong> Perseverancia y preservación de los santos.</li>
+            <li><strong>T (Total Depravity):</strong> Depravación Total del hombre. El pecado afecta la voluntad del hombre y no puede buscar a Dios.</li>
+            <li><strong>U (Unconditional Election):</strong> Elección Incondicional soberana de Dios. Dios elige sin basarse en la fe del elegido.</li>
+            <li><strong>L (Limited Atonement):</strong> Expiación Limitada (Particular). Cristo pagó solo por los elegidos.</li>
+            <li><strong>I (Irresistible Grace):</strong> Gracia Irresistible en el llamado. El Espíritu cambia la voluntad del hombre para aceptar el llamado, y el elegido siempre acepta.</li>
+            <li><strong>P (Perseverance of the Saints):</strong> Perseverancia y preservación de los santos: «salvo siempre salvo».</li>
           </ul>`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Synodedordrecht.jpg',
   },
@@ -926,7 +1073,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     id: 'kehukee',
     year: '1827',
     title: 'Declaración de Kehukee',
-    tags: ['doctrina', 'historia'],
+    tags: ['doctrina', 'historia', 'landmark'],
     shortDesc: 'La Asociación Bautista de Kehukee rechaza las misiones centralizadas, los seminarios y las sociedades bíblicas modernas, dando origen al movimiento Bautista Primitivo.',
     fullDesc: `La <a href='https://en.wikipedia.org/wiki/Kehukee_Primitive_Baptist_Church' target='_blank' class='inline-link' data-preview='Iglesia Primitiva Bautista de Kehukee'>Asociación Bautista de Kehukee</a>
           adoptó en octubre de 1827 la histórica <a href='https://baptiststudiesonline.com/wp-content/uploads/2007/02/the-kehukee-declaration.pdf' target='_blank' class='inline-link' data-preview='Texto original de la Declaración'>Declaración de Kehukee</a>
@@ -935,6 +1082,26 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
           Esta declaración marcó el nacimiento formal del movimiento Bautista Primitivo en América. La iglesia de Kehukee aún existe y puede verse en su
           <a href='https://maps.app.goo.gl/KMk9AFqRkBHoyNoL8' target='_blank' class='inline-link' data-preview='Ver iglesia en Google Maps'>ubicación histórica original en Carolina del Norte</a>.`,
     image: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=fL4X7WbmKHZ4liXyya7lsw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=56.005978&pitch=0&thumbfov=100',
+  },
+
+  {
+    id: 'westcott-y-hort',
+    year: '1853 – 1881',
+    title: 'Westcott y Hort y el Texto Crítico',
+    tags: ['biblia'],
+    shortDesc: 'Dos profesores de Cambridge preparan durante casi treinta años un Nuevo Testamento griego basado sobre todo en los códices Vaticano y Sinaítico.',
+    fullDesc: `En 1853, <a href='https://es.wikipedia.org/wiki/Brooke_Foss_Westcott' target='_blank' class='inline-link'>Brooke Foss Westcott</a> y <a href='https://es.wikipedia.org/wiki/Fenton_John_Anthony_Hort' target='_blank' class='inline-link'>Fenton John Anthony Hort</a>, profesores de Cambridge, comenzaron a preparar un nuevo texto griego del Nuevo Testamento.
+          Lo publicaron en 1881 con el título <em>The New Testament in the Original Greek</em> («El Nuevo Testamento en el griego original»).<br><br>
+          <strong>📜 Lo que cambió:</strong>
+          <ul class='modal-list'>
+            <li><strong>Otros manuscritos:</strong> Dieron preferencia a dos códices del siglo IV, el <a href='https://es.wikipedia.org/wiki/Codex_Vaticanus' target='_blank' class='inline-link'>Vaticano</a> y el Sinaítico, que consideraban los más cercanos al original,
+            por encima de la gran mayoría de los manuscritos griegos, que son de la misma familia que los del <a href='#erasmo' class='inline-link' data-event='erasmo'>Textus Receptus</a>.</li>
+            <li><strong>Una nueva versión inglesa:</strong> Los dos formaban parte del comité de la <em>Revised Version</em> (1881), la revisión inglesa de la <a href='#king-james' class='inline-link' data-event='king-james'>King James</a>, que en el Nuevo Testamento siguió en buena parte su texto.</li>
+            <li><strong>No fueron los primeros:</strong> Antes que ellos, Lachmann, Tischendorf y Tregelles ya habían publicado textos griegos de este tipo; el de Westcott y Hort fue el que se impuso.</li>
+            <li><strong>La base del Texto Crítico:</strong> Las ediciones griegas en que se basan hoy la mayoría de las Biblias modernas (<a href='#ubs-nestle-aland-26' class='inline-link' data-event='ubs-nestle-aland-26'>UBS y Nestle-Aland</a>) siguen muy de cerca su texto.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Brooke_Foss_Westcott_by_WE_Miller.jpg',
+    pendingReview: true,
   },
 
   {
@@ -982,8 +1149,49 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     tags: ['biblia'],
     shortDesc: 'Revisión histórica muy apreciada, criticada modernamente por permitir lecturas del Texto Crítico.',
     fullDesc: `Publicada por la Sociedad Bíblica Americana y la Británica, la <strong>RV 1909</strong> actualizó la ortografía. Sin embargo, incorporó sutilmente algunas influencias
-          del <strong>Texto Crítico</strong> en su NT, apartándose del Textus Receptus puro. Esta mezcla motivó los futuros esfuerzos de purificación independiente.`,
+          del <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'><strong>Texto Crítico</strong></a> en su NT, apartándose del Textus Receptus puro. Esta mezcla motivó los futuros esfuerzos de purificación independiente.`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Biblia_Reina-Valera_1909.jpg',
+  },
+
+  {
+    id: 'primera-guerra-mundial',
+    year: '1914 – 1918',
+    title: 'Primera Guerra Mundial',
+    tags: ['historia'],
+    shortDesc: 'Las potencias de Europa y sus imperios se enfrentan en la guerra más mortífera vista hasta entonces. Al terminar caen cuatro imperios, y Jerusalén pasa de manos otomanas a británicas.',
+    fullDesc: `La <a href='https://es.wikipedia.org/wiki/Primera_Guerra_Mundial' target='_blank' class='inline-link'>Primera Guerra Mundial</a> empezó en julio de 1914, un mes después de que el archiduque Francisco Fernando de Austria fuera asesinado en Sarajevo, y terminó con el armisticio del 11 de noviembre de 1918.
+          De un lado estaban los Aliados (Francia, el Reino Unido, Rusia y, desde 1917, Estados Unidos); del otro, los Imperios Centrales (Alemania, Austria-Hungría, el Imperio otomano y Bulgaria).<br><br>
+          <strong>📜 Lo que dejó:</strong>
+          <ul class='modal-list'>
+            <li><strong>Los muertos:</strong> Murieron <mark class='dudoso'>unos 9 millones de soldados</mark> y millones de civiles.</li>
+            <li><strong>Caen cuatro imperios:</strong> El alemán, el austrohúngaro, el ruso y el otomano.</li>
+            <li><strong>Jerusalén:</strong> En noviembre de 1917, la <a href='https://es.wikipedia.org/wiki/Declaraci%C3%B3n_Balfour' target='_blank' class='inline-link'>Declaración Balfour</a> anunció el apoyo británico a «un hogar nacional para el pueblo judío» en Palestina.
+            En diciembre, las tropas británicas del general Allenby tomaron Jerusalén, después de cuatro siglos de dominio otomano.</li>
+            <li><strong>La paz:</strong> El <a href='https://es.wikipedia.org/wiki/Tratado_de_Versalles_%281919%29' target='_blank' class='inline-link'>Tratado de Versalles</a> (1919) impuso duras condiciones a Alemania; muchos historiadores lo cuentan entre las causas de la <a href='#segunda-guerra-mundial' class='inline-link' data-event='segunda-guerra-mundial'>Segunda Guerra Mundial</a>.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Cheshire_Regiment_trench_Somme_1916.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'segunda-guerra-mundial',
+    year: '1939 – 1945',
+    title: 'Segunda Guerra Mundial',
+    tags: ['historia'],
+    shortDesc: 'La guerra más mortífera de la historia enfrenta a Alemania, Italia y Japón con los Aliados. En ella, el régimen nazi asesina a unos seis millones de judíos.',
+    fullDesc: `La <a href='https://es.wikipedia.org/wiki/Segunda_Guerra_Mundial' target='_blank' class='inline-link'>Segunda Guerra Mundial</a> empezó el 1 de septiembre de 1939, cuando Alemania invadió Polonia, y terminó en 1945: Alemania se rindió en mayo, y Japón en septiembre, después de las bombas atómicas sobre Hiroshima y Nagasaki.
+          Sus causas se remontan en parte a la <a href='#primera-guerra-mundial' class='inline-link' data-event='primera-guerra-mundial'>Primera Guerra Mundial</a> y a la paz que la cerró.<br><br>
+          <strong>📜 Lo que marcó:</strong>
+          <ul class='modal-list'>
+            <li><strong>Los muertos:</strong> Se calcula que murieron <mark class='dudoso'>entre 70 y 85 millones de personas</mark>, la mayoría civiles.</li>
+            <li><strong>El Holocausto:</strong> El régimen nazi asesinó a unos seis millones de judíos, además de millones de otras víctimas (<a href='https://es.wikipedia.org/wiki/Holocausto' target='_blank' class='inline-link'>Holocausto</a>).</li>
+            <li><strong>Roma y el régimen nazi:</strong> En 1933, la Santa Sede firmó un concordato con el gobierno de Hitler, el <a href='https://es.wikipedia.org/wiki/Reichskonkordat' target='_blank' class='inline-link'>Reichskonkordat</a>.</li>
+            <li><strong>La Iglesia Confesante:</strong> En 1934, en la <a href='https://es.wikipedia.org/wiki/Declaraci%C3%B3n_de_Barmen' target='_blank' class='inline-link'>Declaración de Barmen</a>, representantes de iglesias protestantes alemanas rechazaron que la iglesia se sometiera a la ideología del régimen.
+            Uno de los pastores de la Iglesia Confesante, <a href='https://es.wikipedia.org/wiki/Dietrich_Bonhoeffer' target='_blank' class='inline-link'>Dietrich Bonhoeffer</a>, fue ejecutado en abril de 1945.</li>
+            <li><strong>Después:</strong> Se fundó la ONU (1945), y en 1948 se proclamó el Estado de Israel.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Into_the_Jaws_of_Death_23-0455M_edit.jpg/1280px-Into_the_Jaws_of_Death_23-0455M_edit.jpg',
+    pendingReview: true,
   },
 
   {
@@ -1022,10 +1230,29 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
           Gozando de una impresionante aceptación inmediata, la <strong>Reina-Valera 1960</strong> se estandarizó en casi todas las denominaciones evangélicas, siendo
           memorizada por innumerables generaciones. Sin embargo, en términos de pureza manuscrita, el comité revisor tomó una decisión trascendental: no se limitaron
           exclusivamente al <strong>Textus Receptus</strong>. En su lugar, decidieron incorporar en el Nuevo Testamento diversas lecturas provenientes de los
-          <strong>Textos Críticos</strong> (manuscritos alejandrinos de corte minoritario). Esta separación del fundamento original estricto de Casiodoro de Reina y Valera
+          <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'><strong>Textos Críticos</strong></a> (manuscritos alejandrinos de corte minoritario). Esta separación del fundamento original estricto de Casiodoro de Reina y Valera
           se convirtió en la razón principal por la que, décadas después, los firmes defensores del Texto Recibido iniciarían grandes proyectos de revisión
           para restaurar fielmente la línea tradicional.`,
     image: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Biblia_Reina_Valera_1960.jpg',
+  },
+
+  {
+    id: 'ubs-nestle-aland-26',
+    year: '1966 – 1979',
+    title: 'UBS y Nestle-Aland 26: un texto común',
+    tags: ['biblia'],
+    shortDesc: 'Las dos ediciones del Nuevo Testamento griego más usadas acuerdan un mismo texto, todavía muy cercano al de Westcott y Hort.',
+    fullDesc: `En 1966, las <a href='https://es.wikipedia.org/wiki/Sociedades_B%C3%ADblicas_Unidas' target='_blank' class='inline-link'>Sociedades Bíblicas Unidas</a> (UBS, por sus siglas en inglés) publicaron un Nuevo Testamento griego pensado para los traductores de la Biblia.
+          Desde 1898 existía además la edición de <a href='https://es.wikipedia.org/wiki/Eberhard_Nestle' target='_blank' class='inline-link'>Eberhard Nestle</a>, continuada después por <a href='https://es.wikipedia.org/wiki/Kurt_Aland' target='_blank' class='inline-link'>Kurt Aland</a>: el <a href='https://es.wikipedia.org/wiki/Novum_Testamentum_Graece' target='_blank' class='inline-link'><em>Nestle-Aland</em></a>, la más usada por los estudiosos.<br><br>
+          <strong>📜 Lo que pasó:</strong>
+          <ul class='modal-list'>
+            <li><strong>Un solo texto:</strong> Con la tercera edición de la UBS (1975) y la 26.ª del Nestle-Aland (1979), las dos quedaron con el mismo texto griego; solo cambian sus notas.</li>
+            <li><strong>Cómo se eligió:</strong> Los editores escogieron, pasaje por pasaje, la lectura que consideraban más probable entre todos los manuscritos, dando mucho peso a los más antiguos.</li>
+            <li><strong>Cerca de 1881:</strong> El resultado sigue muy cerca del texto de <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'>Westcott y Hort</a>.</li>
+            <li><strong>Las Biblias modernas:</strong> Es el texto griego en que se basa la mayoría de las traducciones modernas del Nuevo Testamento.</li>
+          </ul>`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/GNT-Committee.jpg',
+    pendingReview: true,
   },
 
   {
@@ -1057,6 +1284,25 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   {
+    id: 'nestle-aland-28',
+    year: '2013',
+    title: 'Nestle-Aland 28',
+    tags: ['biblia'],
+    shortDesc: 'La nueva edición cambia el texto de las cartas de Santiago, Pedro, Juan y Judas con una forma nueva de comparar los manuscritos.',
+    fullDesc: `En 2013 se publicó la 28.ª edición del <a href='https://es.wikipedia.org/wiki/Novum_Testamentum_Graece' target='_blank' class='inline-link'><em>Nestle-Aland</em></a>; en 2014, la UBS publicó su 5.ª edición con el mismo texto.<br><br>
+          <strong>📜 Lo nuevo:</strong>
+          <ul class='modal-list'>
+            <li><strong>Las cartas generales:</strong> En Santiago, 1 y 2 Pedro, las tres cartas de Juan y Judas (las llamadas cartas «católicas»), cambió el texto en <mark class='dudoso'>unas tres decenas de lugares</mark>,
+            siguiendo una nueva edición mayor preparada en Münster, Alemania.</li>
+            <li><strong>Una forma nueva de comparar:</strong> Para decidir, los editores midieron con ayuda de computadoras cuánto coincide cada manuscrito con los demás, y así reconstruyeron qué lectura dio origen a las otras.</li>
+            <li><strong>Sin el esquema de 1881:</strong> La idea de seguir el parentesco entre los manuscritos sigue viva, pero ya no se ordena en las grandes familias de texto que propusieron <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'>Westcott y Hort</a>.</li>
+          </ul>
+          El resto del Nuevo Testamento conserva el texto de la <a href='#ubs-nestle-aland-26' class='inline-link' data-event='ubs-nestle-aland-26'>edición 26</a>.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Vatican%2C_Apostolic_Library_Ms_Papyrus_Bodmer_VIII_2_%28Papyrus_72%29_Ending_of_1_Peter_-_Beginning_of_2_Peter.jpg/1280px-Vatican%2C_Apostolic_Library_Ms_Papyrus_Bodmer_VIII_2_%28Papyrus_72%29_Ending_of_1_Peter_-_Beginning_of_2_Peter.jpg',
+    pendingReview: true,
+  },
+
+  {
     id: 'rv-sbt',
     year: '2020+',
     title: 'Reina Valera SBT',
@@ -1064,9 +1310,49 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     shortDesc: 'La Sociedad Bíblica Trinitaria somete la antigua RV 1909 a una revisión magistral amparada en los puros textos originales.',
     fullDesc: `El proyecto histórico liderado por la <a href='https://sociedadbiblicatrinitaria.org/' target='_blank' class='inline-link' data-preview='Página Oficial SBT Hispana'>Sociedad Bíblica Trinitaria (SBT)</a>
           persigue entregar a la esfera hispanohablante una depurada Reina-Valera de altísima calidad tomando como texto primario estructural a la venerable
-          <strong>Reina-Valera 1909</strong>. Enmendando todas las infiltraciones del Texto Crítico que dicha versión albergó por un siglo, este esfuerzo institucional
+          <strong>Reina-Valera 1909</strong>. Enmendando todas las infiltraciones del <a href='#westcott-y-hort' class='inline-link' data-event='westcott-y-hort'>Texto Crítico</a> que dicha versión albergó por un siglo, este esfuerzo institucional
           asegura depender de forma leal y exclusiva del <strong>Textus Receptus</strong> histórico y del Texto Masorético tradicional hebreo; coronando un inmenso frente
           erudito con el fin de preservar intacta la equivalencia formal de las palabras originales.`,
     image: 'https://sociedadbiblicatrinitaria.org/wp-content/uploads/2025/11/Store01-400x400.jpg',
+  },
+
+  {
+    id: 'concilio-vaticano-i',
+    year: '1869 – 1870',
+    title: 'Concilio Vaticano I',
+    tags: ['roma'],
+    shortDesc: 'Pío IX hace definir la infalibilidad del papa cuando habla ex cathedra y su jurisdicción sobre toda la iglesia.',
+    fullDesc: `Convocado por <a href='https://es.wikipedia.org/wiki/P%C3%ADo_IX' target='_blank' class='inline-link'>Pío IX</a>, el <a href='https://es.wikipedia.org/wiki/Concilio_Vaticano_I' target='_blank' class='inline-link'>Concilio Vaticano I</a> fue el primero desde Trento.<br><br>
+          <strong>📜 Lo que decidió:</strong>
+          <ul class='modal-list'>
+            <li><strong><em>Pastor aeternus</em> (18 de julio de 1870):</strong> Definió que el papa, cuando habla <em>ex cathedra</em> sobre fe o moral, es
+            <a href='https://es.wikipedia.org/wiki/Infalibilidad_pontificia' target='_blank' class='inline-link'>infalible</a>, y que tiene jurisdicción plena y directa sobre toda la iglesia. Antes de la votación final,
+            <mark class='dudoso'>decenas de obispos</mark> contrarios salieron de Roma para no votar en contra.</li>
+            <li><strong><em>Dei Filius</em>:</strong> Sobre la fe y la razón.</li>
+            <li><strong>Interrumpido:</strong> En septiembre de 1870 las tropas italianas tomaron Roma y el concilio se suspendió sin terminar.</li>
+          </ul>
+          Quienes rechazaron la infalibilidad formaron la Iglesia Vieja Católica.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/First_Vatican_Council%2C_1869-1870%3B_Pope_Pius_IX_leading_his_Wellcome_V0040850.jpg/960px-First_Vatican_Council%2C_1869-1870%3B_Pope_Pius_IX_leading_his_Wellcome_V0040850.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'concilio-vaticano-ii',
+    year: '1962 – 1965',
+    title: 'Concilio Vaticano II',
+    tags: ['roma'],
+    shortDesc: 'Convocado por Juan XXIII y cerrado por Pablo VI: misa en las lenguas de cada pueblo, apertura ecuménica y libertad religiosa, sin definir dogmas nuevos.',
+    fullDesc: `Convocado por Juan XXIII y clausurado por Pablo VI, el <a href='https://es.wikipedia.org/wiki/Concilio_Vaticano_II' target='_blank' class='inline-link'>Concilio Vaticano II</a> reunió a
+          <mark class='dudoso'>unos 2,500 obispos</mark> de todo el mundo y aprobó 16 documentos.<br><br>
+          <strong>📜 Algunos de sus cambios:</strong>
+          <ul class='modal-list'>
+            <li><strong>La liturgia:</strong> Permitió celebrar la misa en las lenguas de cada pueblo y no solo en latín (<em>Sacrosanctum Concilium</em>).</li>
+            <li><strong>Escritura y tradición:</strong> <em>Dei Verbum</em> las presenta como «un solo depósito sagrado de la palabra de Dios», cuya interpretación auténtica corresponde al magisterio de la iglesia.</li>
+            <li><strong>Los «hermanos separados»:</strong> Llamó así a protestantes y ortodoxos, y abrió el diálogo ecuménico (<em>Unitatis redintegratio</em>).</li>
+            <li><strong>Libertad religiosa:</strong> <em>Dignitatis humanae</em> reconoció el derecho civil a la libertad religiosa.</li>
+          </ul>
+          No definió dogmas nuevos: mantuvo los de Trento y del Vaticano I.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/6/68/Second_Vatican_Council_by_Lothar_Wolleh_004.jpg',
+    pendingReview: true,
   },
 ];

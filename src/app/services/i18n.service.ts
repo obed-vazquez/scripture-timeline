@@ -66,6 +66,7 @@ export class I18nService {
   year(label: string): string {
     if (this.lang() === 'es') return label;
     return label
+      .replace(/^hasta\s+/i, 'until ')
       .replace(/~\s*/g, 'c. ')
       .replace(/\s*a\.\s?C\./gi, ' BC')
       .replace(/\s*d\.\s?C\./gi, ' AD')

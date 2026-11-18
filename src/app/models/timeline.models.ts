@@ -15,6 +15,8 @@ export interface TimelineItemData {
   /** Explicit container (another item id). Without it, the era is deduced from the year. */
   parent?: string;
   year: string;
+  /** Year text shown instead of `year` (which still places the item). */
+  yearText?: string;
   title: string;
   color?: string;
   tags?: string[];

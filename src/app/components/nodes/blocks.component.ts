@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { SceneNode } from '../../engine/scene';
 import {
-  ChronicleBlock, ChronicleEntry, CompareBlock, CompareMark, CompareRow, GroupBlock, LineageBlock, LineageNode, VideoBlock,
+  ChronicleBlock, ChronicleEntry, CompareBlock, CompareMark, CompareRow, GroupBlock, LineageBlock, LineageNode, RelationNode,
+  RelationsBlock, VideoBlock,
 } from '../../models/custom.models';
 import { I18nService } from '../../services/i18n.service';
 import { NavigationService } from '../../services/navigation.service';
 import { ThemeService } from '../../services/theme.service';
 import { MediaService } from '../../services/media.service';
+import { TimelineDataService } from '../../services/timeline-data.service';
 import { themed } from '../../utils/color.util';
 
 /**
@@ -161,7 +163,9 @@ export class LineageBlockComponent {
   open(ev: Event, p: LineageNode): void {
     ev.stopPropagation();
     if (this.isHidden(p)) return;
-    this.nav.goTo(p.detail ? `${this.node().id}::${p.id}` : (p.event ?? this.node().id));
+    if (p.detail) this.nav.goTo(`${this.node().id}::${p.id}`);
+    else if (p.event) this.nav.jumpTo(p.event);
+    else this.nav.goTo(this.node().id);
   }
 }
 
@@ -195,7 +199,7 @@ export class PointDetailComponent {
 
   go(ev: Event): void {
     ev.stopPropagation();
-    if (this.point().event) this.nav.goTo(this.point().event!);
+    if (this.point().event) this.nav.jumpTo(this.point().event!);
   }
 }
 
@@ -360,6 +364,164 @@ export class ChronicleBlockComponent {
   open(ev: Event, e: ChronicleEntry): void {
     if (!e.event) return;
     ev.stopPropagation();
-    this.nav.goTo(e.event);
+    this.nav.jumpTo(e.event);
+  }
+}
+
+/** Geometry of a relations map, in chart pixels (the chart is 1400 × 1100). Mirrors canvas.css. */
+const REL = { nodeW: 250, nodeH: 190, gap: 12, pairsTop: 668, rowsTop: 722, rowH: 74, rowMid: 14, leftX: 548, rightX: 852 };
+/** Colour of an answer that condemns (the category of the Roman Catholic Church). */
+const AGAINST = '#d65d72';
+
+/**
+ * A map of how a few events relate: cards joined by labelled arrows (one led to the other, an
+ * answer that condemns, a coincidence without descent), and optionally two facing lists joined
+ * item by item. Every card and list title opens its event.
+ */
+@Component({
+  selector: 'tl-relations-block',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @let b = block();
+    <figure class="relations" [style.--c]="color()" [style.--against]="against()">
+      <figcaption class="lin-head">
+        <h3>{{ t('title', b.title) }}</h3>
+        @if (b.caption) { <p>{{ t('caption', b.caption) }}</p> }
+      </figcaption>
+      <svg class="rel-svg" viewBox="0 0 1400 1100" aria-hidden="true">
+        @for (e of edges(); track e.id) {
+          <path [attr.d]="e.d" [class]="'rel-edge k-' + e.kind" [style.stroke]="e.color" />
+          @if (e.head) { <path [attr.d]="e.head" class="rel-arrow" [style.fill]="e.color" /> }
+        }
+        @for (l of links(); track l.id) {
+          <path [attr.d]="l.d" class="rel-link" />
+          <circle [attr.cx]="R.leftX" [attr.cy]="l.y0" r="6" class="rel-link-end" />
+          <circle [attr.cx]="R.rightX" [attr.cy]="l.y1" r="6" class="rel-link-end" />
+        }
+      </svg>
+      @for (e of edges(); track e.id) {
+        @if (e.label) {
+          <span [class]="'rel-elabel k-' + e.kind" [style.left.px]="e.lx" [style.top.px]="e.ly" [style.--ec]="e.color">{{ e.label }}</span>
+        }
+      }
+      @for (n of b.nodes; track n.id) {
+        <button type="button" class="rel-node" [class.is-special]="n.special" (click)="open($event, n.event)"
+                [style.left.px]="n.x - R.nodeW / 2" [style.top.px]="n.y" [style.width.px]="R.nodeW" [style.min-height.px]="R.nodeH"
+                [style.--nc]="nodeColor(n)">
+          <span class="rel-year">{{ i18n.year(n.year) }}</span>
+          <span class="rel-label">{{ t(n.id + '.label', n.label) }}</span>
+          @for (p of n.points; track $index; let i = $index) { <span class="rel-pt">{{ t(n.id + '.p' + i, p) }}</span> }
+          @if (n.note) { <span class="rel-note">{{ t(n.id + '.note', n.note) }}</span> }
+        </button>
+      }
+      @if (b.legend; as lg) {
+        <ul class="rel-legend" [style.left.px]="lg.x" [style.top.px]="lg.y">
+          @for (it of lg.items; track it.kind) {
+            <li>
+              <svg viewBox="0 0 54 10" aria-hidden="true"><path d="M2,5 L46,5" [class]="'rel-edge k-' + it.kind" [style.stroke]="legendColor(it.kind)" /></svg>
+              {{ t('legend.' + it.kind, it.label) }}
+            </li>
+          }
+        </ul>
+      }
+      @if (b.pairs; as P) {
+        <button type="button" class="rel-ph is-left" [style.top.px]="R.pairsTop" (click)="open($event, P.left.event)">{{ t('pairs.left', P.left.title) }}</button>
+        <button type="button" class="rel-ph is-right" [style.top.px]="R.pairsTop" (click)="open($event, P.right.event)">{{ t('pairs.right', P.right.title) }}</button>
+        @if (P.note) { <p class="rel-pnote" [style.top.px]="R.pairsTop">{{ t('pairs.note', P.note) }}</p> }
+        @for (it of P.leftItems; track it.id; let i = $index) {
+          <div class="rel-item is-left" [style.top.px]="R.rowsTop + i * R.rowH">
+            <b>{{ t(it.id + '.label', it.label) }}</b><span>{{ t(it.id + '.sub', it.sub) }}</span>
+          </div>
+        }
+        @for (it of P.rightItems; track it.id; let i = $index) {
+          <div class="rel-item is-right" [style.top.px]="R.rowsTop + i * R.rowH">
+            <b>{{ t(it.id + '.label', it.label) }}</b><span>{{ t(it.id + '.sub', it.sub) }}</span>
+          </div>
+        }
+      }
+    </figure>
+  `,
+})
+export class RelationsBlockComponent {
+  readonly node = input.required<SceneNode>();
+  readonly i18n = inject(I18nService);
+  private nav = inject(NavigationService);
+  private theme = inject(ThemeService);
+  private data = inject(TimelineDataService);
+  readonly R = REL;
+
+  readonly block = computed(() => this.node().block as RelationsBlock);
+  readonly color = computed(() => themed(this.node().item!.color, this.theme.dark()));
+  readonly against = computed(() => themed(AGAINST, this.theme.dark()));
+
+  t(key: string, source: string): string {
+    return this.i18n.text(`custom.${this.block().id}.${key}`, source);
+  }
+
+  nodeColor(n: RelationNode): string {
+    return themed(n.color ?? this.data.get(n.event)?.color ?? this.node().item!.color, this.theme.dark());
+  }
+
+  legendColor(kind: string): string {
+    return kind === 'against' ? this.against() : kind === 'coincides' ? 'var(--ink-3)' : this.color();
+  }
+
+  /** Arrows from card edge to card edge, with their arrowhead and the place of their label. */
+  readonly edges = computed(() => {
+    const b = this.block();
+    const byId = new Map(b.nodes.map((n) => [n.id, n]));
+    const centre = (n: RelationNode) => ({ x: n.x, y: n.y + REL.nodeH / 2 });
+    // where the line from a card's centre towards (tx, ty) leaves the card (plus a small gap)
+    const exit = (n: RelationNode, tx: number, ty: number) => {
+      const c = centre(n);
+      const dx = tx - c.x;
+      const dy = ty - c.y;
+      const s = Math.min((REL.nodeW / 2 + REL.gap) / Math.abs(dx || 1e-6), (REL.nodeH / 2 + REL.gap) / Math.abs(dy || 1e-6));
+      return { x: c.x + dx * s, y: c.y + dy * s };
+    };
+    return b.edges.map((e) => {
+      const p = byId.get(e.from)!;
+      const q = byId.get(e.to)!;
+      const kind = e.kind ?? 'leads';
+      const a = exit(p, centre(q).x, centre(q).y);
+      const z = exit(q, centre(p).x, centre(p).y);
+      const len = Math.hypot(z.x - a.x, z.y - a.y) || 1;
+      const ux = (z.x - a.x) / len;
+      const uy = (z.y - a.y) / len;
+      // the line stops at the base of the arrowhead
+      const tip = z;
+      const base = { x: tip.x - ux * 16, y: tip.y - uy * 16 };
+      const head = kind === 'coincides' ? '' :
+        `M${tip.x},${tip.y} L${base.x - uy * 8},${base.y + ux * 8} L${base.x + uy * 8},${base.y - ux * 8} Z`;
+      const end = kind === 'coincides' ? tip : base;
+      const color = kind === 'against' ? this.against() : kind === 'coincides' ? 'var(--ink-3)' : this.nodeColor(q);
+      return {
+        id: e.id, kind, color, head,
+        d: `M${a.x},${a.y} L${end.x},${end.y}`,
+        label: e.label ? this.t(e.id + '.label', e.label) : '',
+        lx: (a.x + z.x) / 2,
+        ly: (a.y + z.y) / 2,
+      };
+    });
+  });
+
+  /** Lines between the two facing lists. */
+  readonly links = computed(() => {
+    const P = this.block().pairs;
+    if (!P) return [];
+    const row = (i: number) => REL.rowsTop + i * REL.rowH + REL.rowMid;
+    return P.links.map(([l, r]) => {
+      const y0 = row(P.leftItems.findIndex((it) => it.id === l));
+      const y1 = row(P.rightItems.findIndex((it) => it.id === r));
+      const mx = (REL.leftX + REL.rightX) / 2;
+      return { id: `${l}-${r}`, y0, y1, d: `M${REL.leftX},${y0} C${mx},${y0} ${mx},${y1} ${REL.rightX},${y1}` };
+    });
+  });
+
+  open(ev: Event, event?: string): void {
+    if (!event) return;
+    ev.stopPropagation();
+    this.nav.jumpTo(event);
   }
 }

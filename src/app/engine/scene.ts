@@ -214,6 +214,7 @@ export const BLOCK_SIZE: Record<Exclude<BlockDef['type'], 'group'>, { w: number;
   lineage: { w: 1400, h: 820 },
   compare: { w: 1400, h: 900 },
   chronicle: { w: 1520, h: 700 },
+  relations: { w: 1400, h: 1100 },
 };
 
 /** Authored size of a lineage point's detail, and where it sits relative to the point. */
@@ -537,6 +538,34 @@ export function buildScene(input: SceneInput): Scene {
       });
       gy += r.h + V.guideGap;
     });
+  }
+
+  // The eras sit end to end on one axis, so a range that runs past its era continues over the
+  // next ones up to its real year (each era has its own scale: the year is placed with the era
+  // it falls in). Only what runs past the last era, or a container's sub-timeline, stays cut.
+  const rootFrames = frames.filter((f) => f.isRoot);
+  const rootOf = (t: number) => rootFrames.find((g) => t >= g.t0 && t <= g.t1);
+  for (const f of rootFrames) {
+    for (const mk of f.markers) {
+      const gEnd = mk.clippedEnd ? rootOf(mk.item.end) : undefined;
+      if (gEnd) {
+        mk.m1 = timeToMain(gEnd, mk.item.end);
+        mk.clippedEnd = false;
+      }
+      const gStart = mk.clippedStart ? rootOf(mk.item.start) : undefined;
+      if (gStart) {
+        mk.m0 = timeToMain(gStart, mk.item.start);
+        mk.clippedStart = false;
+      }
+      mk.isRange = mk.item.isRange && mk.m1 - mk.m0 > 1e-9;
+    }
+  }
+  // Lanes along the whole axis, so a bar coming from the previous era never runs over this one's.
+  const lanePad = Math.min(...rootFrames.map((f) => (f.mainHi - f.mainLo) * 0.006));
+  for (const side of [-1, 1] as const) {
+    const mks = rootFrames.flatMap((f) => f.markers.filter((m) => m.side === side));
+    const lanes = assignLanes(mks.map((m) => ({ s: m.m0, e: m.isRange ? m.m1 : m.m0 })), lanePad);
+    mks.forEach((m, i) => (m.lane = lanes[i]));
   }
 
   const titleAuth = orient === 'h' ? TITLE_AUTH_H : { w: 1000, h: (V.titleH - 80) };

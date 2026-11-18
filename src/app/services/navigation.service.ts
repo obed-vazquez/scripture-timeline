@@ -20,6 +20,9 @@ export interface TourStep {
   show?: string[];
 }
 
+/** The scene node `id` is `root` or lies inside it ("root::leer", "root::block"…). */
+const within = (id: string, root: string) => id === root || id.startsWith(`${root}::`);
+
 /** What the canvas exposes to the rest of the app. Implemented by the stage component. */
 export interface StageEngine {
   flyTo(nodeId: string, opts?: { instant?: boolean }): Promise<void>;
@@ -183,6 +186,32 @@ export class NavigationService {
     return out;
   }
 
+  // ── links inside the content ──────────────────────────────
+
+  /**
+   * Where the visitor was before following a link inside the content (a chart, a text), so the
+   * bottom bar can offer the way back. Cleared when the visitor leaves the event the link led to.
+   */
+  readonly returnTo = signal<{ origin: string; target: string; arrived: boolean } | null>(null);
+
+  /** Follows a link inside the content to another event, remembering the way back. */
+  jumpTo(target: string): void {
+    const origin = this.current()?.id;
+    if (origin && !within(origin, target)) this.returnTo.set({ origin, target, arrived: false });
+    this.goTo(target);
+  }
+
+  goBack(): void {
+    const back = this.returnTo();
+    if (!back) return;
+    this.returnTo.set(null);
+    this.goTo(back.origin);
+  }
+
+  clearReturn(): void {
+    this.returnTo.set(null);
+  }
+
   // ── guides ────────────────────────────────────────────────
 
   openGuideItem(guideId: string, itemId: string): void {
@@ -207,6 +236,13 @@ export class NavigationService {
 
   setPath(path: PathEntry[]): void {
     this.path.set(path);
+    // the way back after a link: offered while the visitor stays at the event the link led to
+    const back = this.returnTo();
+    if (back) {
+      const inside = within(path[path.length - 1]?.id ?? '', back.target);
+      if (inside && !back.arrived) this.returnTo.set({ ...back, arrived: true });
+      else if (!inside && back.arrived) this.returnTo.set(null);
+    }
     // arriving at a guide (or at the menu of guides) closes the guide in progress
     const last = path[path.length - 1];
     if (last && (last.kind === 'guide' || last.kind === 'hub') && this.activeGuide()) {

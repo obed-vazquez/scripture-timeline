@@ -63,6 +63,25 @@ function sources(): Map<string, string> {
           put(`custom.${b.id}.${r.id}.note`, r.note);
         }
       }
+      if (b.type === 'relations') {
+        put(`custom.${b.id}.caption`, b.caption);
+        for (const n of b.nodes) {
+          put(`custom.${b.id}.${n.id}.label`, n.label);
+          n.points.forEach((p, i) => put(`custom.${b.id}.${n.id}.p${i}`, p));
+          put(`custom.${b.id}.${n.id}.note`, n.note);
+        }
+        for (const e of b.edges) put(`custom.${b.id}.${e.id}.label`, e.label);
+        for (const it of b.legend?.items ?? []) put(`custom.${b.id}.legend.${it.kind}`, it.label);
+        if (b.pairs) {
+          put(`custom.${b.id}.pairs.left`, b.pairs.left.title);
+          put(`custom.${b.id}.pairs.right`, b.pairs.right.title);
+          put(`custom.${b.id}.pairs.note`, b.pairs.note);
+          for (const it of [...b.pairs.leftItems, ...b.pairs.rightItems]) {
+            put(`custom.${b.id}.${it.id}.label`, it.label);
+            put(`custom.${b.id}.${it.id}.sub`, it.sub);
+          }
+        }
+      }
       if (b.type === 'lineage') {
         put(`custom.${b.id}.caption`, b.caption);
         for (const n of b.nodes) {

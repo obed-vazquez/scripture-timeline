@@ -387,6 +387,46 @@
 .pg-count { min-width: 64px; text-align: center; font: 500 12.5px/1 var(--f-ui); color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .pg-count i { margin: 0 2px; font-style: normal; opacity: .5; }
 
+/* ── Way back after a link inside the content ─────────────── */
+.back-chip {
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  z-index: 21;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 46px;
+  padding: 0 6px 0 6px;
+  max-width: calc(100vw - 32px);
+  border-radius: var(--radius-pill);
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+          backdrop-filter: blur(16px) saturate(1.25);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .14);
+  color: var(--ink);
+  animation: chip-in .45s var(--ease-out) both;
+}
+.back-chip.is-stacked { bottom: 144px; }
+.bk-go {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 16px 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  transition: filter .2s;
+}
+.bk-go:hover { filter: brightness(1.08); }
+.bk-go .icon { width: 16px; height: 16px; }
+.bk-k { font: 600 12.5px/1 var(--f-ui); white-space: nowrap; }
+.bk-name { font: 600 17px/1 var(--f-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
 /* ── Guide chip (A57) ────────────────────────────────────── */
 .guide-chip {
   position: fixed;
@@ -474,5 +514,7 @@
   .pg { width: 42px; height: 42px; }
   .pg-count { min-width: 48px; }
   .guide-chip { bottom: 112px; height: 40px; padding-left: 14px; gap: 8px; }
+  .back-chip { bottom: 112px; }
+  .back-chip.is-stacked { bottom: 160px; }
   .gc-k { display: none; }
 }
