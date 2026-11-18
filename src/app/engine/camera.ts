@@ -46,6 +46,8 @@ export class Camera {
   private lastWheelKind: 'zoom' | 'pan' = 'zoom';
   private flying = false;
   private wheelLast = 0;
+  /** When the last pinch frame happened (performance.now()). */
+  private pinchAt = -Infinity;
 
   constructor(private el: HTMLElement) {
     this.sel = select(el);
@@ -69,11 +71,19 @@ export class Camera {
         this.samples = [];
       })
       .on('zoom', (ev) => {
+        const prevK = this.t.k;
         this.t = ev.transform;
         const se = ev.sourceEvent as Event | null;
         if (se && (se.type === 'mousemove' || se.type === 'touchmove' || se.type === 'pointermove')) {
-          this.samples.push({ x: this.t.x, y: this.t.y, time: performance.now() });
-          if (this.samples.length > 8) this.samples.shift();
+          // a pinch moves the view as it zooms: that is not a flick, so it never feeds the inertia
+          // (lifting one finger before the other would otherwise throw the view away)
+          if (Math.abs(this.t.k / prevK - 1) > 1e-4 || ((se as TouchEvent).touches?.length ?? 0) > 1) {
+            this.samples = [];
+            this.pinchAt = performance.now();
+          } else {
+            this.samples.push({ x: this.t.x, y: this.t.y, time: performance.now() });
+            if (this.samples.length > 8) this.samples.shift();
+          }
         }
         this.onChange(this.t);
       })
@@ -298,6 +308,8 @@ export class Camera {
   private startInertia(): boolean {
     const s = this.samples;
     if (s.length < 2 || this.reducedMotion) return false;
+    // the last finger of a pinch: no inertia
+    if (performance.now() - this.pinchAt < 400) return false;
     const last = s[s.length - 1];
     if (performance.now() - last.time > 80) return false;
     const first = s.find((p) => last.time - p.time < 110) ?? s[0];
