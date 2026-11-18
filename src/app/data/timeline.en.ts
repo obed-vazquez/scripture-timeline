@@ -549,7 +549,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           <strong>📌 The question that divided the churches:</strong> Should those who denied the faith to save their lives be received back into communion?
           The answer to that question led to the Synod of Rome of 251 and to the separation of the Novatianists.` },
 
-  'sinodo-de-roma-251.title': { src: 'd200a687', text: `The Synod of Rome` },
+  'sinodo-de-roma-251.title': { src: '648aa6b1', text: `The Synod of Rome and the Novatianists` },
   'sinodo-de-roma-251.shortDesc': { src: 'b5319f24', text: `Some 60 bishops back Cornelius as bishop of Rome, accept the lapsed after penance and excommunicate Novatian.` },
   'sinodo-de-roma-251.fullDesc': { src: '6b8a715a', text: `In June 251 Decius dies in battle against the Goths and the persecution ends. The churches are left with a problem:
           what to do with the <strong>lapsed</strong>, those who denied the faith during the persecution and now ask to return.<br><br>

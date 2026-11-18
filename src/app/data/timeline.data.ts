@@ -333,7 +333,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   {
     id: 'sinodo-de-roma-251',
     year: '251',
-    title: 'Sínodo de Roma',
+    title: 'Sínodo de Roma y los Novacianos',
     tags: ['roma', 'historia', 'landmark'],
     shortDesc: 'Unos 60 obispos respaldan a Cornelio como obispo de Roma, aceptan a los lapsi con penitencia y excomulgan a Novaciano.',
     fullDesc: `En junio del 251 Decio muere en batalla contra los godos y la persecución termina. Las iglesias quedan con un problema:
