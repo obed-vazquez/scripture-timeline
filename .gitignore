@@ -91,3 +91,7 @@ Thumbs.db
 /Screenshots/
 /.angular/
 .angular
+
+# Node #
+########
+node_modules/
