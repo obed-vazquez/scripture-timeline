@@ -40,6 +40,9 @@ export interface TimelineItem {
   end: number;
   isRange: boolean;
   ongoing: boolean;
+  /** The start / end year is written as approximate ('~'). */
+  approxStart: boolean;
+  approxEnd: boolean;
   title: string;
   shortDesc: string;
   fullDesc: string;

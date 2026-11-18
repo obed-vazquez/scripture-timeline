@@ -41,6 +41,8 @@ export class NavigationService {
   /** Objects hidden by presentation steps (keys "<event>:<point>"). */
   readonly hidden = signal<Set<string>>(new Set());
   readonly reviewMode = signal(false);
+  /** The search box (Ctrl+F) is open. */
+  readonly searchOpen = signal(false);
 
   readonly current = computed(() => {
     const p = this.path();
@@ -60,12 +62,18 @@ export class NavigationService {
   readonly steps = computed<TourStep[]>(() => {
     this.filters.version();
     const g = this.guide();
-    if (g) return g.entries.filter((e) => this.filters.isVisible(e)).map((e) => ({ node: e.id, event: e.id }));
+    // every event has two stops: its header view, then its detail view
+    if (g) {
+      return g.entries
+        .filter((e) => this.filters.isVisible(e))
+        .flatMap((e) => [{ node: e.id, event: e.id }, { node: `${e.id}::leer`, event: e.id }]);
+    }
     const order = this.data.custom.tour;
     const steps: TourStep[] = [];
     const pushEvent = (e: TimelineItem) => {
       if (!this.filters.isVisible(e)) return;
       steps.push({ node: e.id, event: e.id });
+      steps.push({ node: `${e.id}::leer`, event: e.id });
       for (const s of this.data.custom.events[e.id]?.steps ?? []) {
         steps.push({ node: s.focus ? `${e.id}::${s.focus}` : e.id, event: e.id, show: s.show });
       }
@@ -119,7 +127,7 @@ export class NavigationService {
     const p = this.path();
     if (!p.length) return;
     const cur = p[p.length - 1];
-    if (cur.kind === 'era' || cur.kind === 'guide' || cur.kind === 'title') {
+    if (cur.kind === 'era' || cur.kind === 'title' || cur.kind === 'hub' || (cur.kind === 'guide' && p.length < 2)) {
       this.home();
       return;
     }
@@ -145,7 +153,13 @@ export class NavigationService {
       else this.home();
       return;
     }
-    i = Math.min(i, steps.length - 1);
+    if (i >= steps.length) {
+      // after the last point: back to the start, as if the page had just been opened
+      this.tourIndex.set(-1);
+      if (this.guide()) this.goTo(`guia:${this.guide()!.id}`);
+      else this.home();
+      return;
+    }
     while (i >= 0 && i < steps.length && this.engine && !this.engine.hasNode(steps[i].node)) i += dir;
     if (i < 0 || i >= steps.length) return;
     this.tourIndex.set(i);
@@ -160,7 +174,10 @@ export class NavigationService {
     const out = new Set<string>();
     if (!ev) return out;
     const blocks = this.data.custom.events[ev]?.blocks ?? [];
-    for (const b of blocks) if (b.type === 'lineage') for (const n of b.nodes) if (n.startsHidden) out.add(`${ev}:${n.id}`);
+    for (const b of blocks) {
+      if (b.type === 'lineage') for (const n of b.nodes) if (n.startsHidden) out.add(`${ev}:${n.id}`);
+      if (b.type === 'compare') for (const r of b.rows) if (r.startsHidden) out.add(`${ev}:${r.id}`);
+    }
     for (let j = i; j >= 0 && steps[j].event === ev; j--) for (const s of steps[j].show ?? []) out.delete(`${ev}:${s}`);
     // arriving at the event itself (before its own steps) keeps everything hidden
     return out;
@@ -190,6 +207,12 @@ export class NavigationService {
 
   setPath(path: PathEntry[]): void {
     this.path.set(path);
+    // arriving at a guide (or at the menu of guides) closes the guide in progress
+    const last = path[path.length - 1];
+    if (last && (last.kind === 'guide' || last.kind === 'hub') && this.activeGuide()) {
+      this.activeGuide.set(null);
+      this.tourIndex.set(-1);
+    }
     const hidden = this.hidden();
     if (hidden.size) {
       const ev = [...hidden][0].split(':')[0];

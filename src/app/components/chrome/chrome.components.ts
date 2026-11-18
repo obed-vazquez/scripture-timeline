@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, ElementRef, computed, effect, forwardRef, inject, output, signal, untracked, viewChild,
+} from '@angular/core';
 import { IconComponent } from './icon.component';
 import { NavigationService } from '../../services/navigation.service';
 import { I18nService } from '../../services/i18n.service';
@@ -7,8 +9,9 @@ import { FilterService } from '../../services/filter.service';
 import { TimelineDataService } from '../../services/timeline-data.service';
 import { PrintService } from '../../services/print.service';
 import { UrlStateService } from '../../services/url-state.service';
+import { MediaService } from '../../services/media.service';
 import { themed } from '../../utils/color.util';
-import { TimelineTag } from '../../models/timeline.models';
+import { TimelineItem, TimelineTag } from '../../models/timeline.models';
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
@@ -37,31 +40,60 @@ const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
       </div>
 
       <div class="tools">
-        <div class="tool-wrap">
-          <button type="button" class="tool" [class.is-on]="filtersOpen() || !filters.allActive() || filters.hasHighlights()"
-                  (click)="filtersOpen.set(!filtersOpen())" [attr.aria-expanded]="filtersOpen()" [title]="i18n.t('filters')">
-            <tl-icon name="filter" /><span class="tool-label">{{ i18n.t('filters') }}</span>
-            @if (!filters.allActive()) { <span class="tool-badge">{{ filters.activeTags().size }}</span> }
-          </button>
-          @if (filtersOpen()) { <tl-filter-panel (closed)="filtersOpen.set(false)" /> }
-        </div>
+        <button type="button" class="tool" (click)="nav.searchOpen.set(true)" [title]="i18n.t('search') + ' (Ctrl+F)'">
+          <tl-icon name="search" />
+        </button>
+        <button type="button" class="tool" [class.is-on]="open() === 'filters' || !filters.allActive() || filters.hasHighlights()"
+                (click)="toggle('filters')" [attr.aria-expanded]="open() === 'filters'" [title]="i18n.t('filters')">
+          <tl-icon name="filter" /><span class="tool-label">{{ i18n.t('filters') }}</span>
+          @if (!filters.allActive()) { <span class="tool-badge">{{ filters.activeTags().size }}</span> }
+        </button>
         <button type="button" class="tool lang" (click)="i18n.toggle()" [title]="i18n.t('switchLangLabel')">
           <span [class.on]="i18n.lang() === 'es'">ES</span><span class="sep">/</span><span [class.on]="i18n.lang() === 'en'">EN</span>
         </button>
-        <button type="button" class="tool" (click)="theme.toggle()" [title]="theme.dark() ? i18n.t('themeLight') : i18n.t('themeDark')">
+        <button type="button" class="tool" [class.is-on]="media.musicOn()" (click)="media.toggleMusic()"
+                [title]="media.musicOn() ? i18n.t('musicStop') : i18n.t('musicPlay')" [attr.aria-pressed]="media.musicOn()">
+          <tl-icon [name]="media.musicOn() ? 'music' : 'musicOff'" />
+        </button>
+        <button type="button" class="tool hide-sm" (click)="theme.toggle()" [title]="theme.dark() ? i18n.t('themeLight') : i18n.t('themeDark')">
           <tl-icon [name]="theme.dark() ? 'sun' : 'moon'" />
         </button>
         <button type="button" class="tool hide-sm" (click)="printer.print()" [disabled]="printer.busy()" [title]="i18n.t('print')">
           <tl-icon name="print" />
         </button>
-        <button type="button" class="tool" (click)="copy()" [title]="copied() ? i18n.t('copied') : i18n.t('share')">
+        <button type="button" class="tool hide-sm" (click)="copy()" [title]="copied() ? i18n.t('copied') : i18n.t('share')">
           <tl-icon [name]="copied() ? 'check' : 'link'" />
         </button>
         <button type="button" class="tool hide-sm" (click)="fullscreen()" [title]="isFull() ? i18n.t('exitFullscreen') : i18n.t('fullscreen')">
           <tl-icon [name]="isFull() ? 'shrink' : 'expand'" />
         </button>
+        <button type="button" class="tool" [class.is-on]="open() === 'info'" (click)="toggle('info')"
+                [attr.aria-expanded]="open() === 'info'" [title]="i18n.t('info')">
+          <tl-icon name="info" />
+        </button>
       </div>
     </header>
+    @if (open() === 'filters') { <tl-filter-panel (closed)="open.set(null)" /> }
+    @if (open() === 'info') {
+      <div class="popover info-panel" role="dialog" [attr.aria-label]="i18n.t('info')">
+        <div class="fp-head">
+          <span class="fp-title">{{ i18n.t('info') }}</span>
+          <button type="button" class="fp-close" (click)="open.set(null)" aria-label="×"><tl-icon name="close" /></button>
+        </div>
+        <ul class="info-list">
+          <li><span class="t-key">⇲</span>{{ i18n.t('hintDrag') }}</li>
+          <li><span class="t-key">⊕</span>{{ i18n.t('hintZoom') }}</li>
+          <li><span class="t-key">◎</span>{{ i18n.t('hintClick') }}</li>
+          <li><span class="t-key">⊖</span>{{ i18n.t('hintOut') }}</li>
+          <li class="hide-sm"><span class="t-key">→</span>{{ i18n.t('hintKeys') }}</li>
+          <li class="hide-sm"><span class="t-key">⌕</span>{{ i18n.t('hintSearch') }}</li>
+        </ul>
+        <div class="info-actions show-sm">
+          <button type="button" (click)="theme.toggle()"><tl-icon [name]="theme.dark() ? 'sun' : 'moon'" />{{ theme.dark() ? i18n.t('themeLight') : i18n.t('themeDark') }}</button>
+          <button type="button" (click)="copy()"><tl-icon [name]="copied() ? 'check' : 'link'" />{{ i18n.t('share') }}</button>
+        </div>
+      </div>
+    }
     @if (copied()) { <div class="toast" role="status">{{ i18n.t('copied') }}</div> }
   `,
 })
@@ -71,9 +103,11 @@ export class TopBarComponent {
   readonly theme = inject(ThemeService);
   readonly filters = inject(FilterService);
   readonly printer = inject(PrintService);
+  readonly media = inject(MediaService);
   private url = inject(UrlStateService);
 
-  readonly filtersOpen = signal(false);
+  /** The open popover of the top bar. */
+  readonly open = signal<'filters' | 'info' | null>(null);
   readonly copied = signal(false);
   readonly isFull = signal(false);
   readonly era = computed(() => (this.nav.atHome() ? null : this.nav.currentEra()));
@@ -82,6 +116,10 @@ export class TopBarComponent {
 
   constructor() {
     document.addEventListener('fullscreenchange', () => this.isFull.set(!!document.fullscreenElement));
+  }
+
+  toggle(which: 'filters' | 'info'): void {
+    this.open.set(this.open() === which ? null : which);
   }
 
   copy(): void {
@@ -244,7 +282,7 @@ export class NavControlsComponent {
           }
         </div>
         <div class="mini-ticks">
-          @for (tk of ticks; track tk.y) { <span [style.left.%]="tk.left">{{ tk.label }}</span> }
+          @for (tk of ticks(); track tk.y) { <span [style.left.%]="tk.left">{{ tk.label }}</span> }
         </div>
         @if (here(); as h) { <div class="mini-here">{{ h }}</div> }
       </div>
@@ -255,8 +293,8 @@ export class NavControlsComponent {
           @if (nav.tourIndex() >= 0) { {{ nav.tourIndex() + 1 }}<i>/</i>{{ nav.steps().length }} }
           @else { {{ i18n.t('tour') }} }
         </span>
-        <button type="button" class="pg pg-next" (click)="nav.next()" [disabled]="nav.tourIndex() >= nav.steps().length - 1"
-                [title]="i18n.t('next')"><tl-icon name="next" /></button>
+        <button type="button" class="pg pg-next" (click)="nav.next()" [disabled]="!nav.steps().length"
+                [title]="nav.tourIndex() >= nav.steps().length - 1 ? i18n.t('restart') : i18n.t('next')"><tl-icon name="next" /></button>
       </div>
     </footer>
   `,
@@ -271,9 +309,11 @@ export class ContextBarComponent {
   private readonly t1 = Math.max(...this.data.eras.map((e) => e.end));
   private pct = (y: number) => ((y - this.t0) / (this.t1 - this.t0)) * 100;
 
-  readonly ticks = [-200, 200, 600, 1000, 1400, 1800].filter((y) => y > this.t0 && y < this.t1).map((y) => ({
-    y, left: this.pct(y), label: y < 0 ? `${-y}` : `${y}`,
-  }));
+  readonly ticks = computed(() =>
+    [-200, 200, 600, 1000, 1400, 1800].filter((y) => y > this.t0 && y < this.t1).map((y) => ({
+      y, left: this.pct(y), label: y < 0 ? `${-y} ${this.i18n.lang() === 'es' ? 'a.C.' : 'BC'}` : `${y}`,
+    })),
+  );
 
   readonly guideColor = computed(() => themed(this.nav.guide()?.color ?? '#999999', this.theme.dark()));
 
@@ -302,6 +342,7 @@ export class ContextBarComponent {
     this.nav.path().map((p) => {
       let label = '';
       if (p.kind === 'read') label = this.i18n.t('read');
+      else if (p.kind === 'hub') label = this.i18n.t('guidesHeading');
       else if (p.kind === 'guide') {
         const g = this.data.guides.find((x) => x.id === p.guideId);
         label = g ? this.i18n.text(`guide.${g.id}.title`, g.title) : '';
@@ -332,4 +373,128 @@ export class ContextBarComponent {
     const era = this.data.eras.find((e) => year >= e.start && year <= e.end) ?? this.data.eras[this.data.eras.length - 1];
     this.nav.goTo(era.id);
   }
+}
+
+/**
+ * Search (Ctrl+F): a single box; the matching events and eras appear while typing, and
+ * choosing one flies to it.
+ */
+@Component({
+  selector: 'tl-search',
+  standalone: true,
+  imports: [IconComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @if (nav.searchOpen()) {
+      <div class="search-scrim" (click)="close()"></div>
+      <div class="search" role="dialog" aria-modal="true" [attr.aria-label]="i18n.t('search')">
+        <label class="search-box">
+          <tl-icon name="search" />
+          <input #box type="search" [value]="query()" (input)="onInput($event)" (keydown)="onKey($event)"
+                 [placeholder]="i18n.t('searchPlaceholder')" autocomplete="off" spellcheck="false" />
+          <kbd>Esc</kbd>
+        </label>
+        @if (query().trim()) {
+          <ul class="search-results" role="listbox">
+            @for (r of results(); track r.item.id; let i = $index) {
+              <li>
+                <button type="button" class="sr" [class.is-sel]="i === sel()" [class.is-out]="!r.visible" [style.--c]="r.color"
+                        (click)="go(r.item.id)" (mousemove)="sel.set(i)">
+                  <span class="sr-dot"></span>
+                  <span class="sr-year">{{ i18n.year(r.item.yearLabel) }}</span>
+                  <span class="sr-title">{{ r.title }}</span>
+                  <span class="sr-era">{{ r.era }}</span>
+                </button>
+              </li>
+            } @empty {
+              <li class="sr-empty">{{ i18n.t('searchEmpty') }}</li>
+            }
+          </ul>
+        }
+      </div>
+    }
+  `,
+})
+export class SearchComponent {
+  readonly nav = inject(NavigationService);
+  readonly i18n = inject(I18nService);
+  private data = inject(TimelineDataService);
+  private filters = inject(FilterService);
+  private theme = inject(ThemeService);
+  private box = viewChild<ElementRef<HTMLInputElement>>('box');
+
+  readonly query = signal('');
+  readonly sel = signal(0);
+
+  readonly results = computed(() => {
+    const q = norm(this.query().trim());
+    if (!q) return [];
+    this.filters.version();
+    const all = [...this.data.eras, ...this.data.events];
+    const scored: { item: TimelineItem; score: number }[] = [];
+    for (const it of all) {
+      const title = this.i18n.text(`${it.id}.title`, it.title);
+      const hay = [norm(title), norm(it.title), norm(it.yearLabel)];
+      const pos = Math.min(...hay.map((h) => {
+        const i = h.indexOf(q);
+        return i < 0 ? Infinity : i === 0 || h[i - 1] === ' ' ? 0 : 1;
+      }));
+      if (pos !== Infinity) scored.push({ item: it, score: pos });
+    }
+    scored.sort((a, b) => a.score - b.score || a.item.start - b.item.start);
+    return scored.slice(0, 12).map(({ item }) => ({
+      item,
+      title: this.i18n.text(`${item.id}.title`, item.title),
+      era: item.kind === 'era' ? this.i18n.t('era') : this.i18n.text(`${item.era.id}.title`, item.era.title),
+      color: themed(item.color, this.theme.dark()),
+      visible: item.kind === 'era' || this.filters.isVisible(item),
+    }));
+  });
+
+  constructor() {
+    effect(() => {
+      if (!this.nav.searchOpen()) return;
+      untracked(() => {
+        this.query.set('');
+        this.sel.set(0);
+        setTimeout(() => this.box()?.nativeElement.focus());
+      });
+    });
+  }
+
+  onInput(ev: Event): void {
+    this.query.set((ev.target as HTMLInputElement).value);
+    this.sel.set(0);
+  }
+
+  onKey(ev: KeyboardEvent): void {
+    const n = this.results().length;
+    if (ev.key === 'Escape') {
+      ev.preventDefault();
+      this.close();
+    } else if (ev.key === 'ArrowDown' && n) {
+      ev.preventDefault();
+      this.sel.set((this.sel() + 1) % n);
+    } else if (ev.key === 'ArrowUp' && n) {
+      ev.preventDefault();
+      this.sel.set((this.sel() - 1 + n) % n);
+    } else if (ev.key === 'Enter' && n) {
+      ev.preventDefault();
+      this.go(this.results()[this.sel()].item.id);
+    }
+  }
+
+  go(id: string): void {
+    this.close();
+    this.nav.goTo(id);
+  }
+
+  close(): void {
+    this.nav.searchOpen.set(false);
+  }
+}
+
+/** Lower case, without accents: "Concilio de Nicea" ≈ "concilio de nicea" ≈ "CONCILIO DE NICEA". */
+function norm(s: string): string {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }

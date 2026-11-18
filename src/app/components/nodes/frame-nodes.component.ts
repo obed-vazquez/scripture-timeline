@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { SceneNode, Orientation } from '../../engine/scene';
 import { I18nService } from '../../services/i18n.service';
 import { ThemeService } from '../../services/theme.service';
-import { TimelineDataService } from '../../services/timeline-data.service';
+import { Guide, TimelineDataService } from '../../services/timeline-data.service';
 import { NavigationService } from '../../services/navigation.service';
 import { FilterService } from '../../services/filter.service';
 import { themed } from '../../utils/color.util';
 import { TimelineItem } from '../../models/timeline.models';
 
-const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
 /** Header of an era: number, name, years, one-line description and a faded image. */
 @Component({
@@ -58,7 +58,10 @@ export class EraHeaderComponent {
   });
 }
 
-/** The big title of the overview. */
+/**
+ * The big title of the overview. The hints fade away as soon as the visitor moves (they stay
+ * in the ⓘ button of the top bar).
+ */
 @Component({
   selector: 'tl-title-block',
   standalone: true,
@@ -84,7 +87,54 @@ export class TitleBlockComponent {
   readonly i18n = inject(I18nService);
 }
 
-/** A thematic guide: a menu at the overview whose points fly to their events (A55–A61). */
+/**
+ * The hub: one small menu of the guides at the overview. On wide screens, zooming into it
+ * sends each line towards a corner, where it becomes the title of its guide (the stage drives
+ * that movement); on a phone each line flies to its guide.
+ */
+@Component({
+  selector: 'tl-guide-hub',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="hub" [class.is-portrait]="orient() === 'v'">
+      <div class="hub-list">
+        <div class="hub-kicker">{{ i18n.t('guidesHeading') }}</div>
+        <div class="hub-sub">{{ i18n.t('guidesSub') }}</div>
+        @for (g of guides; track g.id; let i = $index) {
+          <button type="button" class="hub-row" [attr.data-hubrow]="i" [style.--c]="color(g)" (click)="open($event, g)">
+            <span class="hr-dot"></span>
+            <span class="hr-title">{{ title(g) }}</span>
+            <span class="hr-count">{{ g.entries.length }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  `,
+})
+export class GuideHubComponent {
+  readonly node = input.required<SceneNode>();
+  readonly orient = input.required<Orientation>();
+  readonly i18n = inject(I18nService);
+  private nav = inject(NavigationService);
+  private theme = inject(ThemeService);
+  readonly guides = inject(TimelineDataService).guides;
+
+  color(g: Guide): string {
+    return themed(g.color, this.theme.dark());
+  }
+
+  title(g: Guide): string {
+    return this.i18n.text(`guide.${g.id}.title`, g.title);
+  }
+
+  open(ev: Event, g: Guide): void {
+    ev.stopPropagation();
+    this.nav.goTo(`guia:${g.id}`);
+  }
+}
+
+/** A thematic guide: a menu whose points fly to their events (A55–A61). */
 @Component({
   selector: 'tl-guide-menu',
   standalone: true,
@@ -96,7 +146,7 @@ export class TitleBlockComponent {
         <div class="g-kicker">{{ i18n.t('guidesHeading') }} · {{ g.entries.length }} {{ i18n.t('guideItems') }}</div>
         <h3 class="g-title">{{ title() }}</h3>
         <p class="g-desc">{{ desc() }}</p>
-        <ol class="g-list" [class.two-col]="orient() === 'h'">
+        <ol class="g-list" [class.three-col]="orient() === 'h'">
           @for (e of g.entries; track e.id; let i = $index) {
             <li>
               <button type="button" class="g-item" [class.is-out]="!visible(e)" [class.is-here]="nav.currentEvent()?.id === e.id"

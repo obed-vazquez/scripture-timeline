@@ -24,16 +24,112 @@ export interface LineageNode {
   startsHidden?: boolean;
 }
 
+/** A picture under a chart (a map, a title page…). Positions are in chart pixels. */
+export interface ChartImage {
+  src: string;
+  alt: string;
+  /** Box the picture fills inside the chart. */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /** Part of the picture shown (in the picture's own pixels); omitted = the whole picture. */
+  crop?: { x: number; y: number; w: number; h: number; naturalW: number; naturalH: number };
+  /** Credit shown under the picture (licence). */
+  credit?: string;
+}
+
 export interface LineageBlock {
   type: 'lineage';
   id: string;
   title: string;
   caption?: string;
+  /**
+   * 'line' (default): points joined by lines, with name and year under each point.
+   * 'pins': numbered pins over the picture, with their list beside it.
+   */
+  style?: 'line' | 'pins';
+  image?: ChartImage;
   nodes: LineageNode[];
   edges: [string, string][];
 }
 
-export type BlockDef = VideoBlock | LineageBlock;
+/** How a witness treats a reading: ✅ same · ❌ verse missing · ➖ part missing · ⚠️ changed · ➕ added · ❓ not preserved. */
+export type CompareMark = 'same' | 'missing' | 'partial' | 'changed' | 'added' | 'lost';
+
+export interface CompareRow {
+  id: string;
+  /** Reference, e.g. "1 Jn 5.7–8". */
+  ref: string;
+  /** The reading of the first witness (the Majority Text). */
+  text: string;
+  /** One mark per witness, in the order of `witnesses`. */
+  marks: CompareMark[];
+  /** Footnote mark per witness ('' = none), e.g. '†' = included with a footnote. */
+  notes?: string[];
+  /** Short explanation, readable when zooming into the row. */
+  note?: string;
+  /** Hidden until a presentation step shows it (only while presenting). */
+  startsHidden?: boolean;
+}
+
+/** A table that compares several witnesses (manuscripts, versions) on a few readings. */
+export interface CompareBlock {
+  type: 'compare';
+  id: string;
+  title: string;
+  caption?: string;
+  witnesses: { id: string; label: string; detail: string }[];
+  rows: CompareRow[];
+  /** Meaning of the footnote marks used in the rows. */
+  footnote?: string;
+}
+
+export interface ChronicleEntry {
+  id: string;
+  year: string;
+  text: string;
+  /** Doubt about the entry (shown in small type). */
+  note?: string;
+  /** Event the entry opens. */
+  event?: string;
+}
+
+/** A short chronology in two columns (for example, the story told in a video). */
+export interface ChronicleBlock {
+  type: 'chronicle';
+  id: string;
+  title: string;
+  caption?: string;
+  entries: ChronicleEntry[];
+}
+
+/** One block placed inside a group, in the group's own pixels. */
+export interface GroupItem {
+  block: VideoBlock | LineageBlock | CompareBlock | ChronicleBlock;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/**
+ * A closed section: from afar it shows one picture and a title; zooming into it, the picture
+ * gives way to the blocks it holds.
+ */
+export interface GroupBlock {
+  type: 'group';
+  id: string;
+  title: string;
+  caption?: string;
+  cover: { src: string; alt: string };
+  /** Size of the open section, in its own pixels. */
+  w: number;
+  h: number;
+  items: GroupItem[];
+}
+
+export type BlockDef = VideoBlock | LineageBlock | CompareBlock | ChronicleBlock | GroupBlock;
 
 /** Extra presentation step run inside an event after arriving at it. */
 export interface PresentationStep {

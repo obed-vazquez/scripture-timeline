@@ -3,7 +3,7 @@ import { BlockDef, EventCustom, LineageBlock } from '../models/custom.models';
 import { Rect, assignLanes, fitInto, placeOnLine, rectUnion, sub } from './geometry';
 
 export type Orientation = 'h' | 'v';
-export type SceneKind = 'title' | 'era' | 'event' | 'read' | 'block' | 'point' | 'guide';
+export type SceneKind = 'title' | 'era' | 'event' | 'read' | 'block' | 'point' | 'guide' | 'hub';
 
 export interface Marker {
   nodeId: string;
@@ -12,6 +12,8 @@ export interface Marker {
   m1: number;
   isRange: boolean;
   ongoing: boolean;
+  approxStart: boolean;
+  approxEnd: boolean;
   clippedStart: boolean;
   clippedEnd: boolean;
   side: -1 | 1;
@@ -28,6 +30,9 @@ export interface TimelineFrame {
   mainHi: number;
   t0: number;
   t1: number;
+  /** The owner's start / end year is approximate. */
+  approxStart: boolean;
+  approxEnd: boolean;
   timePad: number;
   color: string;
   region: Rect;
@@ -57,6 +62,8 @@ export interface SceneNode {
   depth: number;
   frame?: TimelineFrame;
   cover?: CoverLayout;
+  /** Fly here with small margins (reading views). */
+  tight?: boolean;
 }
 
 export interface Scene {
@@ -68,6 +75,10 @@ export interface Scene {
   home: Rect;
   homeMode: 'fit' | 'top';
   minFocusWidth: number;
+  /** The menu of guides shown at the overview. */
+  hub: SceneNode;
+  /** The guides open out of the hub when zooming into it (wide screens only). */
+  hubMorph: boolean;
 }
 
 export interface ResolvedGuide {
@@ -112,7 +123,14 @@ export function coverLayout(item: TimelineItem, orient: Orientation, custom?: Ev
       L.subtl = { x: 40, y: L.h + 20, w: 1520, h: 640 };
       L.h += 680;
     }
-    if (blocks.length) {
+    if (blocks.length === 1 && blocks[0].type === 'group') {
+      // a closed section: small under the card, it opens when zoomed into
+      const g = blocks[0];
+      const bw = 620;
+      const bh = (bw * g.h) / g.w;
+      L.blocks.push({ x: (L.w - bw) / 2, y: L.h + 40, w: bw, h: bh });
+      L.h += bh + 80;
+    } else if (blocks.length) {
       const gap = 60;
       const bw = (1520 - gap * (blocks.length - 1)) / blocks.length;
       blocks.forEach((_, i) => L.blocks.push({ x: 40 + i * (bw + gap), y: L.h + 20, w: bw, h: 760 }));
@@ -136,32 +154,68 @@ export function coverLayout(item: TimelineItem, orient: Orientation, custom?: Ev
     L.subtl = { x: 30, y: L.h + 20, w: 940, h: 1300 };
     L.h += 1340;
   }
-  for (const _ of blocks) {
-    L.blocks.push({ x: 40, y: L.h + 20, w: 920, h: 640 });
-    L.h += 680;
+  for (const b of blocks) {
+    const h = b.type === 'group' ? (920 * b.h) / b.w : 640;
+    L.blocks.push({ x: 40, y: L.h + 20, w: 920, h });
+    L.h += h + 40;
   }
   return L;
 }
 
-export const BLOCK_SIZE: Record<BlockDef['type'], { w: number; h: number }> = {
+/** The card itself (image, title and texts), without the nested timeline or the blocks below it. */
+export const CARD_H = { w: 1600, h: 1000 };
+
+/** Authored size of a block. */
+export function blockSize(b: BlockDef): { w: number; h: number } {
+  return b.type === 'group' ? { w: b.w, h: b.h } : BLOCK_SIZE[b.type];
+}
+
+/**
+ * Wide screens: share of the screen the card takes in the "header view" (image, title and
+ * summary). The "detail view" fits the card to the screen.
+ */
+export const HEADER_VIEW = 0.62;
+
+/** Scene id of the hub (the menu of guides). */
+export const HUB_ID = '::guias';
+
+/**
+ * Font size (authored px) of an event's title on its cover; long titles get smaller. The
+ * screen label of the event uses the same size, so one turns into the other seamlessly.
+ */
+export function coverTitleSize(title: string, hasImage: boolean, orient: Orientation): number {
+  const len = title.length;
+  const base = orient === 'h' ? (hasImage ? 92 : 108) : 86;
+  return Math.round(Math.max(base * 0.68, Math.min(base, base - (len - 26) * 1.1)));
+}
+
+/** Authored typography of the cover text (year above the title). Mirrors canvas.css. */
+export const COVER_TYPE: Record<Orientation, { year: number; gap: number }> = {
+  h: { year: 132, gap: 22 },
+  v: { year: 120, gap: 16 },
+};
+
+export const BLOCK_SIZE: Record<Exclude<BlockDef['type'], 'group'>, { w: number; h: number }> = {
   video: { w: 1280, h: 880 },
   lineage: { w: 1400, h: 820 },
+  compare: { w: 1400, h: 900 },
+  chronicle: { w: 1520, h: 700 },
 };
 
 /** Authored size of a lineage point's detail, and where it sits relative to the point. */
 export const POINT_DETAIL = { w: 520, h: 300, scale: 0.4, dy: 112 };
+
+/** Authored size of the overview title on wide screens. */
+const TITLE_AUTH_H = { w: 1800, h: 400 };
 
 // Sizes in world units.
 const H = {
   baseLength: 10000,
   cardW: 420,
   headerH: 860,
-  axisGap: 90,
+  axisGap: 130,
   eraScale: 2, // world units per authored px in era headers
   titleW: 6400,
-  titleScale: 4,
-  guideW: 2400,
-  guideGap: 520,
 };
 const V = {
   width: 1000,
@@ -184,8 +238,14 @@ export interface SceneInput {
 
 /** Guide menu authored size for a given number of items. */
 export function guideAuthSize(n: number, orient: Orientation): { w: number; h: number } {
-  if (orient === 'h') return { w: 1000, h: 310 + Math.ceil(n / 2) * 82 + 70 };
+  if (orient === 'h') return { w: 1600, h: 300 + Math.ceil(n / 3) * 92 + 60 };
   return { w: 1000, h: 320 + n * 98 + 70 };
+}
+
+/** Authored size of the hub (the menu of guides) for a given number of guides. */
+export function hubAuthSize(n: number, orient: Orientation, aspect: number): { w: number; h: number } {
+  if (orient === 'h') return { w: 1000, h: Math.round(1000 / aspect) };
+  return { w: 1000, h: 200 + n * 112 + 60 };
 }
 
 export function buildScene(input: SceneInput): Scene {
@@ -201,17 +261,28 @@ export function buildScene(input: SceneInput): Scene {
   // ── Cards (events), recursively ───────────────────────────
   const addCard = (item: TimelineItem, rect: Rect, parent: SceneNode, side: -1 | 1, depth: number) => {
     const L = coverLayout(item, orient, input.custom[item.id]);
+    const cardArea = orient === 'h' ? sub(rect, L.w, { x: 0, y: 0, ...CARD_H }) : rect;
+    // wide screens: the event's own view is the "header view", the card at a share of the screen
+    const headerFocus = orient === 'h' ? scaleAround(cardArea, 1 / HEADER_VIEW) : rect;
     const card = add({
       id: item.id, kind: 'event', item, parent, children: [], rect, authW: L.w, authH: L.h,
-      focus: rect, focusMode: 'fit', reveal: [70, 130], side, depth, cover: L,
+      focus: headerFocus, focusMode: 'fit', reveal: [70, 130], side, depth, cover: L,
     });
-    // reading panel
-    const rs = input.readSizes.get(item.id) ?? estimateReadSize(item, orient);
-    const readRect = fitInto(sub(rect, L.w, L.read), rs.w, rs.h, 'start');
-    add({
-      id: `${item.id}::leer`, kind: 'read', item, parent: card, children: [], rect: readRect, authW: rs.w, authH: rs.h,
-      focus: readRect, focusMode: rs.h / rs.w > 1.15 ? 'top' : 'fit', reveal: orient === 'v' ? [30, 56] : [110, 180], depth: depth + 1,
-    });
+    if (orient === 'h') {
+      // "detail view": the card itself fills the screen and turns into its full text
+      add({
+        id: `${item.id}::leer`, kind: 'read', item, parent: card, children: [], rect: cardArea, authW: CARD_H.w, authH: CARD_H.h,
+        focus: cardArea, focusMode: 'fit', reveal: [0, 0], depth: depth + 1, tight: true,
+      });
+    } else {
+      // phone: the full text is a panel under the summary, read by zooming into it
+      const rs = input.readSizes.get(item.id) ?? estimateReadSize(item, orient);
+      const readRect = fitInto(sub(rect, L.w, L.read), rs.w, rs.h, 'start');
+      add({
+        id: `${item.id}::leer`, kind: 'read', item, parent: card, children: [], rect: readRect, authW: rs.w, authH: rs.h,
+        focus: readRect, focusMode: rs.h / rs.w > 1.15 ? 'top' : 'fit', reveal: [30, 56], depth: depth + 1,
+      });
+    }
     // nested timeline of children
     if (L.subtl && item.children.length) {
       const region = sub(rect, L.w, L.subtl);
@@ -220,13 +291,25 @@ export function buildScene(input: SceneInput): Scene {
     // blocks
     const blocks = input.custom[item.id]?.blocks ?? [];
     blocks.forEach((b, i) => {
-      const size = BLOCK_SIZE[b.type];
+      const size = blockSize(b);
       const r = fitInto(sub(rect, L.w, L.blocks[i]), size.w, size.h, 'center');
       const bn = add({
         id: `${item.id}::${b.id}`, kind: 'block', item, block: b, parent: card, children: [], rect: r,
         authW: size.w, authH: size.h, focus: r, focusMode: 'fit', reveal: [90, 150], depth: depth + 1,
       });
       if (b.type === 'lineage') addLineagePoints(bn, b, depth + 2);
+      if (b.type === 'group') {
+        // the blocks of a section, laid out in the section's own pixels
+        for (const it of b.items) {
+          const cs = blockSize(it.block);
+          const cr = fitInto(sub(r, b.w, it), cs.w, cs.h, 'center');
+          const cn = add({
+            id: `${item.id}::${it.block.id}`, kind: 'block', item, block: it.block, parent: bn, children: [], rect: cr,
+            authW: cs.w, authH: cs.h, focus: cr, focusMode: 'fit', reveal: [0, 0], depth: depth + 2,
+          });
+          if (it.block.type === 'lineage') addLineagePoints(cn, it.block, depth + 3);
+        }
+      }
     });
     return card;
   };
@@ -237,7 +320,9 @@ export function buildScene(input: SceneInput): Scene {
       if (!p.detail) continue;
       const w = POINT_DETAIL.w * POINT_DETAIL.scale;
       const h = POINT_DETAIL.h * POINT_DETAIL.scale;
-      const r: Rect = { x: bn.rect.x + (p.x - w / 2) * s, y: bn.rect.y + (p.y + POINT_DETAIL.dy) * s, w: w * s, h: h * s };
+      // a numbered pin sits on its spot (centred); a line point has its name and year underneath
+      const dy = b.style === 'pins' ? 26 : POINT_DETAIL.dy;
+      const r: Rect = { x: bn.rect.x + (p.x - w / 2) * s, y: bn.rect.y + (p.y + dy) * s, w: w * s, h: h * s };
       const focus: Rect = { x: r.x - r.w * 0.6, y: r.y - r.h * 0.9, w: r.w * 2.2, h: r.h * 2.1 };
       add({
         id: `${bn.id}::${p.id}`, kind: 'point', item: bn.item, block: b, pointId: p.id, parent: bn, children: [], rect: r,
@@ -285,7 +370,7 @@ export function buildScene(input: SceneInput): Scene {
   const mkFrame = (ownerId: string, depth: number, axisCross: number, mainLo: number, mainHi: number,
     owner: TimelineItem, region: Rect, cardSize: number, isRoot: boolean): TimelineFrame => ({
     ownerId, orient, depth, axisCross, mainLo, mainHi, t0: owner.start, t1: Math.max(owner.end, owner.start + 1),
-    timePad: (mainHi - mainLo) * 0.04, color: owner.color, region, cardSize, markers: [], isRoot,
+    approxStart: owner.approxStart, approxEnd: owner.approxEnd, timePad: (mainHi - mainLo) * 0.04, color: owner.color, region, cardSize, markers: [], isRoot,
   });
 
   const timeToMain = (f: TimelineFrame, t: number) =>
@@ -318,6 +403,7 @@ export function buildScene(input: SceneInput): Scene {
       addCard(it, rect, owner, side, depth);
       f.markers.push({
         nodeId: it.id, item: it, m0: ms[i].m0, m1: ms[i].m1, isRange: ms[i].isRange, ongoing: it.ongoing,
+        approxStart: it.approxStart, approxEnd: it.approxEnd,
         clippedStart: ms[i].clippedStart, clippedEnd: ms[i].clippedEnd, side, lane: lanes[i], anchor: anchors[i],
       });
     });
@@ -328,7 +414,9 @@ export function buildScene(input: SceneInput): Scene {
   const eras = input.eras;
   const eraNodes: SceneNode[] = [];
   let titleRect: Rect;
-  let guidesTop: number;
+  let hub!: SceneNode;
+  let home!: Rect;
+  const nGuides = input.guides.length;
 
   if (orient === 'h') {
     const sqrt = eras.map((e) => Math.sqrt(Math.max(1, e.end - e.start)));
@@ -362,21 +450,48 @@ export function buildScene(input: SceneInput): Scene {
       x += w;
     });
     const total = x;
-    titleRect = { x: total * 0.04, y: -1900, w: H.titleW, h: H.titleW * (340 / 1500) };
-    guidesTop = stripH + 760;
-    const n = input.guides.length;
-    const gw = Math.min(H.guideW, (total - H.guideGap * (n - 1)) / Math.max(1, n));
-    const gx0 = (total - (n * gw + (n - 1) * H.guideGap)) / 2;
+    titleRect = { x: total * 0.04, y: -1900, w: H.titleW, h: H.titleW * (TITLE_AUTH_H.h / TITLE_AUTH_H.w) };
+    // The hub sits beside the title. Its guides are laid out 2 × 2 inside it and open out of it
+    // (towards the four corners) when zooming in.
+    const cell = { w: 1600, h: Math.max(...input.guides.map((g) => guideAuthSize(g.items.length, 'h').h)) };
+    const cols = 2;
+    const rows = Math.ceil(nGuides / cols);
+    const gapX = cell.w * 0.1;
+    const gapY = cell.h * 0.16;
+    const gridW = cols * cell.w + (cols - 1) * gapX;
+    const gridH = rows * cell.h + (rows - 1) * gapY;
+    const areaX = titleRect.x + titleRect.w + 700;
+    const areaW = total * 0.985 - areaX;
+    const areaY = -2050;
+    const areaH = -380 - areaY;
+    const s = Math.min(areaW / gridW, areaH / gridH);
+    const hubRect: Rect = { x: areaX + (areaW - gridW * s) / 2, y: areaY + (areaH - gridH * s) / 2, w: gridW * s, h: gridH * s };
+    const hs = hubAuthSize(nGuides, 'h', hubRect.w / hubRect.h);
+    hub = add({
+      id: HUB_ID, kind: 'hub', parent: root, children: [], rect: hubRect, authW: hs.w, authH: hs.h,
+      focus: hubRect, focusMode: 'fit', reveal: [0, 0], depth: 0,
+    });
     input.guides.forEach((g, i) => {
       const sz = guideAuthSize(g.items.length, 'h');
-      const r: Rect = { x: gx0 + i * (gw + H.guideGap), y: guidesTop, w: gw, h: (gw * sz.h) / sz.w };
+      const cx = hubRect.x + (i % cols) * (cell.w + gapX) * s;
+      const cy = hubRect.y + Math.floor(i / cols) * (cell.h + gapY) * s;
+      const r: Rect = { x: cx, y: cy, w: sz.w * s, h: sz.h * s };
       add({
-        id: `guia:${g.id}`, kind: 'guide', guideId: g.id, parent: root, children: [], rect: r, authW: sz.w, authH: sz.h,
-        focus: r, focusMode: 'fit', reveal: [0, 0], depth: 0,
+        id: `guia:${g.id}`, kind: 'guide', guideId: g.id, parent: hub, children: [], rect: r, authW: sz.w, authH: sz.h,
+        focus: r, focusMode: 'fit', reveal: [0, 0], depth: 1,
       });
     });
+    home = rectUnion([titleRect, hubRect, ...eraNodes.map((e) => e.rect)]);
   } else {
-    let y = V.titleH;
+    // Phone: the hub sits under the title; the guides themselves stay after the last era.
+    const hs = hubAuthSize(nGuides, 'v', 1);
+    const hubRect: Rect = { x: 0, y: V.titleH - 40, w: V.width, h: (V.width * hs.h) / hs.w };
+    hub = add({
+      id: HUB_ID, kind: 'hub', parent: root, children: [], rect: hubRect, authW: hs.w, authH: hs.h,
+      focus: hubRect, focusMode: 'top', reveal: [0, 0], depth: 0,
+    });
+    let y = hubRect.y + hubRect.h + 120;
+    home = { x: 0, y: 0, w: V.width, h: y + 420 };
     eras.forEach((era) => {
       const sides = splitSides(era.children);
       const sideLen = (s: TimelineItem[]) => s.reduce((acc, it) => acc + V.cardW * coverAspect(it) * 1.1, 0);
@@ -398,8 +513,7 @@ export function buildScene(input: SceneInput): Scene {
       y += h;
     });
     titleRect = { x: 0, y: 0, w: V.width, h: V.titleH - 80 };
-    guidesTop = y + 200;
-    let gy = guidesTop;
+    let gy = y + 200;
     input.guides.forEach((g) => {
       const sz = guideAuthSize(g.items.length, 'v');
       const r: Rect = { x: 0, y: gy, w: V.width, h: (V.width * sz.h) / sz.w };
@@ -411,23 +525,29 @@ export function buildScene(input: SceneInput): Scene {
     });
   }
 
-  const titleAuth = orient === 'h' ? { w: 1500, h: 340 } : { w: 1000, h: (V.titleH - 80) };
+  const titleAuth = orient === 'h' ? TITLE_AUTH_H : { w: 1000, h: (V.titleH - 80) };
   add({
     id: '::titulo', kind: 'title', parent: root, children: [], rect: titleRect, authW: titleAuth.w, authH: titleAuth.h,
     focus: titleRect, focusMode: 'fit', reveal: [0, 0], depth: 0,
   });
 
   // Render order: eras, title, guides first; then everything else by depth (parents before children).
-  const order: Record<SceneKind, number> = { era: 0, title: 1, guide: 1, event: 2, read: 3, block: 3, point: 4 };
+  const order: Record<SceneKind, number> = { era: 0, title: 1, hub: 1, guide: 1, event: 2, read: 3, block: 3, point: 4 };
   nodes.sort((a, b) => order[a.kind] - order[b.kind] || a.depth - b.depth);
 
   const bounds = rectUnion(nodes.filter((n) => n.depth === 0).map((n) => n.rect));
-  const home: Rect = orient === 'h' ? bounds : { x: 0, y: 0, w: V.width, h: V.titleH + 900 };
   const minFocusWidth = Math.min(...nodes.map((n) => n.focus.w));
   return {
     orient, nodes, byId: new Map(nodes.map((n) => [n.id, n])), frames, bounds, home,
-    homeMode: orient === 'h' ? 'fit' : 'top', minFocusWidth,
+    homeMode: orient === 'h' ? 'fit' : 'top', minFocusWidth, hub, hubMorph: orient === 'h',
   };
+}
+
+/** A rectangle grown (or shrunk) around its centre. */
+function scaleAround(r: Rect, f: number): Rect {
+  const w = r.w * f;
+  const h = r.h * f;
+  return { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
 }
 
 /** Alternates children between the two sides of the axis, chronologically. */

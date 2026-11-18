@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { StageComponent } from '../../components/stage/stage.component';
-import { ContextBarComponent, NavControlsComponent, TopBarComponent } from '../../components/chrome/chrome.components';
+import { ContextBarComponent, NavControlsComponent, SearchComponent, TopBarComponent } from '../../components/chrome/chrome.components';
+import { PlayerDockComponent } from '../../components/chrome/player-dock.component';
 import { UrlStateService } from '../../services/url-state.service';
 import { NavigationService } from '../../services/navigation.service';
 
@@ -9,12 +10,14 @@ import { NavigationService } from '../../services/navigation.service';
   selector: 'tl-timeline-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StageComponent, TopBarComponent, NavControlsComponent, ContextBarComponent],
+  imports: [StageComponent, TopBarComponent, NavControlsComponent, ContextBarComponent, PlayerDockComponent, SearchComponent],
   template: `
     <tl-stage [initialNode]="initialNode" />
+    <tl-player-dock />
     <tl-top-bar />
     <tl-nav-controls />
     <tl-context-bar />
+    <tl-search />
   `,
 })
 export class TimelinePageComponent {

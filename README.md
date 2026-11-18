@@ -1,4 +1,4 @@
-# Línea del Tiempo Bíblica
+# Línea del Tiempo de las Escrituras
 
 Línea del tiempo interactiva, con Zoom Reveal, sobre la historia de la Biblia, sus traducciones, la doctrina cristiana y la historia de la iglesia. En español e inglés.
 
@@ -61,6 +61,11 @@ Para marcar una traducción como revisada, agrégale `reviewed: true`.
 ## Gráficas, videos, guías y recorrido
 
 Van en `src/app/data/timeline.custom.ts`, indexados por el `id` del evento. Un evento que no aparece ahí usa la presentación por defecto.
+
+## Música de fondo
+
+1. Para abrir el sitio con la música puesta, agrega `&musica=1` al enlace (por ejemplo `/#/timeline?musica=1`). El navegador la arranca en silencio y la activa con el primer clic.
+2. Para cambiar la música, cambia el id de YouTube en `MUSIC_VIDEO`, dentro de `src/app/services/media.service.ts`.
 
 ## Revisar textos pendientes
 

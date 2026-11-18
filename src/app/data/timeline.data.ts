@@ -15,7 +15,9 @@ import type { TimelineItemData, TimelineTagData } from '../models/timeline.model
  *   id         Identificador fijo, en minúsculas y con guiones (ej. 'concilio-de-trento').
  *              NO lo cambies después de publicar: los enlaces y los QR impresos lo usan.
  *   year       Año o rango, en los formatos de siempre:
- *              '1517'  ·  '~250 a.C.'  ·  '382 – 405 d.C.'  ·  '1545 – 1563'  ·  '2020+'
+ *              '1517'  ·  '~250 a.C.'  ·  '382 – 405'  ·  '1545 – 1563'  ·  '2020+'
+ *              Solo los años antes de Cristo llevan 'a.C.'; los demás van sin 'd.C.'.
+ *              '~' marca un año aproximado (la barra se desvanece en ese extremo).
  *   title      Título del evento.
  *   tags       Categorías (ver CATEGORÍAS abajo): ['biblia', 'historia'].
  *   shortDesc  Resumen de una o dos líneas.
@@ -56,19 +58,18 @@ export const TIMELINE_TAGS: TimelineTagData[] = [
 export const TIMELINE_ITEMS: TimelineItemData[] = [
 
   // ════════════════════════════════════════════════
-  //   ERA I · IGLESIAS PRIMITIVAS (300 a.C. – 313)
+  //   ERA I · ANTES DE CRISTO (300 a.C. – ~4 a.C.)
   // ════════════════════════════════════════════════
   {
-    id: 'iglesias-primitivas',
+    id: 'antes-de-cristo',
     era: true,
-    year: '300 a.C. – 313',
-    title: 'Iglesias Primitivas',
-    color: '#8fa86a',
-    shortDesc: 'De la Septuaginta a Constantino: las Escrituras, los apóstoles y las iglesias bajo persecución.',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/The_Trail_of_Blood.jpg/1920px-The_Trail_of_Blood.jpg',
+    year: '300 a.C. – ~4 a.C.',
+    title: 'Antes de Cristo',
+    color: '#a88b67',
+    shortDesc: 'Las Escrituras del Antiguo Testamento y su traducción al griego en el mundo helenístico.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Great_Isaiah_Scroll.jpg/1280px-Great_Isaiah_Scroll.jpg',
     pendingReview: true,
   },
-
   {
     id: 'septuaginta',
     year: '~250 a.C.',
@@ -96,6 +97,59 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
           Hoy en día, la LXX sigue siendo un objeto de enorme estudio crítico y es el texto oficial del Antiguo Testamento en la Iglesia Católica Apostólica Ortodoxa.`,
     image: 'https://biteproject.com/wp-content/uploads/2025/03/LXX-Destacada-1024x576.webp',
   },
+
+  // ════════════════════════════════════════════════
+  //   ERA II · VIDA DE CRISTO (~4 a.C. – ~30)
+  // ════════════════════════════════════════════════
+  {
+    id: 'vida-de-cristo',
+    era: true,
+    year: '~4 a.C. – ~30',
+    title: 'Vida de Cristo',
+    color: '#c98aa3',
+    shortDesc: 'El Verbo hecho carne: nacimiento, ministerio, muerte y resurrección de Jesucristo.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Panorama_on_the_north_Shore_of_the_Sea_of_Galilee_%285796531006%29.jpg/1280px-Panorama_on_the_north_Shore_of_the_Sea_of_Galilee_%285796531006%29.jpg',
+    pendingReview: true,
+  },
+
+  {
+    id: 'jesucristo',
+    year: '~4 a.C. – ~30',
+    title: 'Jesucristo',
+    tags: ['historia'],
+    shortDesc: 'Jesús nace en Belén en días del rey Herodes, enseña y sana en Galilea y Judea, muere crucificado bajo Poncio Pilato y resucita al tercer día.',
+    fullDesc: `Según los Evangelios, <a href='https://es.wikipedia.org/wiki/Jes%C3%BAs_de_Nazaret' target='_blank' class='inline-link'>Jesús de Nazaret</a>
+          nació en Belén de Judea «en días del rey <a href='https://es.wikipedia.org/wiki/Herodes_I_el_Grande' target='_blank' class='inline-link'>Herodes</a>» (Mt 2.1).
+          Como Herodes murió hacia el 4 a.C., el nacimiento suele fecharse entre el 6 y el 4 a.C.<br><br>
+          <strong>📅 ¿Nacido «antes de Cristo»?</strong> La cuenta de los años «después de Cristo» la propuso el monje
+          <a href='https://es.wikipedia.org/wiki/Dionisio_el_Exiguo' target='_blank' class='inline-link'>Dionisio el Exiguo</a> hacia el año 525,
+          y su cálculo del nacimiento quedó corto por algunos años. Por eso las fechas de la vida de Cristo se escriben como aproximadas.<br><br>
+          <strong>📜 Su vida en las Escrituras:</strong>
+          <ul class='modal-list'>
+            <li><strong>Bautismo:</strong> Juan el Bautista lo bautiza en el Jordán. Jesús comenzaba su ministerio «como de treinta años» (Lc 3.23), en el año quince de Tiberio César (Lc 3.1), hacia el 28 o 29.</li>
+            <li><strong>Ministerio:</strong> Enseña, sana y llama a sus discípulos en Galilea y Judea. El Evangelio de Juan menciona al menos tres Pascuas, por lo que su ministerio suele calcularse en unos tres años.</li>
+            <li><strong>Muerte:</strong> Es crucificado en Jerusalén bajo <a href='https://es.wikipedia.org/wiki/Poncio_Pilato' target='_blank' class='inline-link'>Poncio Pilato</a>, prefecto de Judea entre el 26 y el 36. El año más citado es el <mark class='dudoso'>30</mark>; otros proponen el 33.</li>
+            <li><strong>Resurrección:</strong> «Resucitó al tercer día, conforme a las Escrituras» (1 Co 15.4), y se presentó vivo a sus discípulos durante cuarenta días antes de ascender (Hch 1.3, 9).</li>
+          </ul>
+          Los Evangelios de Mateo, Marcos, Lucas y Juan son las fuentes principales de su vida.`,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Jerusalem_Modell_BW_2.JPG/1280px-Jerusalem_Modell_BW_2.JPG',
+    pendingReview: true,
+  },
+
+  // ════════════════════════════════════════════════
+  //   ERA III · IGLESIAS PRIMITIVAS (~30 – 313)
+  // ════════════════════════════════════════════════
+  {
+    id: 'iglesias-primitivas',
+    era: true,
+    year: '~30 – 313',
+    title: 'Iglesias Primitivas',
+    color: '#8fa86a',
+    shortDesc: 'De Pentecostés a Constantino: los apóstoles y las iglesias bajo persecución.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/The_Trail_of_Blood.jpg/1920px-The_Trail_of_Blood.jpg',
+    pendingReview: true,
+  },
+
 
   {
     id: 'neron',
@@ -145,7 +199,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
 
   {
     id: 'vetus-latina',
-    year: '~100 – 380 d.C.',
+    year: '~100 – 380',
     title: 'Las Vetus Latina',
     tags: ['biblia', 'roma'],
     shortDesc: 'Las primeras traducciones fragmentarias de la Biblia al latín que fueron usadas por la iglesia que posteriormente sería llamada católico-romana occidental.',
@@ -321,7 +375,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
             <li><strong>Persecución a la inversa:</strong> Los grupos que no se sometían, como los donatistas, comenzaron a ser reprimidos por el Estado.</li>
           </ul>
           El cristianismo aún no era la religión oficial del Imperio; eso llegaría con el edicto de Tesalónica, en el 380.`,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Head_Constantine_Musei_Capitolini_MC1072.jpg/960px-Head_Constantine_Musei_Capitolini_MC1072.jpg',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Unknown_painter_-_The_Donation_of_Constantine_-_WGA23883.jpg',
     pendingReview: true,
   },
 
@@ -467,7 +521,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═══════════════════════════════════════════════════════
-  //   ERA II · IGLESIA IMPERIAL Y EDAD MEDIA (313 – 1453)
+  //   ERA IV · IGLESIA IMPERIAL Y EDAD MEDIA (313 – 1453)
   // ═══════════════════════════════════════════════════════
   {
     id: 'iglesia-imperial',
@@ -504,7 +558,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
 
   {
     id: 'vulgata',
-    year: '382 – 405 d.C.',
+    year: '382 – 405',
     title: 'La Vulgata Latina de Jerónimo',
     tags: ['biblia', 'roma'],
     shortDesc: 'Jerónimo de Estridón traduce la Biblia al latín por encargo del Papa Dámaso I, produciendo el texto oficial de la Iglesia Católica.',
@@ -553,7 +607,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ══════════════════════════════════════════════════════
-  //   ERA III · RENACIMIENTO Y PRE-REFORMA (1453 – 1517)
+  //   ERA V · RENACIMIENTO Y PRE-REFORMA (1453 – 1517)
   // ══════════════════════════════════════════════════════
   {
     id: 'renacimiento',
@@ -617,7 +671,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═════════════════════════════════════════════════
-  //   ERA IV · LA REFORMA PROTESTANTE (1517 – 1600)
+  //   ERA VI · LA REFORMA PROTESTANTE (1517 – 1600)
   // ═════════════════════════════════════════════════
   {
     id: 'reforma',
@@ -723,7 +777,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═══════════════════════════════════════════════
-  //   ERA V · ORTODOXIA PROTESTANTE (1600 – 1800)
+  //   ERA VII · ORTODOXIA PROTESTANTE (1600 – 1800)
   // ═══════════════════════════════════════════════
   {
     id: 'ortodoxia-protestante',
@@ -819,7 +873,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
   },
 
   // ═════════════════════════════════════════════════════════════════════════
-  //   ERA VI · BAUTISTAS PRIMITIVOS Y REVISIONES HISPANAS (1800 – presente)
+  //   ERA VIII · BAUTISTAS PRIMITIVOS Y REVISIONES HISPANAS (1800 – presente)
   // ═════════════════════════════════════════════════════════════════════════
   {
     id: 'bautistas-primitivos',
@@ -854,7 +908,7 @@ export const TIMELINE_ITEMS: TimelineItemData[] = [
     tags: ['biblia'],
     shortDesc: 'Revisión del Dr. Ángel H. de Mora para la American Bible Society; un panorama textual más complejo de lo que normalmente se piensa.',
     fullDesc: `<p>La <strong>Reina-Valera 1865</strong> (también conocida como <strong>SBA 1865</strong>) es la revisión realizada por el
-          <strong>Dr. Ángel H. de Mora</strong> para la <a href='https://es.wikipedia.org/wiki/Sociedad_B%C3%ADblica_Americana' target='_blank' class='inline-link'>American Bible Society</a>.
+          <strong>Dr. Ángel H. de Mora</strong> para la <a href='https://es.wikipedia.org/wiki/American_Bible_Society' target='_blank' class='inline-link'>American Bible Society</a>.
           Introdujo numerosos cambios respecto a la edición de 1602 y, según varios investigadores, en algunos lugares siguió la
           <a href='https://es.wikipedia.org/wiki/Vulgata' target='_blank' class='inline-link'>Vulgata Latina</a> o traducciones tradicionales
           en vez del <a href='https://es.wikipedia.org/wiki/Textus_Receptus' target='_blank' class='inline-link'>Textus Receptus</a>.</p>

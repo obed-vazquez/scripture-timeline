@@ -34,6 +34,8 @@ export class TimelineDataService {
         end: Math.max(y.start, end),
         isRange: y.end !== null || y.ongoing,
         ongoing: y.ongoing,
+        approxStart: y.approxStart,
+        approxEnd: y.approxEnd,
         title: d.title,
         shortDesc: d.shortDesc ?? '',
         fullDesc: d.fullDesc ?? '',

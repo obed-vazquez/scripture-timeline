@@ -8,7 +8,9 @@
  *   "2020+"            → { start: 2020, end: null, ongoing: true }
  *   "1800 – presente"  → { start: 1800, end: <current year>, ongoing: true }
  */
-export function parseYearString(year: string): { start: number; end: number | null; ongoing: boolean; approx: boolean } {
+export function parseYearString(year: string): {
+  start: number; end: number | null; ongoing: boolean; approx: boolean; approxStart: boolean; approxEnd: boolean;
+} {
   const approx = year.includes('~');
   const ongoing = /\+\s*$/.test(year) || /presente|present|hoy/i.test(year);
   const parts = year.split(/[–\-\/]/).map((p) => p.trim());
@@ -21,7 +23,7 @@ export function parseYearString(year: string): { start: number; end: number | nu
 
   if (parts.length === 1) {
     const n = num(parts[0]) ?? 0;
-    return { start: /a\.C\./i.test(parts[0]) ? -n : n, end: null, ongoing, approx };
+    return { start: /a\.C\./i.test(parts[0]) ? -n : n, end: null, ongoing, approx, approxStart: approx, approxEnd: approx };
   }
 
   const isStartBC = /a\.C\./i.test(parts[0]) || (!/d\.C\./i.test(parts[0]) && /a\.C\./i.test(parts[1]));
@@ -33,5 +35,7 @@ export function parseYearString(year: string): { start: number; end: number | nu
     end: e === null ? (ongoing ? currentYear : null) : isEndBC ? -e : e,
     ongoing,
     approx,
+    approxStart: parts[0].includes('~'),
+    approxEnd: parts[1].includes('~'),
   };
 }

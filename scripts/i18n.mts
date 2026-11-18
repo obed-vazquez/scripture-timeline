@@ -12,6 +12,7 @@ import { TIMELINE_ITEMS, TIMELINE_TAGS } from '../src/app/data/timeline.data.ts'
 import { TIMELINE_CUSTOM } from '../src/app/data/timeline.custom.ts';
 import { EN_TRANSLATIONS } from '../src/app/data/timeline.en.ts';
 import { textHash } from '../src/app/utils/hash.util.ts';
+import type { BlockDef } from '../src/app/models/custom.models.ts';
 
 const EN_FILE = fileURLToPath(new URL('../src/app/data/timeline.en.ts', import.meta.url));
 
@@ -31,10 +32,37 @@ function sources(): Map<string, string> {
     put(`guide.${g.id}.title`, g.title);
     put(`guide.${g.id}.description`, g.description);
   }
-  for (const ev of Object.values(TIMELINE_CUSTOM.events)) {
-    for (const b of ev.blocks ?? []) {
+  const block = (b: BlockDef) => {
       put(`custom.${b.id}.title`, b.title);
+      if (b.type === 'group') {
+        put(`custom.${b.id}.caption`, b.caption);
+        put(`custom.${b.id}.cover.alt`, b.cover.alt);
+        for (const it of b.items) block(it.block);
+      }
+      if (b.type === 'chronicle') {
+        put(`custom.${b.id}.caption`, b.caption);
+        for (const e of b.entries) {
+          put(`custom.${b.id}.${e.id}.text`, e.text);
+          put(`custom.${b.id}.${e.id}.note`, e.note);
+        }
+      }
       if (b.type === 'video') put(`custom.${b.id}.caption`, b.caption);
+      if (b.type === 'lineage' && b.image) {
+        put(`custom.${b.id}.image.alt`, b.image.alt);
+        put(`custom.${b.id}.image.credit`, b.image.credit);
+      }
+      if (b.type === 'compare') {
+        put(`custom.${b.id}.caption`, b.caption);
+        put(`custom.${b.id}.footnote`, b.footnote);
+        for (const w of b.witnesses) {
+          put(`custom.${b.id}.w.${w.id}.label`, w.label);
+          put(`custom.${b.id}.w.${w.id}.detail`, w.detail);
+        }
+        for (const r of b.rows) {
+          put(`custom.${b.id}.${r.id}.text`, r.text);
+          put(`custom.${b.id}.${r.id}.note`, r.note);
+        }
+      }
       if (b.type === 'lineage') {
         put(`custom.${b.id}.caption`, b.caption);
         for (const n of b.nodes) {
@@ -42,8 +70,8 @@ function sources(): Map<string, string> {
           put(`custom.${b.id}.${n.id}.detail`, n.detail);
         }
       }
-    }
-  }
+  };
+  for (const ev of Object.values(TIMELINE_CUSTOM.events)) for (const b of ev.blocks ?? []) block(b);
   return m;
 }
 

@@ -52,9 +52,143 @@ export const EN_TRANSLATIONS: TranslationTable = {
   'custom.video-rv.title': { src: 'aa326127', text: `History of the Reina-Valera version` },
   'custom.video-rv.caption': { src: '3667a75b', text: `Video by BITE (YouTube, in Spanish).` },
 
-  // ══ ERA I · EARLY CHURCHES ═════════════════════════════════
+  'custom.portada-oso.title': { src: '8f0f1fd5', text: `The 1569 title page` },
+  'custom.portada-oso.caption': { src: '3dbb791b', text: `Zoom into each number to see what the title page says.` },
+  'custom.portada-oso.image.alt': { src: 'd3033444', text: `Title page of the Bear Bible, 1569` },
+  'custom.portada-oso.image.credit': { src: '06da0035', text: `Image: Wikimedia Commons (public domain).` },
+  'custom.portada-oso.titulo.label': { src: 'fa886e7d', text: `The title` },
+  'custom.portada-oso.titulo.detail': { src: 'ca42238b', text: `"La Biblia, que es, los sacros libros del Viejo y Nuevo Testamento. Trasladada en Español." That is: "The Bible, which is the sacred books of the Old and New Testament. Translated into Spanish."` },
+  'custom.portada-oso.oso.label': { src: '57982512', text: `The bear and the honey` },
+  'custom.portada-oso.oso.detail': { src: '8d6a35bd', text: `A bear reaches for the honey of a honeycomb in a tree trunk; a mallet hangs over its head and an open book lies at the foot of the tree. It was the emblem of the printer Matthias Apiarius (apiarius is Latin for "beekeeper"): a picture with no religious symbols.` },
+  'custom.portada-oso.lema.label': { src: '48a5b4d5', text: `The motto` },
+  'custom.portada-oso.lema.detail': { src: '62d4bb68', text: `In Hebrew and then in Spanish: "The word of our God shall stand for ever" (Isaiah 40:8).` },
+  'custom.portada-oso.anio.label': { src: 'd2859ae7', text: `The year` },
+  'custom.portada-oso.anio.detail': { src: '7c16739b', text: `M. D. LXIX: 1569 in Roman numerals (M = 1000, D = 500, LXIX = 69). It was published in Basel, Switzerland.` },
+
+  'custom.arbol-rv.title': { src: 'b7eabfd8', text: `The Reina-Valera family` },
+  'custom.arbol-rv.caption': { src: '0989de83', text: `From Reina's translation to today's revisions. Zoom into a point to see each revision.` },
+  'custom.arbol-rv.reina.label': { src: '6ee6df0a', text: `Reina` },
+  'custom.arbol-rv.reina.detail': { src: '8a361831', text: `Casiodoro de Reina publishes in Basel the first complete Bible in Spanish.` },
+  'custom.arbol-rv.valera.label': { src: '4ce6627e', text: `Valera` },
+  'custom.arbol-rv.valera.detail': { src: '76eeb692', text: `Cipriano de Valera revises Reina's translation; hence the name "Reina-Valera".` },
+  'custom.arbol-rv.rv1865.label': { src: '48ce4b7b', text: `RV 1865` },
+  'custom.arbol-rv.rv1865.detail': { src: '30ed11df', text: `Revision by Dr. Ángel H. de Mora for the American Bible Society.` },
+  'custom.arbol-rv.rv1909.label': { src: '369d8322', text: `RV 1909` },
+  'custom.arbol-rv.rv1909.detail': { src: '6ff5781d', text: `"La Antigua": much loved, and criticized today for admitting Critical Text readings.` },
+  'custom.arbol-rv.rv1960.label': { src: '3399013b', text: `RV 1960` },
+  'custom.arbol-rv.rv1960.detail': { src: 'e966144a', text: `Revision by the United Bible Societies starting from the 1909; the most widely used in the Spanish-speaking world.` },
+  'custom.arbol-rv.p1602.label': { src: '44fcbcb0', text: `1602 Purificada` },
+  'custom.arbol-rv.p1602.detail': { src: '7e64d62d', text: `A Baptist revision made in Monterrey that goes back to Valera's 1602 text.` },
+  'custom.arbol-rv.rvg.label': { src: '96ae623a', text: `RVG` },
+  'custom.arbol-rv.rvg.detail': { src: 'f2d28e5b', text: `A revision by Humberto Gómez (2004) that checks the RV 1909 against the Textus Receptus and the King James. Its critics say it was conformed to the King James; its defenders, that it is the 1909 without Critical Text readings.` },
+  'custom.arbol-rv.sbt.label': { src: '1235a76e', text: `RV SBT` },
+  'custom.arbol-rv.sbt.detail': { src: '76b41944', text: `The Trinitarian Bible Society revises the RV 1909 against the original texts.` },
+
+  'custom.mapa-reforma.title': { src: '7a588755', text: `The map of the Reformation` },
+  'custom.mapa-reforma.caption': { src: '6dc1cb16', text: `Where the events of this period took place. Zoom into a number.` },
+  'custom.mapa-reforma.image.alt': { src: '2f4f7e49', text: `Map of western and central Europe` },
+  'custom.mapa-reforma.image.credit': { src: '8fe5766e', text: `Map: Wikimedia Commons (CC BY-SA 3.0).` },
+  'custom.mapa-reforma.maguncia.label': { src: 'f51a1f7a', text: `Mainz` },
+  'custom.mapa-reforma.maguncia.detail': { src: '6db16038', text: `Gutenberg prints the 42-line Bible with movable type.` },
+  'custom.mapa-reforma.basilea.label': { src: '2cc196fa', text: `Basel` },
+  'custom.mapa-reforma.basilea.detail': { src: '872c14b0', text: `Erasmus publishes his Greek New Testament (1516). In 1569 the Bear Bible is published here.` },
+  'custom.mapa-reforma.wittenberg.label': { src: '2112e740', text: `Wittenberg` },
+  'custom.mapa-reforma.wittenberg.detail': { src: '2e87dcea', text: `Luther makes his 95 theses known.` },
+  'custom.mapa-reforma.ginebra.label': { src: '269d7193', text: `Geneva` },
+  'custom.mapa-reforma.ginebra.detail': { src: '394dead2', text: `Calvin arrives in 1536 and reforms the city. Later Beza and, from 1550, Stephanus work here.` },
+  'custom.mapa-reforma.trento.label': { src: '84a2ca1d', text: `Trent` },
+  'custom.mapa-reforma.trento.detail': { src: '515e8230', text: `Council of the Catholic Church in response to the Reformation.` },
+  'custom.mapa-reforma.amsterdam.label': { src: '647c845b', text: `Amsterdam` },
+  'custom.mapa-reforma.amsterdam.detail': { src: 'f8fcef20', text: `Cipriano de Valera publishes his revision of Reina's Bible.` },
+  'custom.mapa-reforma.londres.label': { src: '7f8df318', text: `London` },
+  'custom.mapa-reforma.londres.detail': { src: '50997a53', text: `The King James is published.` },
+  'custom.mapa-reforma.dordrecht.label': { src: '1fa3b310', text: `Dordrecht` },
+  'custom.mapa-reforma.dordrecht.detail': { src: 'ebbdcef6', text: `The Synod of Dort answers the Remonstrants.` },
+
+  'custom.cmp-rv60.title': { src: '0652c75d', text: `The RV 1960 and the manuscripts` },
+  'custom.cmp-rv60.caption': { src: '816b06d5', text: `What three ancient codices and the RV 1960 do with some readings of the Majority Text. Click a row to read its note.` },
+  'custom.cmp-rv60.footnote': { src: '21e23b1d', text: `† Included with a footnote in study editions.` },
+  'custom.cmp-rv60.w.m.label': { src: 'c80bfd18', text: `M` },
+  'custom.cmp-rv60.w.m.detail': { src: 'df9a5abd', text: `Majority Text` },
+  'custom.cmp-rv60.w.v.label': { src: 'd30c0e69', text: `V` },
+  'custom.cmp-rv60.w.v.detail': { src: '419ad2a7', text: `Codex Vaticanus, 4th c.` },
+  'custom.cmp-rv60.w.s.label': { src: 'd60c1322', text: `S` },
+  'custom.cmp-rv60.w.s.detail': { src: '211b047f', text: `Codex Sinaiticus, 4th c.` },
+  'custom.cmp-rv60.w.a.label': { src: 'c40bf6cc', text: `A` },
+  'custom.cmp-rv60.w.a.detail': { src: 'b3e5f2d6', text: `Codex Alexandrinus, 5th c.` },
+  'custom.cmp-rv60.w.rv60.label': { src: '3399013b', text: `RV 1960` },
+  'custom.cmp-rv60.w.rv60.detail': { src: '895b946e', text: `Reina-Valera 1960` },
+  'custom.cmp-rv60.1jn57.text': { src: 'd5ae0804', text: `"in heaven, the Father, the Word, and the Holy Ghost: and these three are one. And there are three that bear witness in earth"` },
+  'custom.cmp-rv60.1jn57.note': { src: '3b4d0129', text: `Comma Johanneum. Absent from the whole early Greek tradition; present only in late manuscripts and in the Vulgate. The RV 1960 includes it, with a footnote in study editions.` },
+  'custom.cmp-rv60.mr16.text': { src: '636d42d0', text: `The long ending of Mark (12 verses): the resurrection, the appearances and the Great Commission.` },
+  'custom.cmp-rv60.mr16.note': { src: '0c85020d', text: `Cited by Irenaeus (2nd c.) and Tatian; known to Justin Martyr. The RV 1960 includes it, with a footnote in study editions.` },
+  'custom.cmp-rv60.hch837.text': { src: '0b2cd687', text: `"And Philip said, If thou believest with all thine heart, thou mayest. And he answered and said, I believe that Jesus Christ is the Son of God."` },
+  'custom.cmp-rv60.hch837.note': { src: 'c352b425', text: `The three codices leave out the whole verse; the RV 1960 keeps it.` },
+  'custom.cmp-rv60.ro51.text': { src: '0f20b757', text: `"we have peace with God" (ἔχομεν, indicative)` },
+  'custom.cmp-rv60.ro51.note': { src: '677bdbf3', text: `V, S and A read "let us have peace" (ἔχωμεν, subjunctive). A single letter in Greek turns a statement into an exhortation. The RV 1960 keeps "tenemos paz" (we have peace).` },
+  'custom.cmp-rv60.mt522.text': { src: '09659b31', text: `"whosoever is angry with his brother without a cause" (εἰκῇ)` },
+  'custom.cmp-rv60.mt522.note': { src: '95f664e4', text: `V leaves out "without a cause"; S left it out too, and a later corrector added it above the line. A does not preserve this part of Matthew. The RV 1960 leaves out "without a cause".` },
+  'custom.cmp-rv60.mr217.text': { src: 'd23420e4', text: `"I came not to call the righteous, but sinners to repentance"` },
+  'custom.cmp-rv60.mr217.note': { src: 'dcb9648f', text: `V, S and A leave out "to repentance" (εἰς μετάνοιαν). So does the RV 1960.` },
+  'custom.cmp-rv60.mt1720.text': { src: '523ea02a', text: `"Because of your unbelief" (ἀπιστίαν)` },
+  'custom.cmp-rv60.mt1720.note': { src: '1ce9e4b7', text: `V and S read "little faith" (ὀλιγοπιστίαν). A does not preserve this part of Matthew. The RV 1960 follows V and S: "poca fe" (little faith).` },
+
+  'custom.historia-rv.title': { src: 'd522fd36', text: `The story of the Reina-Valera` },
+  'custom.historia-rv.caption': { src: '64b633d2', text: `Zoom in to open it: the video, the 1569 title page and the chronology.` },
+  'custom.historia-rv.cover.alt': { src: 'd3033444', text: `Title page of the Bear Bible, 1569` },
+  'custom.cronologia-rv.title': { src: 'c45366ea', text: `Chronology` },
+  'custom.cronologia-rv.caption': { src: '03dfc0e7', text: `As told in the BITE video.` },
+  'custom.cronologia-rv.e1542.text': { src: '453fc61b', text: `Francisco de Enzinas publishes a New Testament in Spanish.` },
+  'custom.cronologia-rv.e1542.note': { src: 'cb1fff4a', text: `Other sources give 1543.` },
+  'custom.cronologia-rv.e1550.text': { src: '89652c11', text: `Julián Hernández, "Julianillo", begins smuggling Bibles and Protestant books into Spain; in Seville Juan Ponce de León keeps them.` },
+  'custom.cronologia-rv.e1553.text': { src: '31438a63', text: `Two Jews publish in Ferrara a version of the Old Testament.` },
+  'custom.cronologia-rv.e1557a.text': { src: '9382c2d7', text: `Juan Pérez de Pineda publishes another version of the New Testament.` },
+  'custom.cronologia-rv.e1557b.text': { src: '6df69fd7', text: `Monks flee the monastery of San Isidoro del Campo, in Seville; among them Casiodoro de Reina, Cipriano de Valera and Antonio del Corro.` },
+  'custom.cronologia-rv.e1558.text': { src: '61b18234', text: `Casiodoro reaches Geneva and that same year moves to Frankfurt, set on translating the Bible into Spanish.` },
+  'custom.cronologia-rv.e1559.text': { src: '08379c34', text: `Juan Ponce de León dies at the stake. Casiodoro reaches London, meets Valera and pastors Spanish refugees.` },
+  'custom.cronologia-rv.e1560.text': { src: 'eb959234', text: `On 22 December, Julián Hernández dies at the stake.` },
+  'custom.cronologia-rv.e1564.text': { src: '0ea684e1', text: `Casiodoro passes through Antwerp and Frankfurt and reaches France; the Duchess of Ferrara shelters him in her castle, where he meets Pérez de Pineda.` },
+  'custom.cronologia-rv.e1564.note': { src: 'd52a6f19', text: `The video names the castle unclearly; it would be Montargis.` },
+  'custom.cronologia-rv.e1565.text': { src: 'e7663fd0', text: `He settles in Frankfurt; as a cloth merchant he travels to Strasbourg and Basel, and finishes his translation.` },
+  'custom.cronologia-rv.e1567.text': { src: 'cab39dca', text: `Juan Pérez de Pineda dies in Paris and leaves funds to print the Bible.` },
+  'custom.cronologia-rv.e1567.note': { src: '216e5f59', text: `The video does not give the year.` },
+  'custom.cronologia-rv.e1568.text': { src: 'b119c380', text: `The Basel printer, Johannes Oporinus, dies and the advance is lost.` },
+  'custom.cronologia-rv.e1568.note': { src: '216e5f59', text: `The video does not give the year.` },
+  'custom.cronologia-rv.e1569.text': { src: '8a72c779', text: `With new help from friends, the Bear Bible is finished in August.` },
+  'custom.cronologia-rv.e1594.text': { src: '327923a8', text: `Casiodoro de Reina dies.` },
+  'custom.cronologia-rv.e1602.text': { src: '230a49e2', text: `Cipriano de Valera publishes his revision: the Reina-Valera is born.` },
+  'custom.cronologia-rv.e1865.text': { src: '6bf9d2dc', text: `The American Bible Society funds a revision led by a Spanish and an American missionary.` },
+  'custom.cronologia-rv.e1909.text': { src: '8dcd94c8', text: `A committee of the American and British Bible Societies, formed in 1907, publishes the RV 1909.` },
+  'custom.cronologia-rv.e1960.text': { src: 'fc18ea02', text: `Bible scholars from several Spanish-speaking countries make the best-known revision: the RV 1960.` },
+
+  // ══ ERA I · BEFORE CHRIST ═════════════════════════════════
+  'antes-de-cristo.title': { src: '70f0dff3', text: `Before Christ` },
+  'antes-de-cristo.shortDesc': { src: '3a5d9823', text: `The Old Testament Scriptures and their translation into Greek in the Hellenistic world.` },
+
+  // ══ ERA II · THE LIFE OF CHRIST ════════════════════════════
+  'vida-de-cristo.title': { src: '66e2c4b6', text: `The Life of Christ` },
+  'vida-de-cristo.shortDesc': { src: '0fdf549b', text: `The Word made flesh: the birth, ministry, death and resurrection of Jesus Christ.` },
+
+  'jesucristo.title': { src: '35c6d9fc', text: `Jesus Christ` },
+  'jesucristo.shortDesc': { src: '5c55191a', text: `Jesus is born in Bethlehem in the days of King Herod, teaches and heals in Galilee and Judea, dies crucified under Pontius Pilate and rises on the third day.` },
+  'jesucristo.fullDesc': { src: 'a378def0', text: `According to the Gospels, <a href='${W}Jesus' target='_blank' class='inline-link'>Jesus of Nazareth</a>
+          was born in Bethlehem of Judea "in the days of <a href='${W}Herod_the_Great' target='_blank' class='inline-link'>Herod</a> the king" (Mt 2:1).
+          Since Herod died around 4 BC, the birth is usually dated between 6 and 4 BC.<br><br>
+          <strong>📅 Born "before Christ"?</strong> The count of years "after Christ" (anno Domini) was proposed by the monk
+          <a href='${W}Dionysius_Exiguus' target='_blank' class='inline-link'>Dionysius Exiguus</a> around the year 525,
+          and his reckoning of the birth fell short by a few years. That is why the dates of the life of Christ are written as approximate.<br><br>
+          <strong>📜 His life in the Scriptures:</strong>
+          <ul class='modal-list'>
+            <li><strong>Baptism:</strong> John the Baptist baptizes him in the Jordan. Jesus "began to be about thirty years of age" (Lk 3:23), in the fifteenth year of Tiberius Caesar (Lk 3:1), around AD 28 or 29.</li>
+            <li><strong>Ministry:</strong> He teaches, heals and calls his disciples in Galilee and Judea. The Gospel of John mentions at least three Passovers, so his ministry is usually reckoned at about three years.</li>
+            <li><strong>Death:</strong> He is crucified in Jerusalem under <a href='${W}Pontius_Pilate' target='_blank' class='inline-link'>Pontius Pilate</a>, prefect of Judea from 26 to 36. The year most often given is <mark class='dudoso'>30</mark>; others propose 33.</li>
+            <li><strong>Resurrection:</strong> "He rose again the third day according to the scriptures" (1 Cor 15:4), and showed himself alive to his disciples for forty days before ascending (Acts 1:3, 9).</li>
+          </ul>
+          The Gospels of Matthew, Mark, Luke and John are the main sources for his life.` },
+
+  // ══ ERA III · EARLY CHURCHES═══════════════════════════════
   'iglesias-primitivas.title': { src: '703085e0', text: `Early Churches` },
-  'iglesias-primitivas.shortDesc': { src: '1d871e3c', text: `From the Septuagint to Constantine: the Scriptures, the apostles and the churches under persecution.` },
+  'iglesias-primitivas.shortDesc': { src: 'a92239de', text: `From Pentecost to Constantine: the apostles and the churches under persecution.` },
 
   'septuaginta.title': { src: '93c3fee6', text: `The Septuagint (LXX)` },
   'septuaginta.shortDesc': { src: '64a5236a', text: `Jewish scholars in Alexandria translate the Torah into Greek, beginning a collection that would become the most influential translation of antiquity.` },
@@ -330,7 +464,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           </ul>
           His sons divided the Empire. Constantius II, in the east, openly supported Arianism, and the disputes Nicaea meant to settle went on for decades.` },
 
-  // ══ ERA II · THE IMPERIAL CHURCH AND THE MIDDLE AGES ═══════
+  // ══ ERA IV · THE IMPERIAL CHURCH AND THE MIDDLE AGES ═══════
   'iglesia-imperial.title': { src: '4c01d88b', text: `The Imperial Church and the Middle Ages` },
   'iglesia-imperial.shortDesc': { src: 'c5d5613a', text: `The church united to the State: imperial councils, the Vulgate, the crusades.` },
 
@@ -387,7 +521,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
             <li><strong>Later expeditions (1147–1291):</strong> They included new military and diplomatic attempts, though with less overall success.</li>
           </ul>` },
 
-  // ══ ERA III · RENAISSANCE AND PRE-REFORMATION ══════════════
+  // ══ ERA V · RENAISSANCE AND PRE-REFORMATION ══════════════
   'renacimiento.title': { src: '4d00d298', text: `Renaissance and Pre-Reformation` },
   'renacimiento.shortDesc': { src: '1e5a8b8e', text: `The printing press, the Inquisition and the first printed Greek New Testament.` },
 
@@ -423,7 +557,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           This Greek text (later called the <a href='${W}Textus_Receptus' target='_blank' class='inline-link'>Textus Receptus</a>)
           served as the undeniable basis for Bible translations into the vernacular languages during the Reformation.` },
 
-  // ══ ERA IV · THE PROTESTANT REFORMATION ════════════════════
+  // ══ ERA VI · THE PROTESTANT REFORMATION ════════════════════
   'reforma.title': { src: 'add48f43', text: `The Protestant Reformation` },
   'reforma.shortDesc': { src: 'aabd3c16', text: `Luther, Calvin, Trent and the consolidation of the Textus Receptus.` },
 
@@ -483,7 +617,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           It is nicknamed the <a href='https://es.wikipedia.org/wiki/Biblia_del_oso' target='_blank' class='inline-link'>Bear Bible</a>
           after the historic emblem on its title page, used so as not to reveal that it was a Bible and to avoid it being burned by the Inquisition.` },
 
-  // ══ ERA V · PROTESTANT ORTHODOXY ═══════════════════════════
+  // ══ ERA VII · PROTESTANT ORTHODOXY ═══════════════════════════
   'ortodoxia-protestante.title': { src: '77bf6a49', text: `Protestant Orthodoxy` },
   'ortodoxia-protestante.shortDesc': { src: '43066ca3', text: `The Reina-Valera, the King James, Dort and the Pilgrims.` },
 
@@ -539,7 +673,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
           in the new world firmly grounded in godly ideals and teachings, known and praised today in American history as the true
           <a href='${W}Pilgrims_(Plymouth_Colony)' target='_blank' class='inline-link'>Pilgrims</a> or American Pilgrim Mothers and Fathers.` },
 
-  // ══ ERA VI · PRIMITIVE BAPTISTS AND SPANISH REVISIONS ══════
+  // ══ ERA VIII · PRIMITIVE BAPTISTS AND SPANISH REVISIONS ══════
   'bautistas-primitivos.title': { src: 'c4bd7292', text: `Primitive Baptists and Spanish Revisions` },
   'bautistas-primitivos.shortDesc': { src: 'e6491a3e', text: `Kehukee, the Dead Sea Scrolls and the revisions of the Reina-Valera.` },
 
@@ -554,7 +688,7 @@ export const EN_TRANSLATIONS: TranslationTable = {
 
   'rv-1865.title': { src: '6ae90916', text: `Reina-Valera 1865` },
   'rv-1865.shortDesc': { src: '1e825ae0', text: `Dr. Ángel H. de Mora's revision for the American Bible Society; a more complex textual picture than is usually thought.` },
-  'rv-1865.fullDesc': { src: '4adef988', text: `<p>The <strong>Reina-Valera 1865</strong> (also known as <strong>SBA 1865</strong>) is the revision carried out by
+  'rv-1865.fullDesc': { src: 'fb803651', text: `<p>The <strong>Reina-Valera 1865</strong> (also known as <strong>SBA 1865</strong>) is the revision carried out by
           <strong>Dr. Ángel H. de Mora</strong> for the <a href='${W}American_Bible_Society' target='_blank' class='inline-link'>American Bible Society</a>.
           It introduced numerous changes from the 1602 edition and, according to several researchers, in some places followed the
           <a href='${W}Vulgate' target='_blank' class='inline-link'>Latin Vulgate</a> or traditional translations

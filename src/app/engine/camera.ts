@@ -176,7 +176,7 @@ export class Camera {
     const c0 = this.t.invert([w / 2, h / 2]);
     const c1 = target.invert([w / 2, h / 2]);
     const i = interpolateZoom([c0[0], c0[1], w / this.t.k], [c1[0], c1[1], w / target.k]);
-    return clamp(i.duration * 0.7, 650, 2300) / this.speed;
+    return clamp(i.duration * 0.85, 780, 2700) / this.speed;
   }
 
   private scaledAround(t: ZoomTransform, factor: number, p: [number, number]): ZoomTransform {
