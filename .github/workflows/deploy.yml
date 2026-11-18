@@ -1,10 +1,24 @@
 name: Build and Deploy to GitHub Pages
 
+# Deploys by hand (Run workflow), or when a pull request with the "deploy" label is merged
+# into main. Pushes alone never deploy.
 on:
   workflow_dispatch:
+  pull_request:
+    # "labeled" also covers putting the label on a pull request that was already merged
+    types: [closed, labeled]
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       github.event.pull_request.base.ref == 'main' &&
+       contains(github.event.pull_request.labels.*.name, 'deploy'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -12,6 +26,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # a merged pull request deploys the commit it left on main
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

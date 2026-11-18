@@ -1,47 +1,34 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FilterService } from '../../services/filter.service';
-import { TimelineComponent } from '../../components/timeline/timeline.component';
-import { FilterPanelComponent } from '../../components/filter-panel/filter-panel.component';
+import { StageComponent } from '../../components/stage/stage.component';
+import { ContextBarComponent, NavControlsComponent, SearchComponent, TopBarComponent } from '../../components/chrome/chrome.components';
+import { PlayerDockComponent } from '../../components/chrome/player-dock.component';
+import { UrlStateService } from '../../services/url-state.service';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
-  selector: 'app-timeline-page',
+  selector: 'tl-timeline-page',
   standalone: true,
-  imports: [CommonModule, TimelineComponent, FilterPanelComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [StageComponent, TopBarComponent, NavControlsComponent, ContextBarComponent, PlayerDockComponent, SearchComponent],
   template: `
-    <section class="timeline-page">
-      <app-timeline></app-timeline>
-      <app-filter-panel></app-filter-panel>
-    </section>
+    <tl-stage [initialNode]="initialNode" />
+    <tl-player-dock />
+    <tl-top-bar />
+    <tl-nav-controls />
+    <tl-context-bar />
+    <tl-search />
   `,
-  styles: [`
-    .timeline-page {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      height: calc(100vh - var(--header-height));
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* On mobile allow vertical scroll */
-    @media (max-width: 768px) {
-      .timeline-page {
-        height: auto;
-        min-height: calc(100vh - var(--header-height));
-        overflow-y: auto;
-      }
-    }
-  `]
 })
-export class TimelinePageComponent implements OnInit {
-  private filterSvc = inject(FilterService);
-  private route = inject(ActivatedRoute);
+export class TimelinePageComponent {
+  private url = inject(UrlStateService);
+  private nav = inject(NavigationService);
+  readonly initialNode: string | null;
 
-  ngOnInit(): void {
-    // Restore filter state from URL query params
-    const params = this.route.snapshot.queryParams as Record<string, string>;
-    this.filterSvc.restoreFromUrl(params);
+  constructor() {
+    const params = inject(ActivatedRoute).snapshot.queryParams as Record<string, string | undefined>;
+    this.initialNode = this.url.restore(params).node;
+    this.url.start();
+    effect(() => document.body.classList.toggle('is-review', this.nav.reviewMode()));
   }
 }

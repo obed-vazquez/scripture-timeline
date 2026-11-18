@@ -1,19 +1,13 @@
-# Línea del Tiempo Bíblica
+# Línea del Tiempo de las Escrituras
 
-Una aplicación web de línea del tiempo histórica interactiva sobre la historia de la Biblia, traducciones bíblicas, doctrina cristiana e historia eclesiástica.
+Línea del tiempo interactiva, con Zoom Reveal, sobre la historia de la Biblia, sus traducciones, la doctrina cristiana y la historia de la iglesia. En español e inglés.
 
-## Tecnología
-
-- **Angular** (última versión estable) con standalone components
-- **CSS Custom Properties** para theming claro/oscuro
-- **GSAP** para animaciones avanzadas
-- **QRCode.js** para generación de QR al imprimir
-- **HashLocationStrategy** para compatibilidad con GitHub Pages
+Publicada en https://timeline.whiteweb.mx
 
 ## Instalación
 
 ```bash
-git clone https://github.com/TU_USUARIO/scripture-timeline
+git clone https://github.com/obed-vazquez/scripture-timeline
 cd scripture-timeline
 npm install
 ```
@@ -22,11 +16,9 @@ npm install
 
 ```bash
 npm start
-# o
-npx ng serve
 ```
 
-Abre http://localhost:4200 — la app redirige automáticamente a `/#/timeline`.
+Abre http://localhost:4200
 
 ## Build de producción
 
@@ -35,84 +27,46 @@ npm run build
 # Salida en: dist/scripture-timeline/browser/
 ```
 
-## Deploy a GitHub Pages
+## Publicar
 
-### Automático (GitHub Actions)
+Un push no publica. Hay dos formas de publicar:
 
-El workflow `.github/workflows/deploy.yml` se ejecuta automáticamente en cada push a `main`. Para habilitarlo:
+- **Con un PR:** ponle la etiqueta `deploy` al PR hacia `main`. Al hacer merge, se publica.
+- **A mano:** en GitHub, abre **Actions → Build and Deploy to GitHub Pages** y da clic en **Run workflow** sobre la rama `main`.
 
-1. En tu repositorio en GitHub, ve a **Settings → Pages**.
-2. En **Build and deployment**, selecciona la rama `gh-pages` como fuente.
-3. El workflow construirá y desplegará la app automáticamente.
+El workflow compila y publica en la rama `gh-pages` con el dominio `timeline.whiteweb.mx`.
 
-### Configurar dominio personalizado
+## Editar los eventos
 
-1. Abre `.github/workflows/deploy.yml`.
-2. Reemplaza `YOUR_CUSTOM_DOMAIN` con tu dominio (ej: `timeline.midominio.com`):
-   ```yaml
-   cname: timeline.midominio.com
-   ```
-3. En tu proveedor de DNS, agrega un registro CNAME que apunte `timeline.midominio.com` → `TU_USUARIO.github.io`.
-4. En GitHub → **Settings → Pages**, verifica la configuración del dominio personalizado.
+Todo el contenido está en un solo archivo: `src/app/data/timeline.data.ts`. El encabezado del archivo explica cada campo. Para agregar un evento, copia un bloque `{ ... }` y cambia sus datos; el orden no importa.
 
-> Si **no tienes dominio personalizado**, elimina la línea `cname:` del workflow.
+Si un `id` ya se publicó, no lo cambies: los enlaces y los códigos QR impresos lo usan.
 
-## Estructura del proyecto
+## Traducciones al inglés
 
-```
-src/
-├── app/
-│   ├── components/
-│   │   ├── header/          # Header con auto-ocultar en scroll
-│   │   ├── footer/          # Footer (contenido pendiente)
-│   │   ├── timeline/        # Componente principal de la línea del tiempo
-│   │   ├── event-card/      # Tarjeta individual de evento
-│   │   ├── event-modal/     # Modal de detalle con HTML embebido
-│   │   └── filter-panel/    # Panel de filtros + botón imprimir
-│   ├── data/
-│   │   └── timeline-events.data.ts  # 📌 Todos los datos están aquí
-│   ├── models/
-│   │   └── timeline.models.ts       # Interfaces TypeScript
-│   ├── pages/
-│   │   └── timeline-page/   # Página enrutada /timeline
-│   ├── services/
-│   │   ├── filter.service.ts   # Lógica de filtros + URL sync
-│   │   └── theme.service.ts    # Toggle claro/oscuro
-│   └── utils/
-│       └── parse-year.util.ts  # parseYearString() utilitaria
-├── styles/
-│   └── variables.css   # 🎨 Todos los tokens de color aquí
-└── styles.css           # Estilos globales
+Las traducciones están en `src/app/data/timeline.en.ts`. Después de cambiar un texto en español:
+
+```bash
+npm run i18n
 ```
 
-## Agregar eventos
+El reporte lista las traducciones faltantes, las desactualizadas (el español cambió) y las pendientes de revisión. Una traducción nueva se escribe con `src: ''` y luego se sella con:
 
-Edita `src/app/data/timeline-events.data.ts` y agrega un objeto al array `rawEvents`:
-
-```typescript
-{
-  year: '1850',
-  title: 'Mi nuevo evento',
-  tags: ['biblia'],       // IDs: biblia | doctrina | historia | roma
-  era: 'Nombre de la era',
-  shortDesc: 'Descripción corta...',
-  fullDesc: `HTML completo del detalle...`,
-  image: 'https://url-de-imagen.jpg',
-}
+```bash
+npm run i18n -- stamp
 ```
 
-Los eventos se ordenan automáticamente por año.
+Para marcar una traducción como revisada, agrégale `reviewed: true`.
 
-## Funcionalidades
+## Gráficas, videos, guías y recorrido
 
-- 🌓 **Modo claro/oscuro** con toggle en el header
-- 🔍 **Filtros por categoría** con modos OR y AND
-- ⭐ **Resaltado** de categorías (clic derecho en filtro)
-- 🔗 **Estado en URL** — comparte filtros y resaltados vía URL
-- 🖨️ **Impresión** con código QR de la URL actual
-- ↔️ **Scroll horizontal** drag-to-scroll + rueda normalizada
-- 📱 **Responsive** — vertical en móvil, horizontal en desktop
+Van en `src/app/data/timeline.custom.ts`, indexados por el `id` del evento. Un evento que no aparece ahí usa la presentación por defecto.
 
-## Licencia
+## Música de fondo
 
-Open source. Todas las dependencias son gratuitas y de código abierto.
+1. Para abrir el sitio con la música puesta, agrega `&musica=1` al enlace (por ejemplo `/#/timeline?musica=1`). El navegador la arranca en silencio y la activa con el primer clic.
+2. Para cambiar la música, cambia el id de YouTube en `MUSIC_VIDEO`, dentro de `src/app/services/media.service.ts`.
+
+## Revisar textos pendientes
+
+Agrega `&revision=1` al enlace (por ejemplo `/#/timeline?revision=1`). Se marcan los textos pendientes de revisión, las traducciones faltantes o desactualizadas y los datos dudosos.

@@ -1,23 +1,68 @@
-// Timeline domain models
+// ─────────────────────────────────────────────────────────────
+// Data as written in timeline.data.ts (user-editable, Spanish)
+// ─────────────────────────────────────────────────────────────
+
+export interface TimelineTagData {
+  id: string;
+  label: string;
+  color: string;
+}
+
+export interface TimelineItemData {
+  id: string;
+  /** Marks a root era. */
+  era?: boolean;
+  /** Explicit container (another item id). Without it, the era is deduced from the year. */
+  parent?: string;
+  year: string;
+  /** Year text shown instead of `year` (which still places the item). */
+  yearText?: string;
+  title: string;
+  color?: string;
+  tags?: string[];
+  shortDesc?: string;
+  fullDesc?: string;
+  image?: string;
+  pendingReview?: boolean;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Resolved runtime model
+// ─────────────────────────────────────────────────────────────
+
+export type ItemKind = 'era' | 'event';
+
+export interface TimelineItem {
+  id: string;
+  kind: ItemKind;
+  /** Year label exactly as written in the data (Spanish). */
+  yearLabel: string;
+  start: number;
+  /** Equal to start for single-year events. */
+  end: number;
+  isRange: boolean;
+  ongoing: boolean;
+  /** The start / end year is written as approximate ('~'). */
+  approxStart: boolean;
+  approxEnd: boolean;
+  title: string;
+  shortDesc: string;
+  fullDesc: string;
+  image: string;
+  tags: string[];
+  color: string;
+  pendingReview: boolean;
+  parent: TimelineItem | null;
+  children: TimelineItem[];
+  /** Root era this item belongs to (itself for eras). */
+  era: TimelineItem;
+  depth: number;
+  /** 1-based era number (eras only). */
+  eraIndex: number;
+}
 
 export interface TimelineTag {
   id: string;
-  label: string;   // en español
-  icon: string;
+  label: string;
   color: string;
-  bg: string;
-  border: string;
-}
-
-export interface TimelineEvent {
-  id: string;
-  yearLabel: string;   // string original para mostrar ("~250 a.C.", "382 – 405 d.C.", etc.)
-  yearStart: number;   // año numérico parseado (negativo para a.C.)
-  yearEnd: number | null; // null si es evento puntual
-  title: string;
-  tags: string[];      // array de tag IDs
-  shortDesc: string;
-  fullDesc: string;    // HTML sanitizado — se renderizará con innerHTML
-  image: string;       // URL de imagen
-  era: string;         // nombre de la era — preservado en datos
 }
